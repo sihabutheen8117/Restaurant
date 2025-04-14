@@ -31,7 +31,8 @@ const MainNav = () => {
         <div className='flex justify-around items-center py-4'>
             <div className = {`md:text-6xl text-xl px-2 font-bold ${anton.className} text-white`}>
                 <span className=''>Made with <span className='text-[#FFF085] md:text-7xl text-2xl'>Love</span> </span><br></br>
-                <span>Served with Joy</span>
+                <span>Served with Joy</span><br></br>
+                <button className={`md:text-xl text-sm ${lexend.className} border-2 rounded-2xl px-2 hover:text-amber-200 fontrans`}>Order now</button>
             </div>
             <img src='assets/main_food_1.png' alt="food_1" className='md:h-64 h-24 z-[2] bg-black bg-radial from-black from-30% to-red-400 to-70%'/>
             

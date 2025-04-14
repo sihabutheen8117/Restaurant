@@ -30,3 +30,8 @@
     background-color : var(--softRed) ;
 }
 
+.setAbout {
+    background-image: url('../../public/assets/top_view_food.jpg');
+    min-width: 100%;
+    height: 100%;
+}
