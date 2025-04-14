@@ -25,3 +25,8 @@
 .fontrans {
     transition : color 200ms ease-in-out ;
 }
+
+.setBgImg {
+    background-color : var(--softRed) ;
+}
+

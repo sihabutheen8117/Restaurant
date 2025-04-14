@@ -1,29 +1,43 @@
 
 import React from 'react'
-import { lexend } from "@/utils/fonts";
+import { lexend ,anton} from "@/utils/fonts";
 import '@/styles/mainStyles.css'
 
 const MainNav = () => {
   return (
-    <nav className='m-5 flex justify-between'>
-        <div className={`${lexend.className} text-2xl md:pl-10`}>
-            Al-Khalid
+    <div className='setBgImg md:pt-2 pt-1 rounded-b-2xl md:rounded-b-4xl'>
+        {/* <img src='/assets/main_food_table.jpg' alt='table' className='rounded-b-2xl md:rounded-b-4xl brightness-50 h-auto object-cover'/> */}
+        <div className=''>
+            <nav className='md:m-5 m-1 ml-4 flex justify-between text-white'>
+                <div className={`${lexend.className} md:text-2xl md:pl-10 text-lg`}>
+                    Al-Khalid
+                </div>
+                <div className='md:flex gap-8 hidden'>
+                    <div>About us</div>
+                    <div>Contact</div>
+                    <div>Certificates</div>
+                    <div>Menu</div>
+                </div>
+                <div className='md:pr-5 pr-3 md:text-lg flex'>
+                    <button className='md:pr-5 font-semibold hover:text-neutral-600 fontrans '>
+                        log in
+                    </button>
+                    <button className={`vividOrange rounded-2xl font-semibold py-0.5 px-3 hover:text-neutral-600 fontrans hidden md:block`}>
+                        Sign in
+                    </button>
+                </div>
+            </nav>
         </div>
-        <div className='flex gap-8'>
-            <div>about</div>
-            <div>contact</div>
-            <div>certificates</div>
-            <div>Order now</div>
+        <div className='flex justify-around items-center py-4'>
+            <div className = {`md:text-6xl text-xl px-2 font-bold ${anton.className} text-white`}>
+                <span className=''>Made with <span className='text-[#FFF085] md:text-7xl text-2xl'>Love</span> </span><br></br>
+                <span>Served with Joy</span>
+            </div>
+            <img src='assets/main_food_1.png' alt="food_1" className='md:h-64 h-24 z-[2] bg-black bg-radial from-black from-30% to-red-400 to-70%'/>
+            
         </div>
-        <div className='pr-5 text-lg'>
-            <button className='pr-5 font-semibold hover:text-neutral-600 fontrans'>
-                log in
-            </button>
-            <button className={`lightYellow rounded-2xl font-semibold py-0.5 px-3 hover:text-neutral-600 fontrans`}>
-                Sign in
-            </button>
-        </div>
-    </nav>
+    </div>
+
   )
 }
 
