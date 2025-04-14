@@ -1,0 +1,24 @@
+:root{
+    
+    --lightYellow : #FFF085 ;
+    --lightOrange : #FCB454 ;
+    --vividOrange : #FF9B17 ;
+    --softRed : #F16767 ;
+
+}
+
+.lightYellow {
+    background-color: var(--lightYellow);
+}
+
+.lightOrange {
+    background-color: var(--lightOrange);
+}
+
+.vividOrange {
+    background-color: var(--vividOrange);
+}
+
+.softRed {
+    background-color: var(--softRed);
+}
