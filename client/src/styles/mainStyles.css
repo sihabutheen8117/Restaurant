@@ -4,7 +4,6 @@
     --lightOrange : #FCB454 ;
     --vividOrange : #FF9B17 ;
     --softRed : #F16767 ;
-
 }
 
 .lightYellow {
@@ -21,4 +20,8 @@
 
 .softRed {
     background-color: var(--softRed);
+}
+
+.fontrans {
+    transition : color 200ms ease-in-out ;
 }
