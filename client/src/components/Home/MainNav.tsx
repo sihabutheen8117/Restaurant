@@ -9,7 +9,7 @@ const MainNav = () => {
         {/* <img src='/assets/main_food_table.jpg' alt='table' className='rounded-b-2xl md:rounded-b-4xl brightness-50 h-auto object-cover'/> */}
         <div className=''>
             <nav className='md:m-5 m-1 ml-4 flex justify-between text-white'>
-                <div className={`${lexend.className} md:text-2xl md:pl-10 text-lg`}>
+                <div className={`${lexend.className} md:text-3xl md:pl-10 text-lg`}>
                     Al-Khalid
                 </div>
                 <div className='md:flex gap-8 hidden'>
