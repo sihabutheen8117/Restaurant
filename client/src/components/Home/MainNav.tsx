@@ -10,7 +10,7 @@ const MainNav = () => {
         <div className=''>
             <nav className='md:m-5 m-1 ml-4 flex justify-between text-white'>
                 <div className={`${lexend.className} md:text-3xl md:pl-10 text-lg`}>
-                    Al-Khalid
+                    <span className={`text-[#FFF085] font-semibold`}>Al</span>-Khalid
                 </div>
                 <div className='md:flex gap-8 hidden'>
                     <div>About us</div>
@@ -31,10 +31,10 @@ const MainNav = () => {
         <div className='flex justify-around items-center py-4'>
             <div className = {`md:text-6xl text-xl px-2 font-bold ${anton.className} text-white`}>
                 <span className=''>Made with <span className='text-[#FFF085] md:text-7xl text-2xl'>Love</span> </span><br></br>
-                <span>Served with Joy</span><br></br>
+                <span><span className='text-[#FFF085] md:text-7xl text-2xl'>Served</span> with Joy</span><br></br>
                 <button className={`md:text-xl text-sm ${lexend.className} border-2 rounded-2xl px-2 hover:text-amber-200 fontrans`}>Order now</button>
             </div>
-            <img src='assets/main_food_1.png' alt="food_1" className='md:h-64 h-24 z-[2] bg-black bg-radial from-black from-30% to-red-400 to-70%'/>
+            <img src='assets/main_food_1.png' alt="food_1" className='md:h-64 h-24 z-[2] bg-black bg-radial from-black from-30% to-[#F16767] to-70%'/>
             
         </div>
     </div>

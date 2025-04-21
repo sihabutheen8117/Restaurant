@@ -116,3 +116,4 @@
 .item8 {
     animation-delay: calc( ( var(--animation-delay) / 8) * ( 8 - 8 ));
 } 
+
