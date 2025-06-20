@@ -1,0 +1,143 @@
+"use client"
+
+import { playfair } from "@/utils/fonts"
+import { useState } from "react"
+
+
+
+
+const UserMenu = () => {
+  const [rating, setRating] = useState(0);
+
+  const totalStars = 5;
+
+  const handleClick = (index : number) => {
+    setRating(index + 1);
+  };
+
+  const changeRange = (rup : string  ) => {
+    setRupees(rup)
+  }
+
+  const [rupees , setRupees ] = useState('10')
+  
+  return (
+    <div className="mt-4 ml-3">
+        
+      <div className="w-full h-screen py-1 border-r-2 border-gray-200">
+        <div className="">
+          <div className={`${playfair.className} font-semibold`}>
+            price
+          </div>
+          <div className="flex gap-2 whitespace-nowrap flex-wrap mt-3">
+            <div className="border-2 border-gray-400 rounded-full px-2">
+              low to high
+            </div>
+            <div className="border-2 border-gray-400 rounded-full px-2">
+              high to low
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-9">
+          <div className="relative w-full font-semibold">
+            <div className="absolute left-0 top-[-25]">₹0</div>
+            <div className="absolute right-6 top-[-25]">₹2000</div>
+          </div>
+          <div className="relative">
+            <input 
+              type="range" 
+              min="10"
+              max="2000"
+              step="50"
+              className="w-48"
+              value={rupees}
+              onChange={(e)=>changeRange(e.target.value)}
+            />
+            <div className="absolute text-black font-bold text-sm transition-all top-6"
+              style={{
+                left: `calc(${(Number(rupees) - 10) / (2000 - 10) * 75}% ) `, 
+              }}>
+                ₹{rupees}
+             </div>
+          </div>
+        </div>
+
+        <div className=" mt-5">
+          <div className={`${playfair.className} font-semibold`}>ratings</div>
+          <div className="flex mt-3">
+            {[...Array(totalStars)].map((_, index) => (
+                <button key={index} onClick={() => handleClick(index)}>
+                  {index < rating ? (
+                    // Filled star
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                      className="w-6 text-yellow-400"
+                    >
+                      <path d="M12 .587l3.668 7.431L24 9.748l-6 5.848L19.335 24 12 19.771 4.665 24 6 15.596 0 9.748l8.332-1.73z" />
+                    </svg>
+                  ) : (
+                    // Hollow star
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      className="w-6 text-yellow-400"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 
+                        4.674a1 1 0 00.95.69h4.911c.969 0 1.371 
+                        1.24.588 1.81l-3.976 2.89a1 1 0 
+                        00-.364 1.118l1.518 
+                        4.674c.3.921-.755 1.688-1.538 
+                        1.118l-3.976-2.89a1 1 0 
+                        00-1.176 0l-3.976 2.89c-.783.57-1.838-.197-1.538-
+                        1.118l1.518-4.674a1 1 0 
+                        00-.364-1.118L2.98 10.101c-.783-.57-.38-
+                        1.81.588-1.81h4.911a1 1 0 
+                        00.95-.69l1.518-4.674z"
+                      />
+                    </svg>
+                  )}
+                </button>
+              ))}
+              <div className="pl-2 font-semibold">& Up</div>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <div className={`${playfair.className} font-semibold`}>type</div>
+          <div className="mt-3">
+            <label className="pr-7"><input type="checkbox" name="diet" value="veg" className=""/> Veg</label>
+            <label><input type="checkbox" name="diet" value="veg" /> Non-veg</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Indian</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Italian</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Chinese</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Combo</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Limited deals</label><br/>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <div className={`${playfair.className} font-semibold`}>taste</div>
+          <div className="mt-3">
+            <label><input type="checkbox" name="diet" value="veg" /> Sweet</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Spicy</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Savory</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Medium</label><br/>
+            <label><input type="checkbox" name="diet" value="veg" /> Extra Spicy</label><br/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+export default UserMenu

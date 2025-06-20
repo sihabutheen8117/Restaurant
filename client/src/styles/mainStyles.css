@@ -117,3 +117,8 @@
     animation-delay: calc( ( var(--animation-delay) / 8) * ( 8 - 8 ));
 } 
 
+
+.img-login {
+    background-image: url('/assets/auth_image/login_image.avif');
+    background-size: cover;
+}

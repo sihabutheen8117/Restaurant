@@ -3,6 +3,8 @@ import React from 'react'
 import { lexend ,anton} from "@/utils/fonts";
 import '@/styles/mainStyles.css'
 
+
+
 const MainNav = () => {
   return (
     <div className='setBgImg md:pt-2 pt-1 rounded-b-2xl md:rounded-b-4xl'>

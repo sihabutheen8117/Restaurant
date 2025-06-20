@@ -1,4 +1,6 @@
 "use client"
+
+
 import React from 'react'
 import '../../styles/mainStyles.css'
 import {lexend ,kanit , poppins} from '@/utils/fonts'
@@ -44,7 +46,6 @@ const MainBody = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollByStep = (direction:any) => {
-    console.log(scrollRef.current);
     if (!scrollRef.current) return;
     const scrollStep = 100; // width + spacing
     
