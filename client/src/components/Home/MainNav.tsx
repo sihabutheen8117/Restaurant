@@ -2,6 +2,7 @@
 import React from 'react'
 import { lexend ,anton} from "@/utils/fonts";
 import '@/styles/mainStyles.css'
+import Link from 'next/link';
 
 
 
@@ -21,12 +22,17 @@ const MainNav = () => {
                     <div>Menu</div>
                 </div>
                 <div className='md:pr-5 pr-3 md:text-lg flex'>
-                    <button className='md:pr-5 font-semibold hover:text-neutral-600 fontrans '>
-                        log in
-                    </button>
-                    <button className={`vividOrange rounded-2xl font-semibold py-0.5 px-3 hover:text-neutral-600 fontrans hidden md:block`}>
-                        Sign in
-                    </button>
+                    <Link href={"auth/login"}>
+                        <button className='md:pr-5 font-semibold hover:text-neutral-600 fontrans '>
+                            log in
+                        </button>   
+                    </Link>
+                    <Link href={"auth/register"}>
+                        <button className={`vividOrange rounded-2xl font-semibold py-0.5 px-3 hover:text-neutral-600 fontrans hidden md:block`}>
+                            Sign in
+                        </button>
+                    </Link>
+                    
                 </div>
             </nav>
         </div>

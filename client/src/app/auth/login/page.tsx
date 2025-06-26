@@ -1,5 +1,6 @@
 import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
+import Link from 'next/link';
 
 const page = () => {
   return (
@@ -42,7 +43,9 @@ const page = () => {
             </div>
 
             <div className='flex gap-2 px-2 pt-4'>
-                <button className='border-2 rounded-full py-2 px-4 w-1/2 border-amber-400 text-amber-400'>Register</button>
+                <Link 
+                href={"register"}
+                className='border-2 rounded-full py-2 px-4 w-1/2 border-amber-400 text-amber-400 flex justify-center'>Register</Link>
                 <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'>Login</button>
             </div>
 
