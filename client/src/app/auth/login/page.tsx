@@ -1,8 +1,20 @@
+"use client"
+
 import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
 import Link from 'next/link';
+import { loginUser } from '@/reactQuery/queries'
+import { useState } from 'react';
 
 const page = () => {
+
+const [ email , setEmail ]  = useState("") ;
+const [password , setPassword ] = useState("") ;
+
+const getLogin = () => {
+    loginUser( { email , password})
+}
+
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="border-2 rounded-3xl md:h-fit md:w-2/3 p-3 relative">
@@ -27,6 +39,7 @@ const page = () => {
                     type="email"
                     placeholder="alkhalid@example.com"
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
+                    onChange={(e) =>setEmail(e.target.value)}
                 />
             </div>
 
@@ -35,6 +48,7 @@ const page = () => {
                 <input
                     type="password"
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
+                    onChange={ (e)=> setPassword(e.target.value)}
                 />
             </div>
 
@@ -46,7 +60,9 @@ const page = () => {
                 <Link 
                 href={"register"}
                 className='border-2 rounded-full py-2 px-4 w-1/2 border-amber-400 text-amber-400 flex justify-center'>Register</Link>
-                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'>Login</button>
+                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'
+                onClick={getLogin}
+                >Login</button>
             </div>
 
             <div className='pt-3 opacity-50 py-2 w-full flex justify-center text-sm'>or Sign in with Google</div>

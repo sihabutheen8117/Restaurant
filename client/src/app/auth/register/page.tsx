@@ -1,8 +1,21 @@
+"use client"
+
 import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
 import Link from 'next/link';
+import { useState } from 'react';
+import {registerUser} from '@/reactQuery/queries'
 
 const page = () => {
+
+    const [ name , setName ] = useState("")
+    const [ email , setEmail] = useState("")
+    const [ password , setPassword] = useState("")
+
+    const handleRegister = () => {
+        registerUser( { name , email , password })
+    }
+
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="border-2 rounded-3xl md:h-fit md:w-2/3 flex">
@@ -33,6 +46,7 @@ const page = () => {
                 <input
                     placeholder="al khalid"
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
+                    onChange={(e) => setName(e.target.value) }
                 />
             </div>
             
@@ -42,6 +56,7 @@ const page = () => {
                     type="email"
                     placeholder="alkhalid@example.com"
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
+                    onChange={(e) => setEmail(e.target.value) }
                 />
             </div>
 
@@ -50,6 +65,7 @@ const page = () => {
                 <input
                     type="password"
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
+                    onChange={(e) => setPassword(e.target.value) }
                 />
             </div>
 
@@ -66,7 +82,9 @@ const page = () => {
                     Login
                 </Link>
                 
-                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'>Register</button>
+                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'
+                onClick={handleRegister}
+                >Register</button>
             </div>
 
             <div className='pt-3 opacity-50 py-2 w-full flex justify-center text-sm'>or Sign in with Google</div>

@@ -5,6 +5,10 @@ const UsersSchema = mongoose.Schema({
         type : mongoose.Schema.Types.String,
         required : true 
     },
+    isAdmin : {
+        type : mongoose.Schema.Types.Boolean ,
+        required : true  
+    },
     user_name : {
         type : mongoose.Schema.Types.String,
         required : true 

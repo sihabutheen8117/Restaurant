@@ -2,40 +2,65 @@
 
 import { playfair } from "@/utils/fonts"
 import { useState } from "react"
+import { UserFilters } from '@/reactQuery/itemInterfaces'
+import { setPriority } from "os"
 
+const UserMenu = (props : any) => {
 
+  const [ price_order , serPrice_order ] = useState(0) ;
 
-
-const UserMenu = () => {
   const [rating, setRating] = useState(0);
-
   const totalStars = 5;
 
+  const handleApply = () => {
+    props.setFilter({
+      price_order : price_order ,
+      ratings : rating ,
+      price_range : rupees
+    })
+  }
+  
   const handleClick = (index : number) => {
     setRating(index + 1);
   };
 
-  const changeRange = (rup : string  ) => {
-    setRupees(rup)
+  const changeRange = (rup : string ) => {
+    setRupees(parseInt(rup))
   }
 
-  const [rupees , setRupees ] = useState('10')
+  const [rupees , setRupees ] = useState(10)
   
   return (
     <div className="mt-4 ml-3">
         
       <div className="w-full h-screen py-1 border-r-2 border-gray-200">
         <div className="">
-          <div className={`${playfair.className} font-semibold`}>
-            price
+          <div className="flex justify-between mx-2">
+            <div className={`${playfair.className} font-semibold`}>
+              price
+            </div>
+            <button className="bg-green-400 text-white rounded-full px-2 hover:bg-green-500"
+            onClick={handleApply}
+            >
+              apply
+            </button>
           </div>
-          <div className="flex gap-2 whitespace-nowrap flex-wrap mt-3">
-            <div className="border-2 border-gray-400 rounded-full px-2">
+          <div className="flex gap-2 whitespace-nowrap flex-wrap mt-3"
+          >
+            <button className={`border-2 rounded-full px-2 
+              ${price_order == -1 ? "bg-amber-100 text-amber-600 border-amber-400" : "border-gray-400"}
+            `}
+            onClick={() => serPrice_order(-1)}
+            >
               low to high
-            </div>
-            <div className="border-2 border-gray-400 rounded-full px-2">
+            </button>
+            <button className={`border-2 rounded-full px-2
+              ${price_order == 1 ? "bg-amber-100 text-amber-600 border-amber-400" : "border-gray-400"}
+            `}
+            onClick={() => serPrice_order(1)}
+            >
               high to low
-            </div>
+            </button>
           </div>
         </div>
 

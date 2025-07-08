@@ -1,7 +1,7 @@
 import React from 'react'
 import { inter } from '@/utils/fonts'
 
-const AddNewCategory = () => {
+const AddNewCategory = (props : any ) => {
   return (
     <div className={` ${inter.className} p-3 relative h-full`}>
       <div className='font-semibold'>
@@ -93,7 +93,9 @@ const AddNewCategory = () => {
           <button className='mr-3 px-3 py-1 bg-green-400 rounded-xl hover:bg-green-500 transition-colors hover:duration-200'>
             <i className="fas fa-edit mr-1"></i>Create
           </button>
-          <button className='mr-3 px-3 py-1 bg-red-400 rounded-xl hover:bg-red-500 transition-colors hover:duration-200'>
+          <button className='mr-3 px-3 py-1 bg-red-400 rounded-xl hover:bg-red-500 transition-colors hover:duration-200'
+          onClick={props.handleView}
+          >
             <i className="fas fa-times-circle mr-1"></i>Cancel
           </button>
         </div>

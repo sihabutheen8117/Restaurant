@@ -4,10 +4,11 @@ import { useState } from "react";
 import ProfileMenu from "./ProfileMenu";
 import { lexend } from "@/utils/fonts";
 import '@/styles/mainStyles.css'
+import Link from "next/link";
 
 
 
-const UserNav = () => {
+const UserNav = (props:any) => {
 
   const [toggle , unToggle ] = useState(false) ;
   const toggleProfile = () => {
@@ -28,17 +29,27 @@ const UserNav = () => {
             <span className={`text-[#FFF085] font-semibold`}>Al</span>-Khalid
         </div>
         <div className='relative flex'>
-                <input
+                {
+                  props.isSearch && 
+                  <input
                     placeholder="search here..."
                     className="md:w-96 w-52 px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
-                />
-                <button className="">
+                    onChange={(e) => props.search(e.target.value)}
+                  />
+                }
+                {
+                  props.isSearch &&
+                  <button className="">
                   <i className="text-gray-400 absolute fas fa-search md:left-87 left-44 top-2"></i>
-                </button>
-                <button className="hidden md:block text-xl">
-                  <i className="fas fa-shopping-cart pl-7 md:text-2xl text-lg pr-2"></i>
-                  (0)
-                </button>
+                  </button>
+                }
+                {
+                  props.isSearch && 
+                  <button className="hidden md:block text-xl">
+                    <i className="fas fa-shopping-cart pl-7 md:text-2xl text-lg pr-2"></i>
+                    (0)
+                  </button>
+                }
         </div>
         <div className=" hidden md:flex md:gap-2 ">
             <div className="pt-2">User Name</div>
@@ -69,6 +80,14 @@ const UserNav = () => {
           toggle && <ProfileMenu toggle={toggleProfile}/>
         }
       </div>
+      {
+        props.isBack && 
+          <button className="mt-2 ml-3 border-2 rounded-full px-2 "
+          onClick={props.goBack}
+          >
+            <i className="fas fa-arrow-left"></i> Back
+          </button>
+      }
     </div>
   )
 }

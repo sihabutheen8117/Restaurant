@@ -1,5 +1,11 @@
 import mongoose from 'mongoose' ;
 
+// const CategorySchema = mongoose.Schema({
+//     category_name : {
+//         type : mongoose.Schema.Types.String
+//     }
+// })
+
 const ReviewSchema = mongoose.Schema({
 
     reviewer_id : {
@@ -39,11 +45,13 @@ const OrderSchema = mongoose.Schema({
 const FoodSchema = mongoose.Schema({
     food_id : {
         type : mongoose.Schema.Types.String, 
-        required : true 
     },
     food_name : {
         type : mongoose.Schema.Types.String ,
         required : true 
+    },
+    food_image : {
+        type : mongoose.Schema.Types.String
     },
     describtion : {
         type : mongoose.Schema.Types.String
@@ -53,7 +61,7 @@ const FoodSchema = mongoose.Schema({
         required : true 
     },
     offer_price : {
-        type : mongoose.Schema.Types.String
+        type : mongoose.Schema.Types.Number
     },
     offer_validity : {
         type : mongoose.Schema.Types.Date
@@ -78,12 +86,16 @@ const FoodSchema = mongoose.Schema({
     rating_stars : {
         type : mongoose.Schema.Types.Number
     },
-    category : [
-        {
-            type : mongoose.Schema.Types.String
-        }
-    ],
+    isDisable : {
+        type : mongoose.Schema.Types.Boolean
+    },
+    category : {
+        type : mongoose.Schema.Types.String
+    },
     orders : [OrderSchema]
 })
 
+
+
 export const Foods = mongoose.model('Foods' , FoodSchema)
+// export const Categories = mongoose.model('Categories' , CategorySchema)

@@ -1,5 +1,7 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
+import QueryProvider from "@/reactQuery/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -11,6 +13,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" >
       <link
@@ -20,7 +23,9 @@ export default function RootLayout({
       />
       <body
       >
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

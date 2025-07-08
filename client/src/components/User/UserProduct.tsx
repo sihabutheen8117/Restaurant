@@ -1,282 +1,141 @@
 "use client"
-
-import React, { useState } from 'react'
+import React, { useState , useMemo , useEffect} from 'react'
 import '../../styles/mainStyles.css'
 import ViewFoods from './ViewFoods'
+import { useQuery } from '@tanstack/react-query'
+import { getAllFood } from '@/reactQuery/queries'
+import { Food } from '@/reactQuery/itemInterfaces'
+import { CartItems } from '@/reactQuery/itemInterfaces'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-type reviewType = {
-    id: string,
-    reviewer_name: string ,
-    review: string,
-    date: string
-}
+const UserProduct = (props : any) => {
 
 
-type productTypes = {
-        food_name: string ,
-         rating: number,
-         price: string ,
-         offer_price: number ,
-         describtion: string,
-         ingredients: string[] ,
-         reviews: reviewType[],
-         images_url : string
-}
-const products : productTypes[]= [
-    {
-         food_name: "Butter Chicken",
-         rating: 4.6,
-         price: "360",
-         offer_price: -1,
-         describtion: "Creamy and mildly spiced tomato-based gravy with tender chicken chunks.",
-         ingredients: ["Chicken", "tomato puree", "cream", "garam masala", "garlic"],
-         reviews: [
-             {
-                 id: "1030",
-                 reviewer_name: "Aarti Mehta",
-                 review: "Perfect balance of cream and spice!",
-                 date: "15 May 2025"
-             },
-             {
-                 id: "1031",
-                 reviewer_name: "Karan Singh",
-                 review: "Rich and satisfying, best with naan!",
-                 date: "11 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/butter_chicken.jpeg"
-    },
-    {
-         food_name: "Farmhouse Pizza",
-         rating: 4.4,
-         price: "280",
-         offer_price: 250,
-         describtion: "Loaded with fresh veggies, mozzarella cheese, and Italian herbs.",
-         ingredients: ["Bell peppers", "onion", "tomato", "olives", "mozzarella"],
-         reviews: [
-             {
-                 id: "1032",
-                 reviewer_name: "Sneha Roy",
-                 review: "Crunchy crust with fresh veggies!",
-                 date: "9 June 2025"
-             },
-             {
-                 id: "1033",
-                 reviewer_name: "Ramesh Kumar",
-                 review: "Good value for money, tasty cheese.",
-                 date: "12 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/pizza.jpeg"
-    },
-    {
-         food_name: "Veg Hakka Noodles",
-         rating: 4.2,
-         price: "160",
-         offer_price: -1,
-         describtion: "Stir-fried noodles with mixed vegetables and tangy soy sauce.",
-         ingredients: ["Noodles", "cabbage", "capsicum", "carrot", "soy sauce"],
-         reviews: [
-             {
-                 id: "1034",
-                 reviewer_name: "Vinod Sharma",
-                 review: "Tastes like authentic street food!",
-                 date: "10 May 2025"
-             },
-             {
-                 id: "1035",
-                 reviewer_name: "Ritu Das",
-                 review: "Could use more veggies, but very flavorful.",
-                 date: "6 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/hakka_images.jpeg"
-    },
-    {
-         food_name: "Paneer Tikka Burger",
-         rating: 4.5,
-         price: "150",
-         offer_price: 100,
-         describtion: "Spicy grilled paneer tikka with lettuce and mint mayo in a bun.",
-         ingredients: ["Paneer", "tikka masala", "bun", "lettuce", "mint mayo"],
-         reviews: [
-             {
-                 id: "1036",
-                 reviewer_name: "Aman Khan",
-                 review: "Best fusion burger I've had!",
-                 date: "18 May 2025"
-             },
-             {
-                 id: "1037",
-                 reviewer_name: "Divya Patel",
-                 review: "Mint mayo adds a fresh kick.",
-                 date: "3 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/burger_image.jpeg"
-    },
-    {
-         food_name: "Hyderabadi Chicken Biryani",
-         rating: 4.7,
-         price: "250",
-         offer_price: 150,
-         describtion: "Traditional dum-cooked biryani with aromatic basmati rice and marinated chicken.",
-         ingredients: ["Basmati rice", "chicken", "saffron", "spices", "yogurt"],
-         reviews: [
-             {
-                 id: "1038",
-                 reviewer_name: "Shahbaz Ali",
-                 review: "Authentic taste and perfectly cooked.",
-                 date: "2 June 2025"
-             },
-             {
-                 id: "1039",
-                 reviewer_name: "Preeti Nair",
-                 review: "Good portion size and flavor-packed.",
-                 date: "13 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/chicken_biriyani.jpeg"
-    },
-    {
-         food_name: "Palak Paneer",
-         rating: 4.3,
-         price: "190",
-         offer_price: -1,
-         describtion: "Cottage cheese simmered in a silky spinach-based gravy.",
-         ingredients: ["Spinach", "paneer", "garlic", "ginger", "spices"],
-         reviews: [
-             {
-                 id: "1040",
-                 reviewer_name: "Kunal Joshi",
-                 review: "Healthy and comforting meal option.",
-                 date: "7 June 2025"
-             },
-             {
-                 id: "1041",
-                 reviewer_name: "Neha Shah",
-                 review: "Nice texture and spice level.",
-                 date: "5 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/palak_paneer.jpeg"
-    },
-    {
-         food_name: "Chocolate Lava Cake",
-         rating: 4.8,
-         price: "120",
-         offer_price: -1,
-         describtion: "Warm chocolate cake with gooey molten center, served with vanilla ice cream.",
-         ingredients: ["Chocolate", "flour", "sugar", "eggs", "butter"],
-         reviews: [
-             {
-                 id: "1042",
-                 reviewer_name: "Tanya Gupta",
-                 review: "Heavenly dessert, melts in your mouth!",
-                 date: "14 June 2025"
-             },
-             {
-                 id: "1043",
-                 reviewer_name: "Rajiv Sinha",
-                 review: "Best after-meal treat!",
-                 date: "15 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/choco_cake.jpeg"
-    },
-    {
-         food_name: "Grilled Peri-Peri Chicken",
-         rating: 4.6,
-         price: "350",
-         offer_price: -1,
-         describtion: "Spicy peri-peri marinated chicken grilled to perfection.",
-         ingredients: ["Chicken", "peri-peri sauce", "garlic", "lemon", "olive oil"],
-         reviews: [
-             {
-                 id: "1044",
-                 reviewer_name: "Sagar Iyer",
-                 review: "Juicy and spicy, just like Nando’s!",
-                 date: "12 June 2025"
-             },
-             {
-                 id: "1045",
-                 reviewer_name: "Fathima Noor",
-                 review: "Loved the smoky flavor!",
-                 date: "10 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/peri_chicken.jpeg"
-    },
-    {
-         food_name: "Chole Bhature",
-         rating: 4.4,
-         price: "110",
-         offer_price: -1,
-         describtion: "Spicy chickpeas served with deep-fried fluffy bhature.",
-         ingredients: ["Chickpeas", "onion", "tomato", "spices", "maida"],
-         reviews: [
-             {
-                 id: "1046",
-                 reviewer_name: "Rajeshwari",
-                 review: "Crispy bhature and spicy chole!",
-                 date: "9 June 2025"
-             },
-             {
-                 id: "1047",
-                 reviewer_name: "Vikram Tiwari",
-                 review: "Heavy but worth it!",
-                 date: "6 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/chole_bhature.jpeg"
-    },
-    {
-         food_name: "Kesar Pista Kulfi",
-         rating: 4.5,
-         price: "90",
-         offer_price: -1,
-         describtion: "Traditional frozen Indian dessert with saffron and pistachio flavors.",
-         ingredients: ["Milk", "saffron", "pistachio", "sugar"],
-         reviews: [
-             {
-                 id: "1048",
-                 reviewer_name: "Mohini Deshmukh",
-                 review: "Authentic taste, creamy texture.",
-                 date: "8 June 2025"
-             },
-             {
-                 id: "1049",
-                 reviewer_name: "Pradeep Joshi",
-                 review: "Reminds me of childhood fairs!",
-                 date: "10 June 2025"
-             }
-         ],
-         images_url : "/assets/foods/kesar_kulfi.jpeg"
+    const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
+    
+    const handleAddCart = (cart_data : CartItems ) => {
+        props.set_user_cart( (prev:any)=> [ ...prev , cart_data ]) ;
+        setFoodQuantity(prev => ({
+            ...prev ,
+            [cart_data._id] : 1,
+        }))
+        
     }
- ]
- 
 
-const UserProduct = () => {
+    const router = useRouter() ;
 
+    const handlePreOrder = () => {
+        localStorage.setItem("user_cart" , JSON.stringify(props.user_cart) ) ;
+        localStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
+        router.push('/user/user_cart')
+    }
+
+    const handleDelCart = (_id : string ) => {
+        props.set_user_cart( (prev:any) => prev.filter((item :any)=> item._id != _id) ) ;
+        setFoodQuantity(prev => {
+            const updated = { ...prev };
+            delete updated[_id];           
+            return updated;
+          });
+          
+    }
+
+    const foodQuery = useQuery({
+        queryKey : ["foods"] ,
+        queryFn : () => getAllFood()
+    })
+
+    const [ selectedFood , setSelectedFood ] = useState<Food>()
     const [view , setView ] = useState(false) ;
 
-    const [cart , setCart ] = useState(0) ;
-
-    const handleIncCart = () => {
-        setCart(cart => cart + 1) 
+    const handleIncCart = (_id : string ) => {
+        props.set_user_cart( (prev:any) => 
+            prev.map(
+                (item :any) => item._id == _id ? { ...item , quantity : item.quantity+1} : item
+            )
+        )
+        setFoodQuantity(prev => ({
+            ...prev,
+            [_id]: (prev[_id] || 0) + 1
+          }));
+          
     }
 
-    const handleDecCart = () => {
-        setCart(cart => cart - 1)
+    const handleDecCart = (_id : string  ) => {
+        props.set_user_cart( (prev:any) => 
+            prev.map(
+                (item :any) => item._id == _id ? { ...item , quantity : item.quantity-1} : item
+            )
+        )
+        setFoodQuantity(prev => {
+            const updated = { ...prev };
+            if (updated[_id] > 1) {
+              updated[_id] -= 1;
+            } else {
+              delete updated[_id];
+            }
+            return updated;
+          });
+          
     }
 
     const handleView = () => {
         setView( !view ) 
     }
 
+    const handleFoodDetails = (items : Food) => {
+        setSelectedFood(items)
+        setView( !view )
+    }
+
     const viewItems = () => {
         console.log("view items ")
     }
+
+    const finalFoods : Food[] = useMemo(() => {
+        if (!foodQuery.isSuccess || !foodQuery.data?.data) return [];
+      
+        const getEffectivePrice = (item: any) =>
+          item.offer_price !== undefined && item.offer_price !== -1
+            ? item.offer_price
+            : item.price;
+
+      
+        const filteredFoods = foodQuery.data.data.filter((item) =>
+          (props.search == null || item.food_name.includes(props.search)) &&
+          (item.offer_price === undefined
+            ? props.filters.price_range < item.price
+            : props.filters.price_range < item.offer_price) &&
+            item.rating_count !== undefined && props.filters.ratings <= item.rating_count
+        );
+      
+        const sortedFoods = [...filteredFoods].sort((a, b) => {
+          const priceA = getEffectivePrice(a);
+          const priceB = getEffectivePrice(b);
+          return priceA - priceB;
+        });
+      
+        return props.filters.price_order === 0
+          ? filteredFoods
+          : props.filters.price_order === -1
+          ? sortedFoods.reverse()
+          : sortedFoods;
+      }, [foodQuery.isSuccess, foodQuery.data, props.search, props.filters]);
+
+      useEffect(() => {
+          const cartData = localStorage.getItem("user_cart");
+          const food_quantity = localStorage.getItem("food_quantity") ;
+          if (cartData && food_quantity) {
+            try {
+              props.set_user_cart(JSON.parse(cartData));
+              setFoodQuantity(JSON.parse(food_quantity));
+            } catch (err) {
+              console.error("Invalid JSON in localStorage:", err);
+            }
+          }
+        }, []);
+
   return (
     <div>
         {
@@ -286,25 +145,30 @@ const UserProduct = () => {
                 <div className='fixed inset-0 bg-black opacity-40 z-10'
                 onClick={handleView}> </div>
                 <div className='z-50 bg-white fixed inset-x-70 inset-y-20 rounded-xl'>
-                    <ViewFoods/>
+                    <ViewFoods food_data={selectedFood}/>
                 </div>
             </div>
         }
-      <div className='md:flex md:gap-4 md:flex-wrap md:justify-center'>
-        {
-            products.map( (items , index ) => (
+      <div className='md:flex md:gap-4 md:flex-wrap '>
+        {/* {
+            foodQuery.isSuccess && 
+            foodQuery.data.data.map( (items , index ) => (
+                props.search==null || items.food_name.includes(props.search) &&
+                items.offer_price == undefined ? props.filters.price_range < items.price : props.filters.price_range < items.offer_price &&
+                props.filters.ratings <= items.rating_count &&
                 <div className='md:w-56 md:h-96 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
                     key = {index}
                 >
                     <div className='md:w-52 md:h-52 md:m-2 rounded-xl relative'>
-                        <img src={items.images_url} alt = {items.food_name} className='object-fit md:w-52 md:h-52 w-40 h-40 rounded-lg object-cover'
+                        <img src={items.food_image} alt = {items.food_name} className='object-fit md:w-52 md:h-52 w-40 h-40 rounded-lg object-cover'
                         onClick={viewItems}
                         />
-                        <div className='hidden md:block'>
+                        <button className='hidden md:block'
+                        onClick={() => handleFoodDetails(items)}
+                        >
                             <i className="fas fa-eye text-gray-600 absolute top-2 right-2 bg-white rounded-full px-2 py-0.5"
-                            onClick={handleView}
                             ></i>
-                        </div>
+                        </button>
                         
                     </div>
                     <div className='relative flex-1 m-2 md:m-0'>
@@ -315,10 +179,10 @@ const UserProduct = () => {
                         </div>
                         <div className='md:mt-1.5 mt-2 flex justify-between ml-1'>
                             <i className="fas fa-star text-yellow-500">
-                                <span className='text-black font-semibold text-sm pl-1'> {items.rating} / 5 </span>
+                                <span className='text-black font-semibold text-sm pl-1'> {items.rating_count} / 5 </span>
                                 <span className='text-black opacity-40 text-xs pl-1'>(107)</span> 
                             </i>
-                            <div className='px-2 opacity-75 text-sm'>5 reviews</div>
+                            <div className='px-2 opacity-75 text-sm'>{items.review_count} reviews</div>
                         </div>
                         <div className='w-full'>
                             <div className='inline-block relative ml-3 md:mt-1 mt-1 w-full'>
@@ -378,7 +242,113 @@ const UserProduct = () => {
                     </div>
                 </div>
             ))
+        } */}
+         {
+            foodQuery.isSuccess && 
+            finalFoods.map( (items , index ) => (
+                <div className='md:w-56 md:h-96 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
+                    key = {index}
+                >
+                    <div className='md:w-52 md:h-52 md:m-2 rounded-xl relative'>
+                        <img src={items.food_image} alt = {items.food_name} className='object-fit md:w-52 md:h-52 w-40 h-40 rounded-lg object-cover'
+                        onClick={viewItems}
+                        />
+                        <button className='hidden md:block'
+                        onClick={() => handleFoodDetails(items)}
+                        >
+                            <i className="fas fa-eye text-gray-600 absolute top-2 right-2 bg-white rounded-full px-2 py-0.5"
+                            ></i>
+                        </button>
+                        
+                    </div>
+                    <div className='relative flex-1 m-2 md:m-0'>
+                        <div className={`mx-1.5 font-semibold text-xl md:text-lg`}
+                        onClick={viewItems}
+                        >
+                            {items.food_name}
+                        </div>
+                        <div className='md:mt-1.5 mt-2 flex justify-between ml-1'>
+                            <i className="fas fa-star text-yellow-500">
+                                <span className='text-black font-semibold text-sm pl-1'> {items.rating_count} / 5 </span>
+                                <span className='text-black opacity-40 text-xs pl-1'>(107)</span> 
+                            </i>
+                            <div className='px-2 opacity-75 text-sm'>{items.review_count} reviews</div>
+                        </div>
+                        <div className='w-full'>
+                            <div className='inline-block relative ml-3 md:mt-1 mt-1 w-full'>
+                                <span className="absolute top-1 -left-2 text-sm text-gray-600">₹</span>
+                                {
+                                    items.offer_price == -1  ? 
+                                    <span className="text-2xl font-semibold ">{items.price}</span>
+                                    :
+                                    <>
+                                        <span className="text-2xl font-semibold mr-3">{items.offer_price}</span>
+                                        <div className='inline relative'>
+                                            <span className="absolute top-0 -left-2 text-xs text-gray-600">₹</span>
+                                            <span className="font-semibold line-through opacity-50 text-lg ">{items.price}</span>
+                                        </div>
+                                    </>
+                                }
+                            </div>
+                            
+                        </div>
+                        {
+                            items.offer_price != -1  && 
+                            <div className='bg-red-500 text-xs px-2 py-1 absolute left-0 md:-bottom-8 bottom-0 text-white font-semibold'>
+                                limited offer
+                            </div>
+                                    
+                        }
+                        <div className='mt-1 absolute md:right-3 right-0 md:-bottom-9 bottom-0'>
+                        {
+                            (foodQuantity[items._id ?? '']||0) == 0 ? 
+                            <button
+                            className='px-4 py-1 bg-amber-300 text-sm rounded-full'
+                            onClick={() => handleAddCart({
+                                food_image : items.food_image ,
+                                food_name : items.food_name ,
+                                price : items.price ,
+                                offer_price : (items.offer_price == undefined ? -1 : items.offer_price ) ,
+                                _id : (items._id == undefined ? '' : items._id )  ,
+                                quantity : 1
+                            }) }
+                            >
+                                Add to cart
+                                <i className='fas fa-shopping-cart pl-1'></i>
+                            </button>
+                            :
+                            <div className='border-2 border-amber-300 rounded-full px-4 py-0.5'>
+                                {
+                                    foodQuantity[items._id ?? ''] == 1 ? 
+                                    <button className='text-sm'
+                                        onClick={() => handleDelCart(items._id ?? '') }
+                                    ><i className="fas fa-trash pr-3"></i></button>
+                                    :
+                                    <button className='text-sm'
+                                    onClick={() => handleDecCart(items._id ?? '')}
+                                    ><i className="fas fa-minus pr-3"></i></button>
+                                }
+                                <div className='font-semibold inline'>{foodQuantity[items._id ?? '']}</div>
+                                <button className='text-sm'
+                                onClick={() => handleIncCart(items._id ?? '') }
+                                ><i className="fas fa-plus pl-3"></i></button>
+                            </div>
+                        }
+                        </div>
+                        
+                    </div>
+                </div>
+            ))
         }
+      </div>
+      <div className='md:hidden'>
+            <button className='fixed bottom-9 right-7 bg-amber-400 rounded-full px-4 py-1'
+            onClick={handlePreOrder}
+            >
+                cart
+                <i className='fas fa-shopping-cart pl-1 mx-2'></i>
+                ({props.user_cart.length})
+            </button>
       </div>
     </div>
   )

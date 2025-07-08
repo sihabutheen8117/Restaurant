@@ -26,7 +26,7 @@ const foodDetails = {
     images_url : "/assets/foods/burger_image.jpeg"
 }
 
-const ViewFoods = () => {
+const ViewFoods = ( props : any) => {
 
     const stars = [];
 
@@ -46,22 +46,33 @@ const ViewFoods = () => {
             <i className="fas fa-arrow-left  text-xl"></i>
         </button>
       <div className='md:flex'>
-        <img src={foodDetails.images_url} alt={foodDetails.food_name} className='md:object-cover md:w-56 h-56 rounded-lg mx-auto'/>
+        <img src={props.food_data.food_image} alt={props.food_data.food_name} className='md:object-cover md:w-56 h-56 rounded-lg mx-auto'/>
         <div className='w-full md:ml-3 ml-1 md:mt-0 mt-3'>
-            <div className='font-bold md:text-lg text-2xl flex justify-center w-full md:block'>{foodDetails.food_name}</div>
+            <div className='font-bold md:text-lg text-2xl flex justify-center w-full md:block'>{props.food_data.food_name}</div>
             <div className='mt-3'>
                 <div className='font-semibold'>Decription</div>
                 <div className='md:pl-3'>
-                    {foodDetails.describtion}
+                    {props.food_data.describtion}
                 </div>
                 <div className='md:ml-2 mt-3 text-xl'>
-                    {foodDetails.rating} {stars}
+                    {props.food_data.rating_count} {stars}
                     <span className='ml-3 text-lg font-semibold opacity-60'>(700)</span>
                 </div>
                 <div className='flex justify-between relative md:ml-3 md:mt-1 mt-3'>
                     <div className='md:ml-0 ml-3'>
-                    <span className="absolute md:top-0.5 md:-left-2 left-0.5 text-lg text-gray-800">₹</span>
-                    <span className="text-3xl font-semibold">360</span>
+                        <span className="absolute md:top-0.5 md:-left-2 left-0.5 text-lg text-gray-800">₹</span>
+                        {
+                            props.food_data.offer_price == -1  ? 
+                            <span className="text-2xl font-semibold ">{props.food_data.price}</span>
+                            :
+                            <>
+                                <span className="text-2xl font-semibold mr-3">{props.food_data.offer_price}</span>
+                                <div className='inline relative'>
+                                    <span className="absolute top-0 -left-2 text-xs text-gray-600">₹</span>
+                                    <span className="font-semibold line-through opacity-50 text-lg ">{props.food_data.price}</span>
+                                </div>
+                            </>
+                        }
                     </div>
                     <button
                         className='bg-amber-300 text-sm px-4 my-0.5 mt-1 rounded-full mx-2'
@@ -78,10 +89,7 @@ const ViewFoods = () => {
             <div className='font-semibold'>Ingredients</div>
             <ul className='text-sm flex flex-wrap gap-x-2 overflow-y-auto'>
                 {
-                    foodDetails.ingredients.map( (items , index) => (
-                        <li key={index} className="after:content-[','] last:after:content-none">{items}</li>
-                    )
-                    )
+                    props.food_data.ingredients
                 }
             </ul>
         </div>
