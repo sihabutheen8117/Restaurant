@@ -2,12 +2,22 @@
 
 import React from 'react'
 import { inter } from '@/utils/fonts'
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
 import ViewOrders from './ViewOrders'
 import { getAllOrdesDetails } from '@/reactQuery/queries'
 import {  useQuery } from '@tanstack/react-query'
+import  { useSocket } from "@/customHooks/useSocket"
 
 const LiveOrders = (props : any) => {
+
+    const {socket,
+      isConnected,
+      orders,
+      connectionStatus,
+      setOrders
+    } : any = useSocket('admin', {
+      name: "this is admin thats it"
+    })
 
     const [view , setView ] = useState(false) ;
     const [ view_orders , set_view_orders ] = useState({}) ;
@@ -22,6 +32,13 @@ const LiveOrders = (props : any) => {
         setView(!view) ;
         console.log(view);
     }
+
+    useEffect(() => {
+      if (get_all_orders.isSuccess) {
+        setOrders((prev:any) => [...prev, ...get_all_orders.data.data]); 
+      }
+    }, [get_all_orders.isSuccess]);
+
 
   return (
     <div>

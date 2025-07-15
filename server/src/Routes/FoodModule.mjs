@@ -227,6 +227,12 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
           const orders = new Orders(order_data)
           const saved_order = await orders.save();
 
+          //socket io implementation
+          req.io.emit('order-received', {
+              ...saved_order
+            })
+          //finished
+
           if(isAnon)
           {
             const rep = await AnonymousUser.findByIdAndUpdate(user_obj_id, {

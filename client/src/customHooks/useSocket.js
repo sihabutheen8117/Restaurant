@@ -1,4 +1,6 @@
 // hooks/useSocket.js
+"use client"
+
 import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
@@ -32,11 +34,7 @@ export const useSocket = (userType = 'user', userData = {}) => {
       
       // Connect based on user type
       if (userType === 'admin') {
-        newSocket.emit('admin-connect', {
-          adminId: userData.adminId || 'admin_' + Date.now(),
-          name: userData.name || 'Admin',
-          ...userData
-        });
+        newSocket.emit('admin-connect', userData);
       } else {
         newSocket.emit('user-connect', {
           userId: userData.userId || 'user_' + Date.now(),
@@ -60,18 +58,20 @@ export const useSocket = (userType = 'user', userData = {}) => {
       });
 
       newSocket.on('order-received', (orderData) => {
-        console.log('New order received:', orderData);
+        console.log('New order received from socket:', orderData);
         setOrders(prev => [orderData, ...prev]);
       });
 
-      newSocket.on('order-status-changed', (statusData) => {
-        console.log('Order status changed:', statusData);
-        setOrders(prev => prev.map(order => 
-          order.orderId === statusData.orderId 
-            ? { ...order, status: statusData.status }
-            : order
-        ));
-      });
+      console.log("admin connected to the socket io")
+
+      // newSocket.on('order-status-changed', (statusData) => {
+      //   console.log('Order status changed:', statusData);
+      //   setOrders(prev => prev.map(order => 
+      //     order.orderId === statusData.orderId 
+      //       ? { ...order, status: statusData.status }
+      //       : order
+      //   ));
+      // });
     }
 
     // User-specific events
@@ -111,40 +111,40 @@ export const useSocket = (userType = 'user', userData = {}) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [userType, userData]);
+  }, [userType]);
 
   // Helper functions
-  const sendOrder = (orderData) => {
-    if (socket && isConnected) {
-      socket.emit('new-order', orderData);
-    }
-  };
+  // const sendOrder = (orderData) => {
+  //   if (socket && isConnected) {
+  //     socket.emit('new-order', orderData);
+  //   }
+  // };
 
-  const updateOrderStatus = (orderId, status, userSocketId) => {
-    if (socket && isConnected) {
-      socket.emit('update-order-status', {
-        orderId,
-        status,
-        userSocketId,
-        timestamp: new Date()
-      });
-    }
-  };
+  // const updateOrderStatus = (orderId, status, userSocketId) => {
+  //   if (socket && isConnected) {
+  //     socket.emit('update-order-status', {
+  //       orderId,
+  //       status,
+  //       userSocketId,
+  //       timestamp: new Date()
+  //     });
+  //   }
+  // };
 
-  const sendAdminResponse = (responseData) => {
-    if (socket && isConnected) {
-      socket.emit('admin-order-response', responseData);
-    }
-  };
+  // const sendAdminResponse = (responseData) => {
+  //   if (socket && isConnected) {
+  //     socket.emit('admin-order-response', responseData);
+  //   }
+  // };
 
   return {
     socket,
     isConnected,
     orders,
     connectionStatus,
-    sendOrder,
-    updateOrderStatus,
-    sendAdminResponse,
+    // sendOrder,
+    // updateOrderStatus,
+    // sendAdminResponse,
     setOrders
   };
 };
