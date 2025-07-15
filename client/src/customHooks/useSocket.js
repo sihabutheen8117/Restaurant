@@ -15,10 +15,12 @@ export const useSocket = (userType = 'user', userData = {}) => {
 
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io('http://localhost:3001', {
+    //http://localhost:3001
+    //https://restaurant-server-641z.onrender.com
+    const newSocket = io('https://restaurant-server-641z.onrender.com', {
       transports: ['websocket'],
       cors: {
-        origin: "http://localhost:3000",
+        origin: "https://restaurant-ten-black.vercel.app/",
         methods: ["GET", "POST"]
       }
     });
