@@ -1,6 +1,15 @@
+"use client"
+
 import React from 'react'
+import { useRouter } from 'next/navigation'
 
 const ProfileElem = () => {
+
+    const router = useRouter() ;
+
+    const handleMyOrder = () => {
+        router.push('/user/history')
+    }
   return (
     <div className='w-full'>
         <div className='relative h-screen w-full'>
@@ -15,10 +24,12 @@ const ProfileElem = () => {
                     Cart
                 </div> 
                 <hr className='border-b-2 w-full border-gray-200'></hr> 
-                <div className='hover:bg-gray-100 px-7 py-2 whitespace-nowrap'>
+                <button className='hover:bg-gray-100 px-7 py-2 whitespace-nowrap'
+                onClick={() => handleMyOrder()}
+                >
                     <i className="fas fa-box pr-5"></i>
                     My Orders
-                </div> 
+                </button> 
                 <hr className='border-b-2 w-full border-gray-200'></hr> 
             </div>
             <div className='absolute bottom-30 left-18 whitespace-nowrap'>

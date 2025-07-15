@@ -5,17 +5,14 @@ import { Food } from '@/reactQuery/itemInterfaces'
 export const registerUser = async (userData : any ) => {
     try {
         const response = await axios.post('http://localhost:3001/api/authendicate/register',
-        {
-          username: userData.username,
-          email: userData.email,
-          password: userData.password,
-        },
+        userData,
         {
           withCredentials : true 
         });
+        
         return response.data; 
       } catch (error : any ) {
-        console.error(error.response.data);
+        console.error(error);
         throw error;
       }
     
@@ -24,10 +21,7 @@ export const registerUser = async (userData : any ) => {
 export const loginUser = async (userData :any) => {
     try {
         const response = await axios.post('http://localhost:3001/api/authendicate/login',
-        {
-          email: userData.email,
-          password: userData.password,
-        },
+        userData,
         {
           withCredentials : true 
         });
@@ -54,9 +48,83 @@ export const getAllFood = async() => {
   }
 }
 
+export const placeOrder = async(order_details : any ) => {
+  try{
+    const response = await axios.post('http://localhost:3001/api/place_order',
+      order_details,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+
+
+export const myOrders = async() => {
+  try{
+    const response = await axios.get('http://localhost:3001/api/my_orders',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+
 export const getFoodDetails =  async() => {
   try{
 
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const getFoodDetailsWithoutReviews =  async(food_details : any ) => {
+  try{
+    const response = await axios.post('http://localhost:3001/api/get_food_details_whithout_reviews',
+      food_details ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const deleteOrder =  async(food_details : any ) => {
+  try{
+    const response = await axios.post('http://localhost:3001/api/delete_orders',
+      food_details ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
   }
   catch(err)
   {
@@ -118,6 +186,54 @@ export const deleteFood = async( _id : string) => {
   }
 }
 
+export const getAllOrdesDetails = async() => {
+  try{
+    const response = await axios.get('http://localhost:3001/api/get_all_orders_details') ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const getFoodDetailsForOrders =  async(order_details : any ) => {
+  try{
+    const response = await axios.post('http://localhost:3001/api/get_food_details_for_orders',
+      order_details ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const payment_checkout =  async(order_details : any ) => {
+  try{
+    const response = await axios.post('http://localhost:3001/api/payment_checkout',
+      order_details ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
 
 // common queries 
 

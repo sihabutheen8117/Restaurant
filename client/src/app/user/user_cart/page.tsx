@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import UserNav from '@/components/User/UserNav';
 import { useRouter } from 'next/navigation';
+import { placeOrder } from '@/reactQuery/queries';
+import { useMutation } from '@tanstack/react-query';
 
 const Page = () => {
 
@@ -19,7 +21,33 @@ const Page = () => {
       router.push('/user/client')
   }
 
+  const handleSuccessfullOrder = () => {
+    router.push('/user/order_placed')
+  }
+
+  const newFoods = useMutation({
+    mutationFn : placeOrder ,
+    onSuccess : () => {
+        // queryClient.invalidateQueries({
+        //     queryKey : ['foods']
+        // })
+        handleSuccessfullOrder()
+        }
+    })
+
   const handleOrderPlace = () => {
+
+    const fieldsToKeep = ["_id", "quantity"];
+    const filteredCart = userCart.map((item: any) => {
+      const result: any = {};
+      fieldsToKeep.forEach((key: string) => {
+        if (key in item) {
+          result[key] = item[key];
+        }
+      });
+      return result;
+    });
+    newFoods.mutate(filteredCart) ;
     router.push('/user/order_placed');
   }
 

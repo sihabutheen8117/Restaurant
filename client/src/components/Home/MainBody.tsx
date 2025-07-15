@@ -6,7 +6,6 @@ import '../../styles/mainStyles.css'
 import {lexend ,kanit , poppins} from '@/utils/fonts'
 import { useRef } from 'react'
 
-
 type carosFoods = {
   image : string  ,
   title : string

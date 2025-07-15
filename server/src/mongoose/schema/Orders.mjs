@@ -1,24 +1,30 @@
 import mongoose from 'mongoose'
 
-const OrdersSchema = mongoose.Schema({
-    order_id : {
-        type : mongoose.Schema.Types.String ,
+const OrderFoodSchema = mongoose.Schema({
+    _id : {
+        type : mongoose.Schema.Types.String,
+        required : true ,
+    } ,
+    quantity : {
+        type : mongoose.Schema.Types.Number ,
         required : true 
-    },
+    }
+})
+
+const OrdersSchema = mongoose.Schema({
+
     order_date : {
         type : mongoose.Schema.Types.Date,
+        default : Date.now ,
         required : true 
     },
     ordered_foods : [
-        {
-            type : mongoose.Schema.Types.String,
-            required : true
-        }
+        OrderFoodSchema
     ],
     user_id : 
     {
         type : mongoose.Schema.Types.String,
-        required : true
+        required : true ,
     },
     quandity : {
         type : mongoose.Schema.Types.Number ,
@@ -33,12 +39,14 @@ const OrdersSchema = mongoose.Schema({
         required : true
     },
     payment_type : {
-        type : mongoose.Schema.Types.String ,
-        required : true
+        type : mongoose.Schema.Types.String 
     },
     order_status : {
         type : mongoose.Schema.Types.String ,
         required : true
+    },
+    user_name : {
+        type : mongoose.Schema.Types.String
     }
 })
 

@@ -5,6 +5,11 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
 
+//for socket  io 
+import http from 'http' 
+import { Server } from 'socket.io';
+//
+
 import AuthRouter from './Routes/Auth.mjs';
 import FoodModuleRouter from './Routes/FoodModule.mjs';
 
@@ -37,6 +42,24 @@ app.use(cors(corsOptions));
 app.use(AuthRouter);
 app.use(FoodModuleRouter);
 
-app.listen( PORT , () => {
+
+//socket io
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on("connection" , (socket) => {
+    console.log("User connected socket io server ")
+
+    //disconnecting
+    socket.on( "disconnect" , () => {
+        console.log("User disconnected socket io server")
+    })
+})
+
+server.listen( PORT , () => {
     console.log(`Server running on PORT - ${PORT}`)
 })
+
+// app.listen( PORT , () => {
+//     console.log(`Server running on PORT - ${PORT}`)
+// })

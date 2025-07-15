@@ -1,6 +1,11 @@
 import { Router } from "express";
-import { verifyToken } from "../middlewares/authmiddleware.mjs";
+import { verifyToken ,verifyTokenHelper } from "../middlewares/authmiddleware.mjs";
 import { Foods } from "../mongoose/schema/Foods.mjs";
+import { Orders } from "../mongoose/schema/Orders.mjs";
+import { Users } from "../mongoose/schema/Users.mjs";
+import { genAnonymousToken } from "../middlewares/authmiddleware.mjs";
+import { v4 as uuidv4 } from 'uuid';
+import { AnonymousUser } from "../mongoose/schema/AnonymousUser.mjs";
 
 const FoodModuleRouter = new Router() ;
 
@@ -137,6 +142,311 @@ FoodModuleRouter.delete( '/api/delete_food' , async(req , res )=> {
         })
     }
 })
+
+FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
+    const body = req.body;
+    const token = req.cookies.authorization;
+
+    let user_id;
+    let isAnon = false ;
+    let user_obj_id  ;
+
+    if (!token) {
+
+        try{
+
+            isAnon = true ;
+            const uniq_uuid = uuidv4()
+
+            const newAnonymUser = new AnonymousUser({
+                user_id : uniq_uuid
+            })
+
+            const response = await newAnonymUser.save() ;
+            user_obj_id = response._id ;
+
+            user_id = await genAnonymousToken({
+                isAnonymous : true ,
+                user_id: user_obj_id 
+            });
+
+            res.cookie("authorization" , user_id , {
+                httpOnly : true ,
+                secure :  true  ,
+                sameSite : "None"
+            })
+        }
+        catch(error)
+        {
+            console.log(error);
+            return res.status(400).send({
+                level : "error" ,
+                details : "errors in placing the orders"
+            })
+        }
+
+       
+    } else {
+      
+      const user_data = verifyTokenHelper(token) ;
+      if(! user_data)
+      {
+        console.log(user_data)
+        return res.status(401).send({
+          level : "user not authendicated" ,
+          details : ""
+        })
+      }
+      user_id = user_data.user_id;
+      isAnon = user_data.isAnonymous ;
+      user_obj_id = user_data.user_id  ;
+    }
+
+    try {
+
+        const foodIds = body.map(item => item._id);
+        const foods = await Foods.find({ _id : { $in: foodIds } });
+        let food_quantity = 0 ;
+        const total_cost = foods.reduce((acc, food) => {
+            const matchingItem = body.find(item => item._id === String(food._id));
+            const quantity = matchingItem?.quantity || 1; // default to 1
+            const effectivePrice = food.offer_price == -1 ? food.price : food.offer_price ;
+            food_quantity += quantity ;
+            return acc + (effectivePrice * quantity);
+          }, 0);
+        
+          const order_data = {
+                user_id : user_id ,
+                ordered_foods : body ,
+                quandity : food_quantity,
+                total_cost : total_cost ,
+                order_type : "online",
+                order_status : "pending"
+          }
+
+          const orders = new Orders(order_data)
+          const saved_order = await orders.save();
+
+          if(isAnon)
+          {
+            const rep = await AnonymousUser.findByIdAndUpdate(user_obj_id, {
+                $push: {
+                  order_id: saved_order._id
+                }
+            });    
+          }
+          else{
+            const rep = await Users.findByIdAndUpdate(user_obj_id, {
+              $push: {
+                order_id: saved_order._id
+              }
+          });
+          }
+
+        res.status(200).send({
+            status : "order placed successfully" 
+        })
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(400).send({
+            level : "error" ,
+            details : "errors in placing the orders"
+        })
+    }
+
+})
+
+
+FoodModuleRouter.get('/api/my_orders', 
+    verifyToken,
+    async (req, res) => {
+
+      try {
+        console.log( req.user_data)
+        let user ;
+        if( req.user_data.isAnonymous )
+        {
+          user = await AnonymousUser.findOne({
+            _id: req.user_data.user_id
+          });
+        }
+        else{
+          user = await Users.findOne({
+            _id: req.user_data.user_id
+          });
+        }
+        console.log(user)
+        if (!user) {
+          return res.status(404).send({
+            status: "fail",
+            message: "User not found"
+          });
+        }
+        
+        const order = await Orders.find({ _id: { $in: user.order_id } });
+
+        res.status(200).send(order); 
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
+  FoodModuleRouter.post('/api/get_food_details_whithout_reviews', 
+    verifyToken,
+    async (req, res) => {
+      const food_data = req.body;
+      try {
+
+        const food_id = food_data.map( items => items._id );
+
+        const foods_details = await Foods.find(
+            { _id: { $in: food_id } },
+            { description: 0,
+            offer_validity : 0 ,
+            ingredients : 0 ,
+            reviews : 0 ,
+            ratings : 0 ,
+            rating_stars : 0 ,
+            isDisable : 0 ,
+            category : 0 ,
+            orders : 0 
+            } 
+          );
+          
+          const final_food_data = foods_details.map(food => {
+            const matched = food_data.find(item => item._id === food._id.toString());
+            return {
+              ...food.toObject(),
+              quantity: matched?.quantity ?? 1
+            };
+          });
+        res.status(200).send(final_food_data) ;
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
+  
+
+  FoodModuleRouter.post('/api/delete_orders', 
+    verifyToken,
+    async (req, res) => {
+      const { _id }  = req.body;
+     
+      try {
+        const response = await Orders.findByIdAndDelete( _id )
+        res.status(200).send({
+          status : "order deleted successfully"
+
+        }) ;
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+  
+  
+
+  FoodModuleRouter.get('/api/get_all_orders_details',
+    async (req, res) => {
+
+      try {
+        const results = await Orders.find({ order_status: 'pending' });
+        if(! results )
+        {
+          return res.status(404).send({
+            status : "can't fetch the orders"
+          })
+        }
+        res.status(200).send(results);
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
+
+
+  FoodModuleRouter.post('/api/get_food_details_for_orders', 
+    async (req, res) => {
+      const food_data = req.body;
+      try {
+
+        const food_id = food_data.map( items => items._id );
+
+        const foods_details = await Foods.find(
+            { _id: { $in: food_id } },
+            { description: 0,
+            offer_validity : 0 ,
+            ingredients : 0 ,
+            reviews : 0 ,
+            ratings : 0 ,
+            rating_stars : 0 ,
+            isDisable : 0 ,
+            category : 0 ,
+            orders : 0 ,
+            food_image : 0 
+            } 
+          );
+          const final_food_data = foods_details.map(food => {
+            const matched = food_data.find(item => item._id === food._id.toString());
+            return {
+              ...food.toObject(),
+              quantity: matched?.quantity ?? 1
+            };
+          });
+        res.status(200).send(final_food_data) ;
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(500).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
+
+  FoodModuleRouter.post('/api/payment_checkout', 
+    async (req, res) => {
+      const { payment_type , _id} = req.body;
+      try {
+        const response = await Orders.findByIdAndUpdate( _id ,
+          {
+            payment_type : payment_type ,
+            order_status : "paid"
+          }
+        )
+        console.log("from checkout")
+        console.log(response)
+        res.status(200).send({
+            status : "order checket out"
+        }); 
+
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(404).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
 
 
 export default FoodModuleRouter ;

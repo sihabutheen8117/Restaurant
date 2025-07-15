@@ -1,36 +1,96 @@
 import { Router } from "express";
 import { verifyToken , genToken } from "../middlewares/authmiddleware.mjs";
+import { Users } from "../mongoose/schema/Users.mjs";
 
 const AuthRouter =Router() ;
 
 AuthRouter.post( "/api/authendicate/login" , 
     async(req , res ) => {
-        console.log("loggin authendication ")
-        const { email , password } = req.body
-        // check in the db
-        const tokenData = {
-            email : email
+        const {user_email , user_password } = req.body ;
+        if( !user_email)
+        {
+            return res.status(401).send({
+                error : "user email required"
+            })
         }
-        const token = genToken(tokenData) ;
-        res.cookie("authorization" , token , {
-            httpOnly : true ,
-            secure :  true  ,
-            sameSite : "None"
-        })
-        res.status(200).send({
-            status : "successfully logged in"
-        })
+        try{
+            const user = await Users.findOne({ user_email : user_email }) 
+            if( !user)
+            {
+                return res.status(401).send({
+                    error : "user email is not found , please register"
+                })
+            }
+            if( user_password != user.user_password )
+            {
+                return res.status(401).send({
+                    error : "incorrect password , Please try again"
+                })
+            }
+
+            const token = genToken({
+                isAnonymous : false ,
+                user_id: user._id 
+            }) ;
+
+            res.cookie("authorization" , token , {
+                httpOnly : true ,
+                secure :  true  ,
+                sameSite : "None"
+            })
+
+            res.status(200).send({
+                status : "user created  successfully"
+            })
+        }
+        catch(error){
+            res.status(501).send({
+                error : error
+            })
+        }
     }
 )
 
 AuthRouter.post("/api/authendicate/register" ,
-    verifyToken , 
     async(req , res ) => {
-        const data = req.email ;
-        console.log(req.email ) ;
-        res.status(200).send({
-            data : data 
-        })
+        const user_data = req.body ;
+        
+        const final_data = {
+            ...user_data ,
+            isAdmin : false 
+        }
+        try{
+            const user = new Users(final_data);
+            const response = await user.save() ;
+            if(!response)
+            {
+                return res.status(401).send({
+                    error : "error in creating users" 
+                })
+            }
+            const token = genToken({
+                isAnonymous : false ,
+                user_id: response._id 
+            }) ;
+
+            res.cookie("authorization" , token , {
+                httpOnly : true ,
+                secure :  true  ,
+                sameSite : "None"
+            })
+
+            res.status(200).send({
+                status : "user created  successfully"
+            })
+        }
+        catch(error)
+        {
+            console.log(error)
+            res.status(401).send({
+                error : error 
+            })
+        }
+        
     }
 )
 

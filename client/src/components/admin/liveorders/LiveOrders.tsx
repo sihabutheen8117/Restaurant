@@ -4,10 +4,19 @@ import React from 'react'
 import { inter } from '@/utils/fonts'
 import { useState } from 'react'
 import ViewOrders from './ViewOrders'
+import { getAllOrdesDetails } from '@/reactQuery/queries'
+import {  useQuery } from '@tanstack/react-query'
 
 const LiveOrders = (props : any) => {
 
     const [view , setView ] = useState(false) ;
+    const [ view_orders , set_view_orders ] = useState({}) ;
+    const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
+
+    const get_all_orders = useQuery({
+      queryKey : ["all_pending_orders"] ,
+      queryFn : getAllOrdesDetails
+    })
 
     const handleView = () => {
         setView(!view) ;
@@ -26,7 +35,7 @@ const LiveOrders = (props : any) => {
         {
             view && 
             <div className=''>
-                <ViewOrders close={handleView} isNotLive={props.isNotLive}/>
+                <ViewOrders close={handleView} isNotLive={props.isNotLive} food_data={view_orders} order_adnl_details={order_adnl_details}/>
             </div>
         }
         <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
@@ -52,67 +61,57 @@ const LiveOrders = (props : any) => {
                       </tr>
                   </thead>
                   <tbody className='text-sm'>
-                      <tr className='h-10'>
-                          <td className=''>#02302</td>
-                          <td>Kader ismail</td>
-                          <td>12-12-12</td>
-                          <td>12:12 am</td>
-                          <td>&#8377; 360</td>
-                          <td className=''>5</td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'>manual</td>
-                          }
-                          <td className='flex justify-center h-10 items-center'
-                          ><i className="fas fa-eye"
-                          onClick={handleView}
-                          ></i></td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i></button></td>
-                          }
+                  
+                      {
+                        get_all_orders.isSuccess &&
+                        get_all_orders.data.data.map( (item:any , index : any) => {
+
+                          const date = new Date(item.order_date);
+
+                          // Convert to desired format (e.g., 'Jul 14, 2025' and '03:26 PM')
+                          const formattedDate = date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                          });
+
+                          const formattedTime = date.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true,
+                          });
                           
-                      </tr>
-                      <tr className='h-10'>
-                          <td className='py-2'>#02303</td>
-                          <td>Azeem</td>
-                          <td>12-12-12</td>
-                          <td>12:12 am</td>
-                          <td>&#8377; 160</td>
-                          <td>9</td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'>manual</td>
-                          }
-                          <td className='flex justify-center h-10 items-center'
-                          ><i className="fas fa-eye"
-                          onClick={handleView}
-                          ></i></td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i></button></td>
-                          }
-                      </tr>
-                      <tr className='h-10'>
-                          <td className='py-2'>#02304</td>
-                          <td>Ibrahim</td>
-                          <td>12-12-12</td>
-                          <td>12:12 am</td>
-                          <td>&#8377; 260</td>
-                          <td>8</td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'>manual</td>
-                          }
-                          <td className='flex justify-center h-10 items-center'
-                          ><i className="fas fa-eye"
-                          onClick={handleView}
-                          ></i></td>
-                          {
-                            props.isNotLive && 
-                            <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i></button></td>
-                          }
-                      </tr>
+                          return (
+                          <tr className='h-10' key={index}>
+                            <td className='py-2'>#02304</td>
+                            <td>Ibrahim</td>
+                            <td>{formattedDate}</td>
+                            <td>{formattedTime}</td>
+                            <td>&#8377; {item.total_cost}</td>
+                            <td>{item.quandity}</td>
+                            {
+                              props.isNotLive && 
+                              <td className='text-left'>manual</td>
+                            }
+                            <td className='flex justify-center h-10 items-center'
+                            ><i className="fas fa-eye"
+                            onClick={() => {
+                              set_view_orders(item.ordered_foods)
+                              handleView()
+                              set_order_adnl_details({
+                                quantity : item.quandity ,
+                                total_cost : item.total_cost,
+                                _id : item._id
+                              })
+                            }}
+                            ></i></td>
+                            {
+                              props.isNotLive && 
+                              <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i></button></td>
+                            }
+                        </tr>
+                        )})
+                      }
                   </tbody>
               </table>
             </div>

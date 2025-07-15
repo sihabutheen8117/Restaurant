@@ -1,10 +1,6 @@
 import mongoose from 'mongoose'
 
 const UsersSchema = mongoose.Schema({
-    user_id : {
-        type : mongoose.Schema.Types.String,
-        required : true 
-    },
     isAdmin : {
         type : mongoose.Schema.Types.Boolean ,
         required : true  
@@ -21,9 +17,9 @@ const UsersSchema = mongoose.Schema({
         type : mongoose.Schema.Types.String,
         required : true 
     },
-    order_ids : [
+    order_id : [
         {
-            type : mongoose.Schema.Types.String
+            type : mongoose.Schema.Types.ObjectId
         }
     ]
 })

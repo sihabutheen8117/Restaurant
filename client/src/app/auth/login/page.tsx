@@ -4,16 +4,29 @@ import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
 import Link from 'next/link';
 import { loginUser } from '@/reactQuery/queries'
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 const page = () => {
 
-const [ email , setEmail ]  = useState("") ;
-const [password , setPassword ] = useState("") ;
+    const [ email , setEmail ]  = useState("") ;
+    const [password , setPassword ] = useState("") ;
 
-const getLogin = () => {
-    loginUser( { email , password})
-}
+    const login_mutation = useMutation({
+        mutationFn : loginUser 
+    })
+
+    const router = useRouter() ;
+    const getLogin = () => {
+        login_mutation.mutate( { user_email : email , user_password : password})
+    }
+
+    useEffect(() => {
+        if (login_mutation.isSuccess) {
+          router.push('../user/client');
+        }
+      }, [login_mutation.isSuccess, router]);
 
   return (
     <div className="h-screen flex justify-center items-center ">
