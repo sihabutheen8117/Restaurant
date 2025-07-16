@@ -35,9 +35,9 @@ const LiveOrders = (props : any) => {
 
     useEffect(() => {
       if (get_all_orders.isSuccess) {
-        setOrders((prev:any) => [...prev, ...get_all_orders.data.data]); 
+        setOrders(get_all_orders.data.data); 
       }
-    }, [get_all_orders.isSuccess]);
+    }, [get_all_orders.data]);
 
 
   return (
