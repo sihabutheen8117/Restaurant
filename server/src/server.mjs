@@ -34,9 +34,9 @@ mongoose.connect("mongodb+srv://sihabutheen8117:<db_password>@cluster0.296mzuv.m
 const PORT = process.env.PORT ;
 
 // front-ends : http://localhost:3000
-// https://restaurant-ten-black.vercel.app/
+// https://restaurant-a9nobx1bv-sihabutheens-projects.vercel.app
 const corsOptions = {
-    origin : "https://restaurant-ten-black.vercel.app/" , 
+    origin : "https://restaurant-a9nobx1bv-sihabutheens-projects.vercel.app" , 
     methods : ['GET' , "POST" , 'PUT' , 'DELETE'], 
     credentials: true 
 }
@@ -48,7 +48,7 @@ app.use(cors(corsOptions));
 const server = http.createServer(app);
 const io = new Server(server ,{
     cors: {
-      origin: "https://restaurant-ten-black.vercel.app/", // Your Next.js app URL
+      origin: "https://restaurant-a9nobx1bv-sihabutheens-projects.vercel.app", // Your Next.js app URL
       methods: ["GET", "POST"],
       credentials: true
     }
