@@ -22,7 +22,7 @@ export const verifyToken = (req, res, next) => {
       const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       const user_data = decodedToken;
       console.log("from verify token")
-      console.log("user_data")
+      console.log(user_data)
       return user_data 
     } catch (err) {
       console.log(err)

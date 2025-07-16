@@ -34,10 +34,6 @@ const AdminNav = () => {
                   <button className="">
                     <i className="text-gray-400 absolute fas fa-search md:left-87 left-44 top-2"></i>
                   </button>
-                  <button className="text-sm ml-3 bg-gray-200 rounded-full px-2 font-semibold">
-                    <i className="pr-2 fas fa-pen"></i>
-                    Manual Entry
-                  </button>
           </div>
           <div className=" hidden md:flex md:gap-2 ">
               <div className="">User Name</div>

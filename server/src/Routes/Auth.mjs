@@ -27,10 +27,11 @@ AuthRouter.post( "/api/authendicate/login" ,
                     error : "incorrect password , Please try again"
                 })
             }
-
+            const user_name = user.user_name ;
             const token = genToken({
                 isAnonymous : false ,
-                user_id: user._id 
+                user_id: user._id ,
+                user_name : user.user_name
             }) ;
 
             res.cookie("authorization" , token , {
@@ -40,7 +41,7 @@ AuthRouter.post( "/api/authendicate/login" ,
             })
 
             res.status(200).send({
-                status : "user created  successfully"
+                user_name : user_name
             })
         }
         catch(error){

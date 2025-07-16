@@ -8,6 +8,7 @@ import { Food } from '@/reactQuery/itemInterfaces'
 import { CartItems } from '@/reactQuery/itemInterfaces'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import MobileLoaders from '../Loaders/MobileLoaders'
 
 const UserProduct = (props : any) => {
 
@@ -46,6 +47,7 @@ const UserProduct = (props : any) => {
         queryFn : () => getAllFood()
     })
 
+    
     const [ selectedFood , setSelectedFood ] = useState<Food>()
     const [view , setView ] = useState(false) ;
 
@@ -135,6 +137,17 @@ const UserProduct = (props : any) => {
             }
           }
         }, []);
+
+        if(foodQuery.isLoading)
+        {
+            return(
+                <div className=''>
+                    <MobileLoaders/>
+                    <MobileLoaders/>
+                    <MobileLoaders/>
+                </div>
+            )
+        }
 
   return (
     <div>

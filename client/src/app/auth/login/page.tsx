@@ -12,21 +12,21 @@ const page = () => {
 
     const [ email , setEmail ]  = useState("") ;
     const [password , setPassword ] = useState("") ;
-
-    const login_mutation = useMutation({
-        mutationFn : loginUser 
-    })
-
     const router = useRouter() ;
+    
+    const login_mutation = useMutation({
+        mutationFn: loginUser,
+        onSuccess: (data: any) => {
+          localStorage.setItem("user_name", data.user_name);
+          router.push('../user/client'); // <-- Moved here
+        },
+      });
+
+
     const getLogin = () => {
         login_mutation.mutate( { user_email : email , user_password : password})
     }
 
-    useEffect(() => {
-        if (login_mutation.isSuccess) {
-          router.push('../user/client');
-        }
-      }, [login_mutation.isSuccess, router]);
 
   return (
     <div className="h-screen flex justify-center items-center ">

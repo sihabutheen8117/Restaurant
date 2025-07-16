@@ -21,10 +21,10 @@ export const useSocket = (userType = 'user', userData = {}) => {
     //http://localhost:3000
     //https://restaurant-ten-black.vercel.app
 
-    const newSocket = io('https://restaurant-server-641z.onrender.com', {
+    const newSocket = io(process.env.NEXT_PUBLIC_API_KEY, {
       transports: ['websocket'],
       cors: {
-        origin: "https://restaurant-ten-black.vercel.app",
+        origin: process.env.NEXT_PUBLIC_API_FRONT,
         methods: ["GET", "POST"]
       }
     });

@@ -101,7 +101,9 @@ const ViewOrders = (props:any) => {
                           </table>
                         </div>
                     </div>
-                    <div className='mx-2'>
+                    {
+                        !props.isNotLive && 
+                        <div className='mx-2'>
                         <div className="flex items-center space-x-2">
                         <input
                             type="checkbox"
@@ -116,6 +118,7 @@ const ViewOrders = (props:any) => {
                         </label>
                         </div>
                     </div>
+                    }
         </div>
         <div className='flex w-full absolute bottom-2 justify-between text-sm'>
             <button className='bg-red-500 text-white px-3 py-1 rounded-xl mx-3'
@@ -125,7 +128,7 @@ const ViewOrders = (props:any) => {
                 
                 <button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'
                 onClick={() => handleDetails()}
-                ><i className="fas fa-trash"></i></button>
+                ><i className="fas fa-trash"></i> Delete</button>
                 {
                     !props.isNotLive && 
                     <button className='bg-green-400 text-white px-3 py-1 rounded-lg'

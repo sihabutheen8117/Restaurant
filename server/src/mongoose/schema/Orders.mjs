@@ -26,6 +26,10 @@ const OrdersSchema = mongoose.Schema({
         type : mongoose.Schema.Types.String,
         required : true ,
     },
+    user_name : 
+    {
+        type : mongoose.Schema.Types.String,
+    },
     quandity : {
         type : mongoose.Schema.Types.Number ,
         required : true

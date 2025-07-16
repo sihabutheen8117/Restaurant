@@ -5,13 +5,15 @@ import UserNav from '@/components/User/UserNav';
 import { useRouter } from 'next/navigation';
 import { placeOrder } from '@/reactQuery/queries';
 import { useMutation } from '@tanstack/react-query';
+import PromptName from '@/components/User/PromptName';
 
 const Page = () => {
 
   const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
   
   const [userCart, setUserCart] = useState<any>(null);
-  
+  const [is_name, set_is_name] = useState<string>(() => localStorage.getItem("user_name") || "");
+  const [ act_prompt , set_act_prompt ] = useState(false) ;
 
   const router = useRouter() ;
   
@@ -37,6 +39,11 @@ const Page = () => {
 
   const handleOrderPlace = () => {
 
+    if(is_name == "")
+    {
+      set_act_prompt(true)
+      return ;
+    }
     const fieldsToKeep = ["_id", "quantity"];
     const filteredCart = userCart.map((item: any) => {
       const result: any = {};
@@ -47,7 +54,7 @@ const Page = () => {
       });
       return result;
     });
-    newFoods.mutate(filteredCart) ;
+    newFoods.mutate({ body : filteredCart , user_name : is_name }) ;
     router.push('/user/order_placed');
   }
 
@@ -116,6 +123,15 @@ const Page = () => {
       <div className="z-20">
         <UserNav isSearch={false} isBack={true} goBack={() => handlePreOrder()}/>
       </div>
+      {
+        act_prompt && 
+        <div className=''>
+          <div className='fixed bg-black inset-0 z-10 opacity-25' onClick={() => set_act_prompt(false)}></div>
+          <div className='fixed bg-white inset-x-10 inset-y-96 z-20 rounded-xl'>
+            <PromptName close={() => set_act_prompt(false)} setUser={(name:any) => set_is_name(name)}/>
+          </div>
+        </div>
+      }
       <div className='mb-10'>
           {
             userCart && 

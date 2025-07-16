@@ -5,8 +5,8 @@ import { Food } from '@/reactQuery/itemInterfaces'
 //https://restaurant-server-641z.onrender.com
 //http://localhost:3001
 
-const api = "https://restaurant-server-641z.onrender.com" ;
-
+const api = process.env.NEXT_PUBLIC_API_KEY;
+console.log("api key : "+api)
 
 export const registerUser = async (userData : any ) => {
     try {
@@ -240,6 +240,44 @@ export const payment_checkout =  async(order_details : any ) => {
     throw err ;
   }
 }
+
+export const get_seved_orders  =  async() => {
+
+  try{
+    const response = await axios.get(api+'/api/get_served_orders ',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const set_user_name_for_anonymous  =  async(user_data : any ) => {
+
+  try{
+    const response = await axios.post(api+'/api/set_user_name_for_anonymous',
+      user_data ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
 
 // common queries 
 

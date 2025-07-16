@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { getAllFoodForEdit } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
 import { Food } from '@/reactQuery/itemInterfaces'
+import SystemLoaders from '@/components/Loaders/SystemLoaders'
 
 const ViewManageFoods = (props: any) => {
     console.log(props.filter)
@@ -30,6 +31,16 @@ const ViewManageFoods = (props: any) => {
 
     const viewItems = () => {
         console.log("view items ")
+    }
+
+    if(foodQuery.isLoading)
+    {
+        return(
+            <div className=' h-screen '>
+                <div className='flex justify-center h-8/12 items-center opacity-70'><SystemLoaders/></div>
+                
+            </div>  
+        )
     }
     
   return (

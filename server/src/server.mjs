@@ -12,6 +12,7 @@ import { Server } from 'socket.io';
 
 import AuthRouter from './Routes/Auth.mjs';
 import FoodModuleRouter from './Routes/FoodModule.mjs';
+import UserRouter from './Routes/UserRoute.mjs';
 
 dotenv.config()
 
@@ -27,7 +28,7 @@ app.use(cookieParser())
 //mongodb+srv://sihabutheen8117:xe4hR1zxe0hEN5I5@cluster0.296mzuv.mongodb.net/
 //mongodb://localhost/alkhalid_server
 
-mongoose.connect("mongodb+srv://sihabutheen8117:xe4hR1zxe0hEN5I5@cluster0.296mzuv.mongodb.net/")
+mongoose.connect(process.env.MONGO_DB_CONNECT)
     .then( ()=> console.log("Connected to Database"))
     .catch( (err) => console.log(err))
 
@@ -36,7 +37,7 @@ const PORT = process.env.PORT ;
 // front-ends : http://localhost:3000
 // https://restaurant-ten-black.vercel.app
 const corsOptions = {
-    origin : "https://restaurant-ten-black.vercel.app" , 
+    origin : process.env.CORS_ORIGIN , 
     methods : ['GET' , "POST" , 'PUT' , 'DELETE'], 
     credentials: true 
 }
@@ -48,7 +49,7 @@ app.use(cors(corsOptions));
 const server = http.createServer(app);
 const io = new Server(server ,{
     cors: {
-      origin: "https://restaurant-ten-black.vercel.app", 
+      origin: process.env.CORS_ORIGIN , 
       methods: ["GET", "POST"],
       credentials: true
     }
@@ -193,7 +194,7 @@ app.use((req, res, next) => {
 
 app.use(AuthRouter);
 app.use(FoodModuleRouter);
-
+app.use(UserRouter)
 
 
 

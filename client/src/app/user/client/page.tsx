@@ -23,7 +23,6 @@ const page = () => {
   const handleFilter = () => {
     setTogFilter(!togFilter)
   }
-  console.log(user_cart)
   return (
     <div>
       {

@@ -144,12 +144,16 @@ FoodModuleRouter.delete( '/api/delete_food' , async(req , res )=> {
 })
 
 FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
-    const body = req.body;
+    const body = req.body.body;
     const token = req.cookies.authorization;
+
+    console.log("place order user body ")
+    console.log(body) ;
 
     let user_id;
     let isAnon = false ;
     let user_obj_id  ;
+    let user_name = req.body.user_name 
 
     if (!token) {
 
@@ -167,7 +171,8 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
 
             user_id = await genAnonymousToken({
                 isAnonymous : true ,
-                user_id: user_obj_id 
+                user_id: user_obj_id ,
+                user_name : req.body.user_name
             });
 
             res.cookie("authorization" , user_id , {
@@ -197,9 +202,13 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
           details : ""
         })
       }
+
+      console.log("user name ")
+      console.log(user_data)
       user_id = user_data.user_id;
       isAnon = user_data.isAnonymous ;
       user_obj_id = user_data.user_id  ;
+      user_name = user_data.user_name ;
     }
 
     try {
@@ -216,6 +225,7 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
           }, 0);
         
           const order_data = {
+                user_name : user_name ,
                 user_id : user_id ,
                 ordered_foods : body ,
                 quandity : food_quantity,
@@ -452,6 +462,30 @@ FoodModuleRouter.get('/api/my_orders',
       }
       
   });
+
+
+  
+  FoodModuleRouter.get('/api/get_served_orders',
+    async (req, res) => {
+
+      try {
+        const results = await Orders.find({ order_status: 'paid' });
+        if(! results )
+        {
+          return res.status(404).send({
+            status : "can't fetch the orders"
+          })
+        }
+        res.status(200).send(results);
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
 
 
 

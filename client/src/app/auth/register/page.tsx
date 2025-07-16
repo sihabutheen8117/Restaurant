@@ -3,7 +3,7 @@
 import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import {registerUser} from '@/reactQuery/queries'
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -16,17 +16,14 @@ const page = () => {
 
     const router = useRouter() ;
     const register_mutation = useMutation({
-        mutationFn : registerUser
+        mutationFn : registerUser,
+        onSuccess: (data: any) => {
+            router.push('../user/client') // <-- Moved here
+        },
     })
 
     const handleRegister = () => {
         register_mutation.mutate({ user_name : name , user_email : email , user_password : password });
-    }
-
-    if(register_mutation.isSuccess)
-    {
-        console.log("back to user/client")
-        router.push("../user/client")
     }
 
   return (

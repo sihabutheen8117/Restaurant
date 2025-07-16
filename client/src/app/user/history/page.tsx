@@ -6,6 +6,7 @@ import UserNav from '@/components/User/UserNav'
 import  { useRouter}  from 'next/navigation'
 import { myOrders } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
+import MobileLoaders from '@/components/Loaders/MobileLoaders'
 
 const page = () => {
 
@@ -24,6 +25,22 @@ const page = () => {
   }
 
   const [ view , setView ] = useState(false) ;
+
+  if(myOrdersQuery.isLoading)
+  {
+    return(
+      <div className=''>
+          <div className="z-20">
+            <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
+          </div>
+          <div className='mx-3 mt-4'>
+            <MobileLoaders/>
+            <MobileLoaders/>
+            <MobileLoaders/>
+          </div>
+      </div>
+    )    
+  }
   return (
     <div>
       <div className="z-20">

@@ -7,65 +7,55 @@ import ViewOrders from './ViewOrders'
 import { getAllOrdesDetails } from '@/reactQuery/queries'
 import {  useQuery } from '@tanstack/react-query'
 import  { useSocket } from "@/customHooks/useSocket"
-import NewOrders from './NewOrders'
-import ServerdOrders from './ServerdOrders'
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
-const LiveOrders = (props : any) => {
+import SystemLoaders from '@/components/Loaders/SystemLoaders'
+
+const NewOrders = (props : any) => {
 
     const {socket,
-      isConnected,
-      orders,
-      connectionStatus,
-      setOrders
-    } : any = useSocket('admin', {
-      name: "this is admin thats it"
-    })
-
-    const [view , setView ] = useState(false) ;
-    const [ view_orders , set_view_orders ] = useState({}) ;
-    const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
-    const [ search , set_search ] = useState("") ;
+          isConnected,
+          orders,
+          connectionStatus,
+          setOrders
+        } : any = useSocket('admin', {
+          name: "this is admin thats it"
+        })
     
-    const [ is_live , set_is_live ] = useState(true);
+        const [view , setView ] = useState(false) ;
+        const [ view_orders , set_view_orders ] = useState({}) ;
+        const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
 
-    const get_all_orders = useQuery({
-      queryKey : ["all_pending_orders"] ,
-      queryFn : getAllOrdesDetails
-    })
+        const get_all_orders = useQuery({
+              queryKey : ["all_pending_orders"] ,
+              queryFn : getAllOrdesDetails
+            })
+        
+            const handleView = () => {
+                setView(!view) ;
+                console.log(view);
+            }
+        
+            useEffect(() => {
+              if (get_all_orders.isSuccess) {
+                setOrders(get_all_orders.data.data); 
+              }
+            }, [get_all_orders.data]);
 
-    const handleView = () => {
-        setView(!view) ;
-        console.log(view);
-    }
-
-    useEffect(() => {
-      if (get_all_orders.isSuccess) {
-        setOrders(get_all_orders.data.data); 
-      }
-    }, [get_all_orders.data]);
-
-    
+            if(get_all_orders.isLoading)
+              {
+                
+                return (
+                  <div className='h-screen bg-gray-100 m-2 rounded-4xl'>
+                    <div className='flex justify-center items-center h-8/12'>
+                      <MobileLoaders/>
+                    </div>
+                  </div>
+                )
+              }
 
   return (
     <div>
-        <div className='w-fit mt-2 px-3 flex whitespace-nowrap'>
-              <button className={` ${inter.className} text-sm px-2   py-2 mr-2 font-semibold opacity-75 border-b-2 ${ is_live==true ? "border-amber-400 bg-amber-50" : "border-gray-300 bg-white"}  `}
-              onClick={() => set_is_live(true)}
-              >New Orders</button>
-              <button className={` ${inter.className} text-sm px-2  py-2 mr-2 font-semibold opacity-75 border-b-2 ${ is_live==false ? "border-amber-400 bg-amber-50" : "border-gray-300 bg-white"}  `}
-              onClick={() => set_is_live(false)}
-              >Served Orders</button>
-              <div className="relative w-full max-w-sm ml-5">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-1 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  onChange={(e) => set_search(e.target.value)}
-                />
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-              </div>
-        </div>
-        {/* {
+        {
             view && 
             <div
             className="fixed inset-0 bg-black opacity-40 z-10"
@@ -81,7 +71,7 @@ const LiveOrders = (props : any) => {
         <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
             <div className={`${inter.className} mt-2`}>
               <table className='border-collapse w-full'>
-                  <thead>
+                  <thead className='text-sm'>
                       <tr className='opacity-75'>
                           <th className='text-left'>Order ID</th>
                           <th className='text-left'>Customer Name</th>
@@ -123,11 +113,16 @@ const LiveOrders = (props : any) => {
                             minute: '2-digit',
                             hour12: true,
                           });
+
+                          if(   !item.user_name?.toLowerCase().includes(props.search.toLowerCase()) && props.search != "" )
+                          {
+                            return ;
+                          }
                           
                           return (
                           <tr className='h-10' key={index}>
                             <td className='py-2'>#02304</td>
-                            <td>Ibrahim</td>
+                            <td>{ item.user_name ? item.user_name : "errors" }</td>
                             <td>{formattedDate}</td>
                             <td>{formattedTime}</td>
                             <td>&#8377; {item.total_cost}</td>
@@ -158,17 +153,9 @@ const LiveOrders = (props : any) => {
                   </tbody>
               </table>
             </div>
-        </div> */}
-        <div className=''>
-          {
-            is_live ? 
-            <NewOrders isNotLive={props.isNotLive} search={search}/>
-            : 
-            <ServerdOrders isNotLive={props.isNotLive} search={search}/>
-          }
         </div>
     </div>
   )
 }
 
-export default LiveOrders
+export default NewOrders
