@@ -17,10 +17,14 @@ export const useSocket = (userType = 'user', userData = {}) => {
     // Initialize socket connection
     //http://localhost:3001
     //https://restaurant-server-641z.onrender.com
+
+    //http://localhost:3000
+    //https://restaurant-ten-black.vercel.app
+
     const newSocket = io('https://restaurant-server-641z.onrender.com', {
       transports: ['websocket'],
       cors: {
-        origin: "https://restaurant-ten-black.vercel.app/",
+        origin: "https://restaurant-ten-black.vercel.app",
         methods: ["GET", "POST"]
       }
     });
@@ -61,7 +65,7 @@ export const useSocket = (userType = 'user', userData = {}) => {
 
       newSocket.on('order-received', (orderData) => {
         console.log('New order received from socket:', orderData);
-        setOrders(prev => [orderData, ...prev]);
+        setOrders(prev => [orderData._doc, ...prev]);
       });
 
       console.log("admin connected to the socket io")

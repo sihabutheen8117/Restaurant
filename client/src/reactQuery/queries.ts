@@ -3,6 +3,7 @@ import { Food } from '@/reactQuery/itemInterfaces'
 // Authendication queries 
 
 //https://restaurant-server-641z.onrender.com
+//http://localhost:3001
 
 const api = "https://restaurant-server-641z.onrender.com" ;
 

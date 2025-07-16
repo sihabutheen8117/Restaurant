@@ -24,7 +24,7 @@ app.use(express.json( {
 app.use(express.urlencoded({ extended: true  , limit : "15mb"}));
 app.use(cookieParser())
 
-//mongodb+srv://sihabutheen8117:<db_password>@cluster0.296mzuv.mongodb.net/
+//mongodb+srv://sihabutheen8117:xe4hR1zxe0hEN5I5@cluster0.296mzuv.mongodb.net/
 //mongodb://localhost/alkhalid_server
 
 mongoose.connect("mongodb+srv://sihabutheen8117:xe4hR1zxe0hEN5I5@cluster0.296mzuv.mongodb.net/")
@@ -48,7 +48,7 @@ app.use(cors(corsOptions));
 const server = http.createServer(app);
 const io = new Server(server ,{
     cors: {
-      origin: "https://restaurant-ten-black.vercel.app", // Your Next.js app URL
+      origin: "https://restaurant-ten-black.vercel.app", 
       methods: ["GET", "POST"],
       credentials: true
     }
