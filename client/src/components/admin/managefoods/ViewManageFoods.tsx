@@ -37,8 +37,9 @@ const ViewManageFoods = (props: any) => {
     {
         return(
             <div className=' h-screen '>
-                <div className='flex justify-center h-8/12 items-center opacity-70'><SystemLoaders/></div>
-                
+                <div className='flex justify-center h-8/12 items-center opacity-70'>
+                <SystemLoaders/>
+                </div>             
             </div>  
         )
     }

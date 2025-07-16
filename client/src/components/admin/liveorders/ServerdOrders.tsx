@@ -6,6 +6,7 @@ import { get_seved_orders } from '@/reactQuery/queries'
 import { inter } from '@/utils/fonts'
 import { useState} from 'react'
 import ViewOrders from './ViewOrders'
+import MobileLoaders from '@/components/Loaders/MobileLoaders'
 
 const ServerdOrders = (props : any ) => {
 
@@ -20,6 +21,18 @@ const ServerdOrders = (props : any ) => {
         setView(!view) ;
         console.log(view);
     }
+
+    if(served_orders.isLoading )
+      {
+        
+        return (
+          <div className='h-screen bg-gray-100 m-2 rounded-4xl'>
+            <div className='flex justify-center items-center h-8/12'>
+              <MobileLoaders/>
+            </div>
+          </div>
+        )
+      }
 
   return (
     <div>
@@ -80,7 +93,7 @@ const ServerdOrders = (props : any ) => {
                                 return (
                                 <tr className='h-10' key={index}>
                                   <td className='py-2'>#02304</td>
-                                  <td>Ibrahim</td>
+                                  <td>{ item.user_name ? item.user_name : "errors" }</td>
                                   <td>{formattedDate}</td>
                                   <td>{formattedTime}</td>
                                   <td>&#8377; {item.total_cost}</td>

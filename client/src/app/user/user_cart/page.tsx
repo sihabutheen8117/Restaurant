@@ -45,7 +45,7 @@ const Page = () => {
 
   const handleOrderPlace = () => {
 
-    if(is_name == "")
+    if(is_name == "" || is_name == undefined || is_name == null)
     {
       set_act_prompt(true)
       return ;

@@ -41,7 +41,7 @@ const NewOrders = (props : any) => {
               }
             }, [get_all_orders.data]);
 
-            if(get_all_orders.isLoading)
+            if(get_all_orders.isLoading )
               {
                 
                 return (
