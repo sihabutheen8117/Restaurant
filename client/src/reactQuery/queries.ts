@@ -2,9 +2,14 @@ import axios from 'axios'
 import { Food } from '@/reactQuery/itemInterfaces'
 // Authendication queries 
 
+//https://restaurant-server-641z.onrender.com
+
+const api = "https://restaurant-server-641z.onrender.com" ;
+
+
 export const registerUser = async (userData : any ) => {
     try {
-        const response = await axios.post('http://localhost:3001/api/authendicate/register',
+        const response = await axios.post(api+'/api/authendicate/register',
         userData,
         {
           withCredentials : true 
@@ -20,7 +25,7 @@ export const registerUser = async (userData : any ) => {
 
 export const loginUser = async (userData :any) => {
     try {
-        const response = await axios.post('http://localhost:3001/api/authendicate/login',
+        const response = await axios.post(api+'/api/authendicate/login',
         userData,
         {
           withCredentials : true 
@@ -37,7 +42,7 @@ export const loginUser = async (userData :any) => {
 
 export const getAllFood = async() => {
   try{
-    const response = await axios.get<Food[]>('http://localhost:3001/api/get_all_foods') ;
+    const response = await axios.get<Food[]>(api+'/api/get_all_foods') ;
     console.log(response)
     return response
   }
@@ -50,7 +55,7 @@ export const getAllFood = async() => {
 
 export const placeOrder = async(order_details : any ) => {
   try{
-    const response = await axios.post('http://localhost:3001/api/place_order',
+    const response = await axios.post(api+'/api/place_order',
       order_details,
       {
         withCredentials : true 
@@ -70,7 +75,7 @@ export const placeOrder = async(order_details : any ) => {
 
 export const myOrders = async() => {
   try{
-    const response = await axios.get('http://localhost:3001/api/my_orders',
+    const response = await axios.get(api+'/api/my_orders',
       {
         withCredentials : true 
       }
@@ -99,7 +104,7 @@ export const getFoodDetails =  async() => {
 
 export const getFoodDetailsWithoutReviews =  async(food_details : any ) => {
   try{
-    const response = await axios.post('http://localhost:3001/api/get_food_details_whithout_reviews',
+    const response = await axios.post(api+'/api/get_food_details_whithout_reviews',
       food_details ,
       {
         withCredentials : true 
@@ -117,7 +122,7 @@ export const getFoodDetailsWithoutReviews =  async(food_details : any ) => {
 
 export const deleteOrder =  async(food_details : any ) => {
   try{
-    const response = await axios.post('http://localhost:3001/api/delete_orders',
+    const response = await axios.post(api+'/api/delete_orders',
       food_details ,
       {
         withCredentials : true 
@@ -138,7 +143,7 @@ export const deleteOrder =  async(food_details : any ) => {
 export const addNewFood =  async(food_data:Food) => {
   try{
     console.log(food_data.food_image)
-    const respose = await axios.post("http://localhost:3001/api/add_new_foods",
+    const respose = await axios.post(api+"/api/add_new_foods",
       food_data,
       {
         withCredentials : true 
@@ -155,7 +160,7 @@ export const addNewFood =  async(food_data:Food) => {
 
 export const getAllFoodForEdit = async() => {
   try{
-    const response = await axios.get<Food[]>('http://localhost:3001/api/get_all_foods_for_edit') ;
+    const response = await axios.get<Food[]>(api+'/api/get_all_foods_for_edit') ;
     console.log(response)
     return response
   }
@@ -169,7 +174,7 @@ export const getAllFoodForEdit = async() => {
 
 export const deleteFood = async( _id : string) => {
   try{
-    const response = await axios.delete('http://localhost:3001/api/delete_food' ,
+    const response = await axios.delete(api+'/api/delete_food' ,
       {
         data : {
           _id : _id
@@ -188,7 +193,7 @@ export const deleteFood = async( _id : string) => {
 
 export const getAllOrdesDetails = async() => {
   try{
-    const response = await axios.get('http://localhost:3001/api/get_all_orders_details') ;
+    const response = await axios.get(api+'/api/get_all_orders_details') ;
     console.log(response)
     return response
   }
@@ -201,7 +206,7 @@ export const getAllOrdesDetails = async() => {
 
 export const getFoodDetailsForOrders =  async(order_details : any ) => {
   try{
-    const response = await axios.post('http://localhost:3001/api/get_food_details_for_orders',
+    const response = await axios.post(api+'/api/get_food_details_for_orders',
       order_details ,
       {
         withCredentials : true 
@@ -219,7 +224,7 @@ export const getFoodDetailsForOrders =  async(order_details : any ) => {
 
 export const payment_checkout =  async(order_details : any ) => {
   try{
-    const response = await axios.post('http://localhost:3001/api/payment_checkout',
+    const response = await axios.post(api+'/api/payment_checkout',
       order_details ,
       {
         withCredentials : true 
