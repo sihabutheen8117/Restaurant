@@ -80,8 +80,8 @@ const LiveOrders = (props : any) => {
                   <tbody className='text-sm'>
                   
                       {
-                        get_all_orders.isSuccess &&
-                        get_all_orders.data.data.map( (item:any , index : any) => {
+                        orders &&
+                        orders.map( (item:any , index : any) => {
 
                           const date = new Date(item.order_date);
 
