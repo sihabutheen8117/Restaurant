@@ -12,7 +12,13 @@ const Page = () => {
   const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
   
   const [userCart, setUserCart] = useState<any>(null);
-  const [is_name, set_is_name] = useState<string>(() => localStorage.getItem("user_name") || "");
+  const [is_name, set_is_name] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("user_name");
+    set_is_name(storedName);
+  }, []);
+
   const [ act_prompt , set_act_prompt ] = useState(false) ;
 
   const router = useRouter() ;
