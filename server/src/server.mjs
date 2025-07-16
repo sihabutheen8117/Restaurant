@@ -27,7 +27,7 @@ app.use(cookieParser())
 //mongodb+srv://sihabutheen8117:<db_password>@cluster0.296mzuv.mongodb.net/
 //mongodb://localhost/alkhalid_server
 
-mongoose.connect("mongodb+srv://sihabutheen8117:<db_password>@cluster0.296mzuv.mongodb.net/")
+mongoose.connect("mongodb+srv://sihabutheen8117:xe4hR1zxe0hEN5I5@cluster0.296mzuv.mongodb.net/")
     .then( ()=> console.log("Connected to Database"))
     .catch( (err) => console.log(err))
 
