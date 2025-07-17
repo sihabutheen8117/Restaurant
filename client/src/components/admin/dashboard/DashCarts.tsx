@@ -1,7 +1,20 @@
+"use client"
+
 import React from 'react'
 import { inter } from '@/utils/fonts'
+import { useQuery } from '@tanstack/react-query'
+import { get_countables } from '@/reactQuery/queries'
+
+
 
 const DashCarts = () => {
+
+    const get_countable_query = useQuery({
+        queryKey : ["get_countables"] ,
+        queryFn : get_countables 
+      })
+
+
   return (
     <div>
       <div className={`flex ${inter.className} gap-7 justify-center mt-5`}>
@@ -14,7 +27,10 @@ const DashCarts = () => {
                     Total Sales
                 </div>
                 <div className='font-semibold'>
-                    &#8377; 23049
+                    &#8377; {
+                        get_countable_query.isSuccess && 
+                        get_countable_query.data.data.total_sales
+                    }
                 </div>
             </div>
         </div>
@@ -28,7 +44,10 @@ const DashCarts = () => {
                     Total Orders
                 </div>
                 <div className='font-semibold'>
-                    2300
+                    {
+                        get_countable_query.isSuccess && 
+                        get_countable_query.data.data.total_orders
+                    }
                 </div>
             </div>
         </div>
@@ -42,7 +61,10 @@ const DashCarts = () => {
                     Total Menu
                 </div>
                 <div className='font-semibold'>
-                    130
+                    {
+                        get_countable_query.isSuccess && 
+                        get_countable_query.data.data.total_menu
+                    }
                 </div>
             </div>
         </div>

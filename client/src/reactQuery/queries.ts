@@ -278,6 +278,46 @@ export const set_user_name_for_anonymous  =  async(user_data : any ) => {
   }
 }
 
+export const get_countables =  async( ) => {
+
+  try{
+    const response = await axios.get(api+'/api/get_countables',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+
+export const get_dashboard_analytics_orders_customers =  async( user_data : any) => {
+  try{
+    const response = await axios.post(api+'/api/get_dashboard_analytics_orders_customers',
+      {
+        user_data
+      }
+      ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
 
 // common queries 
 

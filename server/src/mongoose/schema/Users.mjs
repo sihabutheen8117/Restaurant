@@ -22,6 +22,8 @@ const UsersSchema = mongoose.Schema({
             type : mongoose.Schema.Types.ObjectId
         }
     ]
-})
+    },
+    { timestamps: true } 
+)
 
 export const Users = mongoose.model('Users' , UsersSchema)
