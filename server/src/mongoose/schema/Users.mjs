@@ -11,7 +11,8 @@ const UsersSchema = mongoose.Schema({
     },
     user_email : {
         type : mongoose.Schema.Types.String ,
-        required : true
+        required : true ,
+        unique : true 
     },
     user_password : {
         type : mongoose.Schema.Types.String,

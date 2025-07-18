@@ -13,13 +13,21 @@ const page = () => {
     const [ email , setEmail ]  = useState("") ;
     const [password , setPassword ] = useState("") ;
     const router = useRouter() ;
+    const [ is_err , set_err] = useState(false); 
+    const [ err_message , set_err_message ] = useState("") ;
     
     const login_mutation = useMutation({
         mutationFn: loginUser,
         onSuccess: (data: any) => {
           localStorage.setItem("user_name", data.user_name);
+          set_err(false)
           router.push('../user/client'); // <-- Moved here
+          
         },
+        onError: (error:any, variables, context) => {
+            set_err_message(error.response.data.message)
+            set_err(true) ;
+        }
       });
 
 
@@ -64,6 +72,19 @@ const page = () => {
                     className="w-full px-4 py-1 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-1 focus:ring-[#FFF085]  focus:border-[#FFF085] transition"
                     onChange={ (e)=> setPassword(e.target.value)}
                 />
+            </div>
+
+            <div className=''>
+                {
+                    is_err && 
+                    <div className='bg-red-100 rounded-lg flex w-full justify-center mt-2 '>
+                        <div className='text-red-500 text-sm py-1.5'>
+                            {
+                                err_message
+                            }
+                        </div>
+                    </div>
+                }
             </div>
 
             <div className='flex justify-end w-full pt-1'>

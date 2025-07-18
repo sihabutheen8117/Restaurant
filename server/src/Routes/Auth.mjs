@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { verifyToken , genToken } from "../middlewares/authmiddleware.mjs";
 import { Users } from "../mongoose/schema/Users.mjs";
+import { errorHandler } from "../middlewares/authErrorHandler.mjs";
 
 const AuthRouter =Router() ;
+
 
 AuthRouter.post( "/api/authendicate/login" , 
     async(req , res ) => {
@@ -18,13 +20,13 @@ AuthRouter.post( "/api/authendicate/login" ,
             if( !user)
             {
                 return res.status(401).send({
-                    error : "user email is not found , please register"
+                    message : "Email not found ! "
                 })
             }
             if( user_password != user.user_password )
             {
                 return res.status(401).send({
-                    error : "incorrect password , Please try again"
+                    message : "incorrect password !"
                 })
             }
             const user_name = user.user_name ;
@@ -45,15 +47,13 @@ AuthRouter.post( "/api/authendicate/login" ,
             })
         }
         catch(error){
-            res.status(501).send({
-                error : error
-            })
+            next(error)
         }
     }
 )
 
 AuthRouter.post("/api/authendicate/register" ,
-    async(req , res ) => {
+    async(req , res , next) => {
         const user_data = req.body ;
         
         const final_data = {
@@ -86,10 +86,7 @@ AuthRouter.post("/api/authendicate/register" ,
         }
         catch(error)
         {
-            console.log(error)
-            res.status(401).send({
-                error : error 
-            })
+            next(error)
         }
         
     }
@@ -106,5 +103,8 @@ AuthRouter.delete("/api/authendicate/delete_user" ,
 
     }
 )
+
+AuthRouter.use(errorHandler)
+
 
 export default AuthRouter;

@@ -13,6 +13,8 @@ const page = () => {
     const [ name , setName ] = useState("")
     const [ email , setEmail] = useState("")
     const [ password , setPassword] = useState("")
+    const [ is_err , set_err] = useState(false); 
+    const [ err_message , set_err_message ] = useState("") ;
 
     const router = useRouter() ;
     const register_mutation = useMutation({
@@ -20,9 +22,13 @@ const page = () => {
         onSuccess: (data: any) => {
             localStorage.setItem("user_name", data.user_name);
             router.push('../user/client') // <-- Moved here
+            set_err(false)
         },
+        onError: (error:any, variables, context) => {
+            set_err_message(error.response.data.message)
+            set_err(true) ;
+        }
     })
-
     const handleRegister = () => {
         register_mutation.mutate({ user_name : name , user_email : email , user_password : password });
     }
@@ -88,6 +94,19 @@ const page = () => {
                 />
             </div>
 
+            <div className=''>
+                {
+                    is_err && 
+                    <div className='bg-red-100 rounded-lg flex w-full justify-center mt-2 '>
+                        <div className='text-red-500 text-sm py-1.5'>
+                            {
+                                err_message
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
             <div className='flex gap-2 px-2 pt-4'>
                 <Link href={"login"} className='border-2 rounded-full py-2 px-4 w-1/2 flex justify-center  border-amber-400 text-amber-400'>
                     Login
@@ -103,6 +122,7 @@ const page = () => {
                     </svg>
                     :
                     "Register"
+
                 }</button>
             </div>
 
