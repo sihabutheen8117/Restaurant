@@ -215,13 +215,13 @@
 
 
   /* From Uiverse.io by barisdogansutcu */ 
-    svg {
+    .svg_loading {
     width: 1.6em;
     transform-origin: center;
     animation: rotate4 2s linear infinite;
    }
    
-   circle {
+   .circle_loading {
     fill: none;
     stroke: hsl(220, 16%, 96%);
     stroke-width: 5;

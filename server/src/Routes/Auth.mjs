@@ -81,7 +81,7 @@ AuthRouter.post("/api/authendicate/register" ,
             })
 
             res.status(200).send({
-                status : "user created  successfully"
+                user_name : response.user_name
             })
         }
         catch(error)

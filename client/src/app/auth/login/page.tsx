@@ -76,13 +76,13 @@ const page = () => {
                 className='border-2 rounded-full py-2 px-4 w-1/2 border-amber-400 text-amber-400 flex justify-center'>
                     Register
                 </Link>
-                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white flex justify-center w-full'
+                <button className='border-2 rounded-full py-2 px-4 bg-amber-400 text-white flex justify-center w-full'
                 disabled = {login_mutation.isPending}
                 onClick={getLogin}
                 >{
                     login_mutation.isPending ? 
-                    <svg viewBox="25 25 50 50">
-                        <circle r="20" cy="50" cx="50"></circle>
+                    <svg viewBox="25 25 50 50" className='svg_loading'>
+                        <circle r="20" cy="50" cx="50" className='circle_loading'></circle>
                     </svg>
                     :
                     "Login"

@@ -18,6 +18,7 @@ const page = () => {
     const register_mutation = useMutation({
         mutationFn : registerUser,
         onSuccess: (data: any) => {
+            localStorage.setItem("user_name", data.user_name);
             router.push('../user/client') // <-- Moved here
         },
     })
@@ -97,8 +98,8 @@ const page = () => {
                 onClick={handleRegister}
                 >{
                     register_mutation.isPending ? 
-                    <svg viewBox="25 25 50 50">
-                        <circle r="20" cy="50" cx="50"></circle>
+                    <svg viewBox="25 25 50 50" className='svg_loading'>
+                        <circle r="20" cy="50" cx="50" className='circle_loading'></circle>
                     </svg>
                     :
                     "Register"
