@@ -5,7 +5,7 @@ import '@/styles/mainStyles.css'
 
 const MobileLoaders = () => {
   return (
-    <div className="loader rounded-2xl w-64">
+    <div className="loader rounded-2xl w-full">
       <div className="wrapper">
         <div className="circle"></div>
         <div className="line-1"></div>

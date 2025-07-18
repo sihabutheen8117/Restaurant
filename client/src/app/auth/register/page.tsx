@@ -92,9 +92,17 @@ const page = () => {
                     Login
                 </Link>
                 
-                <button className='border-2 rounded-full py-2 px-4 w-1/2 bg-amber-400 text-white'
+                <button className='border-2 rounded-full py-2 px-4 bg-amber-400 text-white flex justify-center w-full'
+                disabled = {register_mutation.isPending}
                 onClick={handleRegister}
-                >Register</button>
+                >{
+                    register_mutation.isPending ? 
+                    <svg viewBox="25 25 50 50">
+                        <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+                    :
+                    "Register"
+                }</button>
             </div>
 
             <div className='pt-3 opacity-50 py-2 w-full flex justify-center text-sm'>or Sign in with Google</div>

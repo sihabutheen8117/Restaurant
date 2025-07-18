@@ -141,7 +141,7 @@ const UserProduct = (props : any) => {
         if(foodQuery.isLoading)
         {
             return(
-                <div className=''>
+                <div className='w-full'>
                     <MobileLoaders/>
                     <MobileLoaders/>
                     <MobileLoaders/>
