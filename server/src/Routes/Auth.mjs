@@ -92,17 +92,6 @@ AuthRouter.post("/api/authendicate/register" ,
     }
 )
 
-AuthRouter.post("/api/authendicate/update_authendication" , 
-    async(req , res ) => {
-
-    }
-)
-
-AuthRouter.delete("/api/authendicate/delete_user" ,
-    async(req , res ) => {
-
-    }
-)
 
 AuthRouter.use(errorHandler)
 
