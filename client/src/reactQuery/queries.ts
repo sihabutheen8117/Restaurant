@@ -318,6 +318,23 @@ export const get_dashboard_analytics_orders_customers =  async( user_data : any)
   }
 }
 
+export const register_google_oauth  =  async() => {
+  try{
+    const response = await axios.post(api+'/api/google/oauth',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
 
 // common queries 
 

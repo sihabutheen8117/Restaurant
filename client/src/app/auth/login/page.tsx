@@ -3,10 +3,11 @@
 import '@/styles/mainStyles.css'
 import { lexend } from "@/utils/fonts";
 import Link from 'next/link';
-import { loginUser } from '@/reactQuery/queries'
+import { loginUser ,register_google_oauth } from '@/reactQuery/queries'
 import { useState , useEffect} from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 
 const page = () => {
 
@@ -30,12 +31,23 @@ const page = () => {
         }
       });
 
+      const register_oauth_mutation = useMutation({
+              mutationFn : register_google_oauth ,
+              onSuccess : (data :any) => {
+                  window.location.href = data.data.url
+              }
+          })
+    
+    const handleOauthRegister = () => {
+            console.log("clicked")
+            register_oauth_mutation.mutate() ;
+        }
+
 
     const getLogin = () => {
         console.log("loggin button clicked")
         login_mutation.mutate( { user_email : email , user_password : password})
     }
-
 
   return (
     <div className="h-screen flex justify-center items-center ">
@@ -103,7 +115,7 @@ const page = () => {
                 >{
                     login_mutation.isPending ? 
                     <svg viewBox="25 25 50 50" className='svg_loading'>
-                        <circle r="20" cy="50" cx="50" className='circle_loading'></circle>
+                        <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
                     </svg>
                     :
                     "Login"
@@ -113,14 +125,25 @@ const page = () => {
             <div className='pt-3 opacity-50 py-2 w-full flex justify-center text-sm'>or Sign in with Google</div>
             <hr className='opacity-60'/>
             <div className='w-full flex justify-center pt-3'>
-                <button className='flex rounded-full bg-gray-200 py-2 px-5 gap-2'>
+                <button className='flex rounded-full bg-gray-200 py-2 px-5 gap-2'
+                onClick={handleOauthRegister}
+                disabled = {register_oauth_mutation.isPending}
+                >
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
                         alt="Google Logo" 
                         className="w-6" 
                     />
-                    <div className=''>
-                        Sign in with Goole
-                    </div>
+                    {
+                        register_oauth_mutation.isPending ? 
+                        <svg viewBox="25 25 50 50" className='svg_loading'>
+                            <circle r="20" cy="50" cx="50" className='circle_loading stroke-black'></circle>
+                        </svg>
+                        :
+                        <div className=''>
+                            Sign in with Goole
+                        </div>
+
+                    }
                 </button>
             </div>
 

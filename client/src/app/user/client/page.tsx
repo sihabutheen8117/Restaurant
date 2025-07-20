@@ -5,9 +5,11 @@ import UserHeading from "@/components/User/UserHeading"
 import UserMenu from "@/components/User/UserMenu"
 import Banner from "@/components/User/Banner"
 import UserProduct from "@/components/User/UserProduct"
-import { useState } from "react"
+import { useState , useEffect} from "react"
 import { UserFilters } from "@/reactQuery/itemInterfaces"
 import { CartItems } from "@/reactQuery/itemInterfaces"
+import { useSearchParams } from "next/navigation";
+
 
 const page = () => {
 
@@ -23,6 +25,17 @@ const page = () => {
   const handleFilter = () => {
     setTogFilter(!togFilter)
   }
+
+  const searchParams = useSearchParams();
+  
+  useEffect( ()=> {
+      const userName = searchParams.get("user_name") || "" ;
+      if(userName != "")
+      {
+          localStorage.setItem("user_name", userName );
+      }
+  } ,[])
+  
   return (
     <div>
       {
