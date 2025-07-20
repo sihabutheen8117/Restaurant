@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React , {Suspense} from 'react'
 import { useState } from 'react'
 import OrderDetails from '@/components/User/OrderDetails'
 import UserNav from '@/components/User/UserNav'
@@ -29,19 +29,22 @@ const page = () => {
   if(myOrdersQuery.isLoading)
   {
     return(
-      <div className=''>
-          <div className="z-20">
-            <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
-          </div>
-          <div className='mx-3 mt-4'>
-            <MobileLoaders/>
-            <MobileLoaders/>
-            <MobileLoaders/>
-          </div>
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className=''>
+            <div className="z-20">
+              <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
+            </div>
+            <div className='mx-3 mt-4'>
+              <MobileLoaders/>
+              <MobileLoaders/>
+              <MobileLoaders/>
+            </div>
+        </div>
+      </Suspense>
     )    
   }
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div>
       <div className="z-20">
         <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
@@ -114,6 +117,7 @@ const page = () => {
       }
       </div>
     </div>
+    </Suspense>
   )
 }
 
