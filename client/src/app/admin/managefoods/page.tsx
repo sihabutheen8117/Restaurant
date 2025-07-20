@@ -66,11 +66,11 @@ const page = () => {
             >
                 <i className="group-hover:text-amber-500 transition-all duration-200 fas fa-plus pr-2"></i> New Food
             </button>
-            <button className='group py-1.5 px-2 bg-white text-sm rounded-lg shadow-lg hover:bg-amber-50'
+            {/* <button className='group py-1.5 px-2 bg-white text-sm rounded-lg shadow-lg hover:bg-amber-50'
             onClick={handleNewCategory}
             >
                 <i className="group-hover:text-amber-500 transition-all duration-200 fas fa-plus pr-2"></i> New category
-            </button>
+            </button> */}
         </div>
       </div>
       <div className='flex flex-nowrap gap-2 w-full overflow-x-auto py-2 my-1'>

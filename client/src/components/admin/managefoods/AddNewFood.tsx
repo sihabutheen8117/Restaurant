@@ -6,32 +6,6 @@ import { addNewFood} from '@/reactQuery/queries'
 import { useState } from 'react'
 import { Food } from '@/reactQuery/itemInterfaces'
 
-const foodDetails = {
-    food_name: "Chole Bhature",
-    rating: 4.4,
-    price: "110",
-    offer_price: -1,
-    describtion: "Spicy chickpeas served with deep-fried fluffy bhature.",
-    ingredients: ["Chickpeas", "onion", "tomato", "spices", "maida"],
-    reviews: [
-        {
-            id: "1046",
-            reviewer_name: "Rajeshwari",
-            review: "Crispy bhature and spicy chole!",
-            rating : 3.0 , 
-            date: "9 June 2025"
-        },
-        {
-            id: "1047",
-            reviewer_name: "Vikram Tiwari",
-            review: "Heavy but worth it!",
-            rating : 5.0 , 
-            date: "6 June 2025"
-        }
-    ],
-    images_url : "/assets/foods/burger_image.jpeg"
-}
-
 const AddNewFood = (props:any) => {
 
     const queryClient = useQueryClient()
@@ -45,7 +19,8 @@ const AddNewFood = (props:any) => {
     const [ isEnable , setIsEnable ] = useState(false) ;
     const [ category , setCategory ] = useState('') ;
     const [ ingredients  , setIngredients ] = useState('') ;
-    const [ preview_image , set_preview_image ] = useState('');
+    const [ preview_image , set_preview_image ] = useState("");
+    const [ new_category , set_new_category ] = useState("") ;
 
     const handleImageChange = (e:any) => {
         const file = e.target.files[0];
@@ -81,6 +56,8 @@ const AddNewFood = (props:any) => {
 
     const addFoods = () => {
 
+        const effectiveCategory = new_category == "" ? category : new_category ;
+
         const foodData : Food =  {
             food_name : foodName ,
             describtion : foodDesc ,
@@ -90,7 +67,7 @@ const AddNewFood = (props:any) => {
             ingredients : ingredients ,
             isDisable : isEnable ,
             food_image : foodImage,
-            category : category ,
+            category : effectiveCategory ,
         }
 
         newFoods.mutate(foodData) ;
@@ -101,7 +78,7 @@ const AddNewFood = (props:any) => {
       
       <div className='md:flex'>
         {
-            foodImage ? <img src={preview_image} alt={foodDetails.food_name} className='md:object-cover md:w-56 h-56 rounded-lg mx-auto'/> 
+            foodImage ? <img src={preview_image} alt={"food_name"} className='md:object-cover md:w-56 h-56 rounded-lg mx-auto'/> 
             : <div className='md:w-56 h-56 rounded-lg mx-auto border-2 border-gray-200 flex justify-center items-center text-sm text-gray-500'>Image is not set</div>
         }
         <div className='w-full md:ml-3 ml-1 md:mt-0 mt-3'>
@@ -131,7 +108,7 @@ const AddNewFood = (props:any) => {
                     onChange={ (e) => setFoodDesc(e.target.value)}
                     />
                 </div>
-            <div className='mt-3'>
+            <div className='mt-2'>
              
                 <div className='flex md:ml-3 md:mt-1 mt-3 gap-6'>
                     <div className='relative flex' >
@@ -169,6 +146,22 @@ const AddNewFood = (props:any) => {
                             />
                     </div>
                 </div>
+                <div className='mt-2'>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100"
+                        onChange={handleImageChange}
+                    />
+                    <div className='font-semibold opacity-50 text-sm mt-1'>
+                        ( * Please upload image with equal width and height )
+                    </div>
+                </div>
             </div>
         </div>
       </div>
@@ -193,23 +186,6 @@ const AddNewFood = (props:any) => {
                 onChange={ () => setIsEnable(!isEnable)}
                 />
             </div>
-            <div className='mt-2'>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload new Image</label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-lg file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100"
-                    onChange={handleImageChange}
-                />
-                <div className='font-semibold opacity-50 text-sm mt-1'>
-                    ( * Please upload image with equal width and height )
-                </div>
-            </div>
             <div className='text-sm absolute bottom-2 right-7 font-semibold'>
 
                     <button className='mr-4 px-2 py-1 bg-gray-400 text-white rounded-xl hover:bg-gray-500'
@@ -226,19 +202,34 @@ const AddNewFood = (props:any) => {
                
             </div>
             <div className='mt-1'>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                Choose Category
-                </label>
-                <select
-                id="category"
-                name="category"
-                className="block w-1/2 rounded-md border border-gray-300 bg-white px-3 py-1.5 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 text-sm"
-                onChange={ (e) => setCategory(e.target.value)}
-                >
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="drinks">Drinks</option>
-                </select>
+                <div className=''>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    Choose Category
+                    </label>
+                    <select
+                    id="category"
+                    name="category"
+                    className={`block w-1/2 rounded-md border border-gray-300 bg-white px-3 py-1.5 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 text-sm ${ new_category != "" && "text-gray-400" }`}
+                    disabled = { new_category != "" }
+                    onChange={ (e) => setCategory(e.target.value)}
+                    >
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="drinks">Drinks</option>
+                    </select>
+                </div>
+                <div className='mt-1'>
+                    <label htmlFor="new-cat" className="block text-sm font-medium text-gray-700">
+                        or Create new Category
+                    </label>
+                    <input
+                        type="text"
+                        id="new-cat"
+                        placeholder="Food name"
+                        className="mt-1 block w-1/2 rounded-md border border-gray-300 shadow-sm px-3 py-1 focus:outline-none  focus:border-amber-200"
+                        onChange={ (e) => set_new_category( e.target.value )}
+                        />
+                </div>
             </div>
         </div>
       </div>

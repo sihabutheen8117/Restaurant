@@ -154,24 +154,17 @@ AuthRouter.post('/api/google/oauth', async (req, res) => {
 
                 find_user = await new_user.save() ;
             }
-            
-            // token generation 
-
             const token = genToken({
                 isAnonymous : false ,
                 user_id: find_user._id ,
                 user_name : user_data.name 
             }) ;
-
             res.cookie("authorization" , token , {
                 httpOnly : true ,
                 secure :  true  ,
                 sameSite : "None"
             })
-            
-            //successfull redirection to user client 
             return res.redirect(303, `${process.env.CORS_ORIGIN}/user/client?user_name=${user_data.name}`);
-
           }
           return res.redirect(303 , `${process.env.CORS_ORIGIN}/`)
         } catch (err) {

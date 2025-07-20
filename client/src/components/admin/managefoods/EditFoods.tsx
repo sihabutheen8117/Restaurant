@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Food  } from '@/reactQuery/itemInterfaces'
 
 const EditFoods = ( props : any) => {
-    console.log(props.food_data)
+
     const queryClient = useQueryClient()
 
     const [ foodName , setFoodName ] = useState(props.food_data.food_name) ;
@@ -20,6 +20,7 @@ const EditFoods = ( props : any) => {
     const [ category , setCategory ] = useState(props.food_data.category) ;
     const [ ingredients  , setIngredients ] = useState(props.food_data.ingredients) ;
     const [ preview_image , set_preview_image ] = useState('');
+    const [ new_category , set_new_category ] = useState("") ;
 
     const handleImageChange = (e:any) => {
         const file = e.target.files[0];
@@ -79,7 +80,7 @@ const EditFoods = ( props : any) => {
 
     const addFoods = () => {
 
-        
+        const effectiveCategory = new_category == "" ? category : new_category ;
 
         const foodData : Food =  {
             food_name : foodName ,
@@ -90,7 +91,7 @@ const EditFoods = ( props : any) => {
             ingredients : ingredients ,
             isDisable : isEnable ,
             food_image : foodImage,
-            category : category ,
+            category : effectiveCategory ,
         }
 
         newFoods.mutate(foodData) ;
@@ -132,11 +133,11 @@ const EditFoods = ( props : any) => {
                     onChange={ (e) => setFoodDesc(e.target.value)}
                     />
                 </div>
-            <div className='mt-3'>
-                <div className='md:ml-2 mt-3 text-sm'>
+            <div className='mt-1.5'>
+                {/* <div className='md:ml-2 mt-3 text-sm'>
                     {props.food_data.rating_count} {stars}
                     <span className='ml-3 text-lg font-semibold opacity-60'>({props.food_data.review_count})</span>
-                </div>
+                </div> */}
                 <div className='flex md:ml-3 md:mt-1 mt-3 gap-6'>
                     <div className='relative flex' >
                         <div className='block font-medium text-gray-700 pt-2 mr-2'>Price</div>
@@ -175,6 +176,22 @@ const EditFoods = ( props : any) => {
                             />
                     </div>
                 </div>
+                <div className='mt-2'>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100"
+                        onChange={handleImageChange}
+                    />
+                    <div className='font-semibold opacity-50 text-sm mt-1'>
+                        ( * Please upload image with equal width and height )
+                    </div>
+                </div>
             </div>
         </div>
       </div>
@@ -201,23 +218,6 @@ const EditFoods = ( props : any) => {
                 onChange={ () => setIsEnable(!isEnable)}
                 />
             </div>
-            <div className='mt-2'>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Upload new Image</label>
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-lg file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100"
-                    onChange={handleImageChange}
-                />
-                <div className='font-semibold opacity-50 text-sm mt-1'>
-                    ( * Please upload image with equal width and height )
-                </div>
-            </div>
             <div className='text-sm absolute bottom-2 right-7 font-semibold'>
             
                     <button className='mr-4 px-2 py-1 bg-red-400 text-white rounded-xl hover:bg-red-500'
@@ -240,19 +240,32 @@ const EditFoods = ( props : any) => {
                
             </div>
             <div className='mt-1'>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                Choose Category
-                </label>
-                <select
-                id="category"
-                name="category"
-                className="block w-1/2 rounded-md border border-gray-300 bg-white px-3 py-1.5 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 text-sm"
-                onChange={ (e) => setCategory(e.target.value)}
-                >
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="drinks">Drinks</option>
-                </select>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    Choose Category
+                    </label>
+                    <select
+                    id="category"
+                    name="category"
+                    className={`block w-1/2 rounded-md border border-gray-300 bg-white px-3 py-1.5 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 text-sm ${ new_category != "" && "text-gray-400" }`}
+                    disabled = { new_category != "" }
+                    onChange={ (e) => setCategory(e.target.value)}
+                    >
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="drinks">Drinks</option>
+                    </select>
+                <div className='mt-1'>
+                    <label htmlFor="new-cat" className="block text-sm font-medium text-gray-700">
+                        or Create new Category
+                    </label>
+                    <input
+                        type="text"
+                        id="new-cat"
+                        placeholder="Food name"
+                        className="mt-1 block w-1/2 rounded-md border border-gray-300 shadow-sm px-3 py-1 focus:outline-none  focus:border-amber-200"
+                        onChange={ (e) => set_new_category( e.target.value )}
+                    />
+                </div>
             </div>
         </div>
       </div>
