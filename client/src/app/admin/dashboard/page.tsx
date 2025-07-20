@@ -5,22 +5,13 @@ import DashCarts from '@/components/admin/dashboard/DashCarts'
 import { inter } from '@/utils/fonts'
 import BarChart from '@/components/admin/dashboard/graphs/BarChart'
 import LineChart from '@/components/admin/dashboard/graphs/LineChart'
-import RecentOrders from '@/components/admin/dashboard/RecentOrders'
-import { useState , useEffect} from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { get_dashboard_analytics_orders_customers } from '@/reactQuery/queries'
+import { useState } from 'react'
 
 const page = () => {
 
   const [ total_customers_range , set_total_customers_range ] = useState("1") ; 
   const [ total_orders_range , set_total_orders_range ] = useState("1") ; 
 
-  const analytics_query = useQuery({
-    queryKey: ["admin_analytics", total_customers_range], 
-    queryFn: () => get_dashboard_analytics_orders_customers({
-      range: total_customers_range
-    })
-  });
 
   return (
     <div>

@@ -349,7 +349,8 @@ FoodModuleRouter.get('/api/my_orders',
             rating_stars : 0 ,
             isDisable : 0 ,
             category : 0 ,
-            orders : 0 
+            orders : 0 ,
+            food_image : 0
             } 
           );
           

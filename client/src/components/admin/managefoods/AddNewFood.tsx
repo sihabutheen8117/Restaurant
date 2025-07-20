@@ -8,7 +8,6 @@ import { Food } from '@/reactQuery/itemInterfaces'
 
 const AddNewFood = (props:any) => {
 
-    console.log(props.all_categories.data)
     const queryClient = useQueryClient()
 
     const [ foodName , setFoodName ] = useState('') ;
