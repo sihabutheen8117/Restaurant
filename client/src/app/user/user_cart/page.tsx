@@ -1,5 +1,5 @@
 "use client"
-
+import {Suspense} from 'react'
 import React, { useEffect, useState } from 'react'
 import UserNav from '@/components/User/UserNav';
 import { useRouter } from 'next/navigation';
@@ -125,6 +125,7 @@ const Page = () => {
   }, []);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div>
       <div className="z-20">
         <UserNav isSearch={false} isBack={true} goBack={() => handlePreOrder()}/>
@@ -234,6 +235,7 @@ const Page = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 
