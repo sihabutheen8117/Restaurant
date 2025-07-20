@@ -63,6 +63,9 @@ const page = () => {
       {/* <div className='bg-white rounded-xl shadow-xl m-3 my-5 px-3'>
         <RecentOrders/>
       </div> */}
+      <div className='mt-3 text-sm opacity-70'>
+        ( * for more Analytics Please visit Analytics page )
+      </div>
     </div>
   )
 }

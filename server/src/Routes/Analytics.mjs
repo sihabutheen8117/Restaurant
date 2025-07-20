@@ -156,7 +156,7 @@ AnalyticsRouter.post( "/api/get_dashboard_analytics_total_orders" ,
               month: { $month: '$createdAt' },
             };
   
-      const rawData = await Users.aggregate([
+      const rawData = await Orders.aggregate([
         { $match: { createdAt: { $gte: startDate } } },
         {
           $group: {
@@ -170,7 +170,6 @@ AnalyticsRouter.post( "/api/get_dashboard_analytics_total_orders" ,
       console.log("Raw data")
       console.log(rawData)
       
-      // Format for chart
       const months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -203,11 +202,12 @@ AnalyticsRouter.post( "/api/get_dashboard_analytics_total_orders" ,
         labels,
         datasets: [
           {
-            label: 'New Customers',
+            label: 'New Orders',
             data,
-            backgroundColor: 'rgba(59, 130, 246, 0.6)',
-            hoverBackgroundColor: 'rgba(59, 130, 246, 1)',
-            borderRadius: 8
+            borderColor: 'rgba(16, 185, 129, 1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            fill: true,
+            tension: 0.4
           }
         ]
       });

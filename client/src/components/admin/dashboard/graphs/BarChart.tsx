@@ -34,6 +34,17 @@ const options = {
     //   display: true,
     //   text: 'Total Orders'
     // }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,         // ✅ Start Y-axis from 0
+      ticks: {
+        stepSize: 1,             // ✅ Increment ticks by 1
+        callback: function(value:any) {
+          return Number.isInteger(value) ? value : null; // ✅ Show only integers
+        }
+      }
+    }
   }
 };
 
@@ -56,7 +67,7 @@ const YearLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Se
 
 export default function BarChart(props: { range: string }) {
   const analytics_query = useQuery({
-      queryKey: ["admin_analytics", props.range ], 
+      queryKey: ["admin_analytics_customers", props.range ], 
       queryFn: () => get_dashboard_analytics_orders_customers({
         range:  props.range
       })

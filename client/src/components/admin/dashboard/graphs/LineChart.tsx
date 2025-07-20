@@ -13,6 +13,9 @@ import {
 import { Line } from 'react-chartjs-2';
 import { ChartOptions, ChartData } from 'chart.js';
 
+import { useQuery } from '@tanstack/react-query'
+import { get_dashboard_analytics_orders } from '@/reactQuery/queries'
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,6 +31,17 @@ const options: ChartOptions<'line'> = {
   plugins: {
     legend: { position: 'top' },
     // title: { display: true, text: 'Total Revenue' , position :'top' }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,         
+      ticks: {
+        stepSize: 1,            
+        callback: function(value:any) {
+          return Number.isInteger(value) ? value : null; 
+        }
+      }
+    }
   }
 };
 
@@ -48,6 +62,14 @@ const halfLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 const YearLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul' , 'Aug' ,'Sep' , 'Oct' , 'Nov' , 'Dec'];
 
 export default function LineChart(props : any) {
+
+  const analytics_query = useQuery({
+        queryKey: ["admin_analytics_orders", props.range ], 
+        queryFn: () => get_dashboard_analytics_orders({
+          range:  props.range
+        })
+      });
+
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth(); 
@@ -55,18 +77,22 @@ export default function LineChart(props : any) {
 
   const labels = props.range === "1" ? ( totalDays == 31 ? dayLabels : dayTLabel ) : props.range == "3" ? quatLabels : props.range =="6" ? halfLabels : YearLabels;
 
-  const data: ChartData<'line'> = {
-    labels: labels,
-    datasets: [
-      {
-        label: 'Orders',
-        data: labels.map(() => Math.floor(Math.random() * 100)),
-        borderColor: 'rgba(16, 185, 129, 1)',
-        backgroundColor: 'rgba(16, 185, 129, 0.2)',
-        fill: true,
-        tension: 0.4
-      }
-    ]
+  const data: ChartData<'line'> = analytics_query.isSuccess ? 
+    {
+      labels : analytics_query.data.data.labels,
+      datasets: analytics_query.data.data.datasets
+    } : {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Orders',
+            data: labels.map(() => Math.floor(Math.random() * 100)),
+            borderColor: 'rgba(16, 185, 129, 1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            fill: true,
+            tension: 0.4
+          }
+        ]
   };
 
   return (
