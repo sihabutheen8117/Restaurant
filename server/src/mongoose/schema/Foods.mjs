@@ -1,10 +1,10 @@
 import mongoose from 'mongoose' ;
 
-const CategorySchema = mongoose.Schema({
-    category_name : {
-        type : mongoose.Schema.Types.String
-    }
-})
+// const CategorySchema = mongoose.Schema({
+//     category_name : {
+//         type : mongoose.Schema.Types.String
+//     }
+// })
 
 const ReviewSchema = mongoose.Schema({
 

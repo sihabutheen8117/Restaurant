@@ -336,6 +336,45 @@ export const register_google_oauth  =  async() => {
 }
 
 
+
+
+export const update_food_details  =  async(food_data : any ) => {
+  try{
+    const response = await axios.post(api+'/api/update_food_details',
+      food_data ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+
+
+export const get_all_categories  =  async() => {
+  try{
+    const response = await axios.get(api+'/api/get_all_categories',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
 // common queries 
 
 

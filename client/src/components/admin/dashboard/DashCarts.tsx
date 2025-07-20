@@ -75,7 +75,7 @@ const DashCarts = () => {
             </div>
             <div className=''>
                 <div className='text-xs pb-1'>
-                    Total Workers
+                    Total Customers
                 </div>
                 <div className='font-semibold'>
                     49

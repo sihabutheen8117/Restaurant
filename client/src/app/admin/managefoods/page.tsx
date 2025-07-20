@@ -6,16 +6,24 @@ import ViewManageFoods from '@/components/admin/managefoods/ViewManageFoods'
 import { useState } from 'react'
 import AddNewFood from '@/components/admin/managefoods/AddNewFood'
 import AddNewCategory from '@/components/admin/managefoods/AddNewCategory'
+import { get_all_categories } from '@/reactQuery/queries'
+import { useQuery } from '@tanstack/react-query'
 
 const page = () => {
 
     const [view , setView ] = useState(false) ;
     const [selectFloat , setSelectFload] : any = useState();
     const [ search ,setSearch ] = useState<string>("");
+    const [ cat_filter , set_cat_filter ] = useState("All") ;
+
+    const all_categories = useQuery({
+        queryKey : ['categories'] ,
+        queryFn : get_all_categories
+    })
 
     const handleNewFood = () => {
         handleView() 
-        setSelectFload(<AddNewFood handleView={() => setView(false)} />)
+        setSelectFload(<AddNewFood handleView={() => setView(false)} all_categories={all_categories.data}/>)
     }
 
     const handleNewCategory = () => {
@@ -28,9 +36,7 @@ const page = () => {
         setView( !view ) 
     }
 
-    const category : string[] = [
-        "all" , "drinks" , "lunch" , "breakfast" , "dinner" , "spice" , "sweet" , "snacks" , "cakes" , "all" , "drinks" , "lunch" , "breakfast" , "dinner" , "spice" , "sweet" , "snacks" , "cakes", "all" , "drinks" , "lunch" , "breakfast" , "dinner" , "spice" , "sweet" , "snacks" , "cakes"
-    ]
+    const category = ["All", ...(all_categories.data?.data || [])];
 
   return (
     <div className='flex flex-col w-full'>
@@ -76,14 +82,16 @@ const page = () => {
       <div className='flex flex-nowrap gap-2 w-full overflow-x-auto py-2 my-1'>
       {
             category.map( (items , index ) =>( 
-                <div className='border-2 border-gray-400 rounded-full whitespace-nowrap px-2' key={index}>
+                <button className={`border-2  rounded-full whitespace-nowrap px-2 text-sm ${ items == cat_filter ? "bg-amber-200 text-white border-amber-300" : "border-gray-400" } `} key={index}
+                onClick={() => set_cat_filter(items)}
+                >
                     {items}
-                </div>
+                </button>
             ))
         }
       </div>
         <div className=''>
-            <ViewManageFoods filter={search}/>
+            <ViewManageFoods filter={search}  all_categories={all_categories.data} cat_filter={cat_filter}/>
         </div>
     </div>
   )

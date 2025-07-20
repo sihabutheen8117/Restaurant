@@ -10,8 +10,7 @@ import { AnonymousUser } from "../mongoose/schema/AnonymousUser.mjs";
 const FoodModuleRouter = new Router() ;
 
 FoodModuleRouter.post( '/api/add_new_foods' , async(req , res )=> {
-    const food_data = req.body ;
-
+    const food_data = req.body;
     try{
         const newFood = await Foods({
             ...food_data
@@ -32,6 +31,25 @@ FoodModuleRouter.post( '/api/add_new_foods' , async(req , res )=> {
         })
     }
 })
+
+
+FoodModuleRouter.get( '/api/get_all_categories' , async(req , res )=> {
+    
+  try{
+      const all_categories = await Foods.distinct("category");
+      return res.status(200).send(all_categories)
+  } 
+  catch(err)
+  {
+      console.log(err)
+      res.status(400).send({
+          level : "error" ,
+          details : "error in retreiving all categories"
+      })
+  }
+})
+
+
 
 FoodModuleRouter.get( '/api/get_all_foods' , async(req , res )=> {
     
@@ -303,10 +321,10 @@ FoodModuleRouter.get('/api/my_orders',
         
         const order = await Orders.find({ _id: { $in: user.order_id } });
 
-        res.status(200).send(order); 
+        return res.status(200).send(order); 
       } catch (error) {
         console.error("Error in /api/my_orders:", error);
-        res.status(200).send({
+        return res.status(200).send({
             status : "failed"
         }); 
       }
@@ -487,6 +505,33 @@ FoodModuleRouter.get('/api/my_orders',
   });
 
 
-
+  FoodModuleRouter.post('/api/update_food_details',
+    async (req, res) => {
+      try {
+        const { _id, ...food_data } = req.body;
+        const response = await Foods.findByIdAndUpdate(
+          _id,
+          { $set: food_data },
+          { new: true } // optional: return the updated document
+        );
+  
+        if (!response) {
+          return res.status(404).send({
+            error: "Food not Found"
+          });
+        }
+  
+        return res.status(200).send({
+          message: "Food updated successfully"
+        });
+  
+      } catch (error) {
+        console.error("Error in /api/update_food_details:", error);
+        return res.status(500).send({
+          error: "Internal server error"
+        });
+      }
+  });
+  
 
 export default FoodModuleRouter ;

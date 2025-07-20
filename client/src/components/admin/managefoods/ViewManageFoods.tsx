@@ -10,7 +10,7 @@ import { Food } from '@/reactQuery/itemInterfaces'
 import SystemLoaders from '@/components/Loaders/SystemLoaders'
 
 const ViewManageFoods = (props: any) => {
-    console.log(props.filter)
+
     const [ selectedFood , setSelectedFood ] = useState<Food>()
 
     const [view , setView ] = useState(false) ;
@@ -53,7 +53,7 @@ const ViewManageFoods = (props: any) => {
                 <div className='fixed inset-0 bg-black opacity-40 z-10'
                 onClick={handleView}> </div>
                 <div className='z-50 bg-white fixed inset-x-50 inset-y-20 rounded-xl'>
-                    <EditFoods food_data={selectedFood} handle_view={ () => setView(false)}/>
+                    <EditFoods food_data={selectedFood} handle_view={ () => setView(false)}  all_categories={props.all_categories}/>
                 </div>
             </div>
         }
@@ -61,7 +61,7 @@ const ViewManageFoods = (props: any) => {
         {
             foodQuery.isSuccess && 
             foodQuery.data.data.map( (items , index ) => (
-                (props.filter == "" || items.food_name.toLowerCase().includes(props.filter.toLowerCase()) ) &&
+                ((props.filter == "" || items.food_name.toLowerCase().includes(props.filter.toLowerCase())) && ( props.cat_filter =="All" || props.cat_filter == items.category ) ) &&
                 <div className='md:w-40 md:h-80 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
                     key = {index}
                 >

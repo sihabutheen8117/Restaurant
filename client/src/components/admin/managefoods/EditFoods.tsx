@@ -2,11 +2,14 @@
 
 import React from 'react'
 import { useMutation , useQueryClient} from '@tanstack/react-query' 
-import { addNewFood , deleteFood } from '@/reactQuery/queries'
+import { update_food_details, deleteFood } from '@/reactQuery/queries'
 import { useState } from 'react'
 import { Food  } from '@/reactQuery/itemInterfaces'
 
 const EditFoods = ( props : any) => {
+
+    console.log("from edit food props ");
+    console.log(props) ;
 
     const queryClient = useQueryClient()
 
@@ -21,11 +24,12 @@ const EditFoods = ( props : any) => {
     const [ ingredients  , setIngredients ] = useState(props.food_data.ingredients) ;
     const [ preview_image , set_preview_image ] = useState('');
     const [ new_category , set_new_category ] = useState("") ;
+    const [ is_image_changed , set_changes ] = useState(false ) ;
 
     const handleImageChange = (e:any) => {
         const file = e.target.files[0];
         setFoodImage(file) ;
-
+        set_changes(true) ;
         const reader = new FileReader();
 
         reader.onloadend = () => {
@@ -54,11 +58,15 @@ const EditFoods = ( props : any) => {
     //   }
     // }
 
-    const newFoods = useMutation({
-        mutationFn : addNewFood ,
+    const update_food  = useMutation({
+        mutationFn : update_food_details ,
         onSuccess : () => {
+            console.log("update_foods");
             queryClient.invalidateQueries({
                 queryKey : ['foods']
+            })
+            queryClient.invalidateQueries({
+                queryKey : ['categories']
             })
             props.handle_view()
         }
@@ -78,11 +86,12 @@ const EditFoods = ( props : any) => {
         deleteFoodMutaion.mutate(props.food_data._id)
     }
 
-    const addFoods = () => {
+    const handle_update_foods  = () => {
 
         const effectiveCategory = new_category == "" ? category : new_category ;
 
-        const foodData : Food =  {
+        let foodData =  {
+            _id : props.food_data._id ,
             food_name : foodName ,
             describtion : foodDesc ,
             price  : price,
@@ -90,11 +99,21 @@ const EditFoods = ( props : any) => {
             offer_validity : validity ,
             ingredients : ingredients ,
             isDisable : isEnable ,
-            food_image : foodImage,
             category : effectiveCategory ,
         }
+        let updated_food_data ;
 
-        newFoods.mutate(foodData) ;
+        if(is_image_changed)
+        {
+            updated_food_data  = {
+                ...foodData ,
+                food_image : foodImage
+            }
+        }
+        else{
+            updated_food_data = foodData ;
+        }
+        update_food.mutate(updated_food_data) ;
     }
 
   return (
@@ -233,7 +252,7 @@ const EditFoods = ( props : any) => {
                     </button>
 
                     <button className='mr-4 px-2 py-1 bg-green-400 text-white rounded-xl hover:bg-green-500'
-                    onClick={addFoods}
+                    onClick={handle_update_foods }
                     >
                         <span className=""><i className="fas fa-check-circle"></i> Update</span>
                     </button>
@@ -250,9 +269,11 @@ const EditFoods = ( props : any) => {
                     disabled = { new_category != "" }
                     onChange={ (e) => setCategory(e.target.value)}
                     >
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="drinks">Drinks</option>
+                        {
+                            props.all_categories.data.map( (cates : any , index : any ) => (
+                                <option value={cates} key={index}>{cates}</option>
+                            ))
+                        }
                     </select>
                 <div className='mt-1'>
                     <label htmlFor="new-cat" className="block text-sm font-medium text-gray-700">

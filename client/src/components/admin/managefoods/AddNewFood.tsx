@@ -8,6 +8,7 @@ import { Food } from '@/reactQuery/itemInterfaces'
 
 const AddNewFood = (props:any) => {
 
+    console.log(props.all_categories.data)
     const queryClient = useQueryClient()
 
     const [ foodName , setFoodName ] = useState('') ;
@@ -47,6 +48,9 @@ const AddNewFood = (props:any) => {
     const newFoods = useMutation({
         mutationFn : addNewFood ,
         onSuccess : () => {
+            queryClient.invalidateQueries({
+                queryKey : ['categories']
+            })
             queryClient.invalidateQueries({
                 queryKey : ['foods']
             })
@@ -213,9 +217,11 @@ const AddNewFood = (props:any) => {
                     disabled = { new_category != "" }
                     onChange={ (e) => setCategory(e.target.value)}
                     >
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="drinks">Drinks</option>
+                        {
+                            props.all_categories.data.map( (cates :any , index :any) => (
+                                <option value={cates} key={index}>{cates}</option>
+                            ))
+                        }
                     </select>
                 </div>
                 <div className='mt-1'>
