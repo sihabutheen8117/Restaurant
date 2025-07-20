@@ -5,10 +5,9 @@ import UserHeading from "@/components/User/UserHeading"
 import UserMenu from "@/components/User/UserMenu"
 import Banner from "@/components/User/Banner"
 import UserProduct from "@/components/User/UserProduct"
-import { useState , useEffect} from "react"
+import { useState } from "react"
 import { UserFilters } from "@/reactQuery/itemInterfaces"
 import { CartItems } from "@/reactQuery/itemInterfaces"
-import { useSearchParams } from "next/navigation";
 import React, { Suspense } from 'react';
 
 const page = () => {
@@ -25,16 +24,6 @@ const page = () => {
   const handleFilter = () => {
     setTogFilter(!togFilter)
   }
-
-  const searchParams = useSearchParams();
-  
-  useEffect( ()=> {
-      const userName = searchParams.get("user_name") || "" ;
-      if(userName != "")
-      {
-          localStorage.setItem("user_name", userName );
-      }
-  } ,[])
   
   return (
     <Suspense fallback={<div>Loading...</div>}>

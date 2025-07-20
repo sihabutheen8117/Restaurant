@@ -1,14 +1,25 @@
 "use client"
 
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import ProfileMenu from "./ProfileMenu";
 import { lexend } from "@/utils/fonts";
 import '@/styles/mainStyles.css'
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 
 
 const UserNav = (props:any) => {
+
+  const searchParams = useSearchParams();
+    
+    useEffect( ()=> {
+        const userName = searchParams.get("user_name") || "" ;
+        if(userName != "")
+        {
+            localStorage.setItem("user_name", userName );
+        }
+    } ,[])
 
   const [toggle , unToggle ] = useState(false) ;
   const toggleProfile = () => {
