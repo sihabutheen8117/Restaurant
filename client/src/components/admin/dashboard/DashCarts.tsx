@@ -69,16 +69,36 @@ const DashCarts = () => {
             </div>
         </div>
 
-        <div className='group rounded-lg flex gap-3 bg-white p-2 w-40 shadow-lg'>
+        <div className='group rounded-lg flex gap-3 bg-white p-2 w-44 shadow-lg'>
             <div className='group-hover:bg-amber-100 transition-colors duration-200 w-12 aspect-square bg-gray-200 flex items-center justify-center rounded-lg'>
-                <i className='group-hover:text-amber-500 transition-colors duration-200 fas fa-dollar-sign'></i>
+                <i className='group-hover:text-amber-500 transition-colors duration-200 fas fa-list'></i>
+            </div>
+            <div className=''>
+                <div className='text-xs pb-1'>
+                    Total Categories
+                </div>
+                <div className='font-semibold'>
+                    {
+                        get_countable_query.isSuccess && 
+                        get_countable_query.data.data.total_categories
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div className='group rounded-lg flex gap-3 bg-white p-2 w-44 shadow-lg'>
+            <div className='group-hover:bg-amber-100 transition-colors duration-200 w-12 aspect-square bg-gray-200 flex items-center justify-center rounded-lg'>
+                <i className='group-hover:text-amber-500 transition-colors duration-200 fas fa-user'></i>
             </div>
             <div className=''>
                 <div className='text-xs pb-1'>
                     Total Customers
                 </div>
                 <div className='font-semibold'>
-                    49
+                    {
+                        get_countable_query.isSuccess && 
+                        get_countable_query.data.data.total_customers
+                    }
                 </div>
             </div>
         </div>

@@ -12,12 +12,6 @@ const OrderFoodSchema = mongoose.Schema({
 })
 
 const OrdersSchema = mongoose.Schema({
-
-    order_date : {
-        type : mongoose.Schema.Types.Date,
-        default : Date.now ,
-        required : true 
-    },
     ordered_foods : [
         OrderFoodSchema
     ],
@@ -52,6 +46,8 @@ const OrdersSchema = mongoose.Schema({
     user_name : {
         type : mongoose.Schema.Types.String
     }
-})
+    },
+    { timestamps: true } 
+)
 
 export const Orders = mongoose.model('Orders' , OrdersSchema)
