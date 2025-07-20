@@ -53,7 +53,7 @@ const ViewOrders = (props:any) => {
   return (
     <div className='bg-white z-50 inset-x-72 inset-y-20 absolute rounded-lg'>
         <div className={` ${inter.className} justify-between mx-4 my-2 flex font-semibold `}>
-            <div>kader Ismail</div>
+            <div>{props.order_adnl_details.user_name}</div>
             <div>#0012</div>
         </div>
         <div>

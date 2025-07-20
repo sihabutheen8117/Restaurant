@@ -70,7 +70,7 @@ const ServerdOrders = (props : any ) => {
                               served_orders.isSuccess &&
                               served_orders.data.data.map( (item:any , index : any) => {
 
-                                const date = new Date(item.order_date);
+                                const date = new Date(item.createdAt);
       
                                 // Convert to desired format (e.g., 'Jul 14, 2025' and '03:26 PM')
                                 const formattedDate = date.toLocaleDateString('en-US', {

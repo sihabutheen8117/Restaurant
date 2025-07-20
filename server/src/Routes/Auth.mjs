@@ -10,6 +10,7 @@ const AuthRouter =Router() ;
 AuthRouter.post( "/api/authendicate/login" , 
     async(req , res ) => {
         const {user_email , user_password } = req.body ;
+
         if( !user_email)
         {
             return res.status(401).send({
@@ -43,6 +44,8 @@ AuthRouter.post( "/api/authendicate/login" ,
                 secure :  true  ,
                 sameSite : "None"
             })
+
+            console.log( "user_name to send , after logged in " , user_name )
 
             res.status(200).send({
                 user_name : user_name

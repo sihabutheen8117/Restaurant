@@ -99,7 +99,7 @@ const NewOrders = (props : any) => {
                           console.log("orders data ")
                           console.log(orders)
 
-                          const date = new Date(item.order_date);
+                          const date = new Date(item.createdAt);
 
                           // Convert to desired format (e.g., 'Jul 14, 2025' and '03:26 PM')
                           const formattedDate = date.toLocaleDateString('en-US', {
@@ -139,7 +139,8 @@ const NewOrders = (props : any) => {
                               set_order_adnl_details({
                                 quantity : item.quandity ,
                                 total_cost : item.total_cost,
-                                _id : item._id
+                                _id : item._id ,
+                                user_name : item.user_name 
                               })
                             }}
                             ></i></td>
