@@ -65,8 +65,8 @@ const page = () => {
       {
         myOrdersQuery.isSuccess &&
         myOrdersQuery.data.data.map( (items :any, index : any) => {
-          
-          const orderDate = new Date(items.order_date);
+          console.log(items)
+          const orderDate = new Date(items.createdAt);
           const formattedDate = orderDate.toLocaleDateString('en-IN', {
             year: 'numeric',
             month: '2-digit',
@@ -80,7 +80,7 @@ const page = () => {
           });
           return(
             <div className='w-full border-2 border-gray-200 rounded-xl p-2 mb-2' key={index}>
-                <div className='flex justify-between'>
+                <div className='flex justify-between mx-2 opacity-70'>
                     <div className=''> {formattedDate}</div>
                     <div className={` ${items.order_status == "pending" ? "text-red-400" : "text-green-400"} `}>{items.order_status} </div>
                     <div className=''>{formattedTime}</div>
