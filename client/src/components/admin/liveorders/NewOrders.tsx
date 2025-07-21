@@ -9,6 +9,7 @@ import {  useQuery } from '@tanstack/react-query'
 import  { useSocket } from "@/customHooks/useSocket"
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
 import SystemLoaders from '@/components/Loaders/SystemLoaders'
+import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 
 const NewOrders = (props : any) => {
 
@@ -47,7 +48,7 @@ const NewOrders = (props : any) => {
                 return (
                   <div className='h-screen bg-gray-100 m-2 rounded-4xl'>
                     <div className='flex justify-center items-center h-8/12'>
-                      <MobileLoaders/>
+                      <LoaderSilentLion/>
                     </div>
                   </div>
                 )

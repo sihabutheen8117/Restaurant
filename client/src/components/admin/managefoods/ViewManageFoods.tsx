@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { getAllFoodForEdit } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
 import { Food } from '@/reactQuery/itemInterfaces'
-import SystemLoaders from '@/components/Loaders/SystemLoaders'
+import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 
 const ViewManageFoods = (props: any) => {
 
@@ -38,7 +38,7 @@ const ViewManageFoods = (props: any) => {
         return(
             <div className=' h-screen '>
                 <div className='flex justify-center h-8/12 items-center opacity-70'>
-                <SystemLoaders/>
+                    <LoaderSilentLion/>
                 </div>             
             </div>  
         )

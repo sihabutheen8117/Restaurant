@@ -7,6 +7,7 @@ import { inter } from '@/utils/fonts'
 import { useState} from 'react'
 import ViewOrders from './ViewOrders'
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
+import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 
 const ServerdOrders = (props : any ) => {
 
@@ -28,7 +29,7 @@ const ServerdOrders = (props : any ) => {
         return (
           <div className='h-screen bg-gray-100 m-2 rounded-4xl'>
             <div className='flex justify-center items-center h-8/12'>
-              <MobileLoaders/>
+              <LoaderSilentLion/>
             </div>
           </div>
         )
