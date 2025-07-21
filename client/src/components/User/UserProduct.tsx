@@ -6,7 +6,6 @@ import { useQuery } from '@tanstack/react-query'
 import { getAllFood } from '@/reactQuery/queries'
 import { Food } from '@/reactQuery/itemInterfaces'
 import { CartItems } from '@/reactQuery/itemInterfaces'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import MobileLoaders from '../Loaders/MobileLoaders'
 
@@ -16,7 +15,9 @@ const UserProduct = (props : any) => {
     const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
     
     const handleAddCart = (cart_data : CartItems ) => {
-        props.set_user_cart( (prev:any)=> [ ...prev , cart_data ]) ;
+        
+        // props.set_user_cart( (prev:any)=> [ ...prev , cart_data ]) ;
+        props.set_user_cart((prev:any) => [ ...(Array.isArray(prev) ? prev : []), cart_data ]);
         setFoodQuantity(prev => ({
             ...prev ,
             [cart_data._id] : 1,
@@ -366,7 +367,7 @@ const UserProduct = (props : any) => {
             >
                 cart
                 <i className='fas fa-shopping-cart pl-1 mx-2'></i>
-                ({props.user_cart.length})
+                ({props.user_cart?.length})
             </button>
       </div>
     </div>

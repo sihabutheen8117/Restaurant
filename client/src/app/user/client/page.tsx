@@ -33,7 +33,7 @@ const page = () => {
       <div>
         {
           togFilter && <div
-          className="fixed inset-0 bg-black opacity-40 z-10"
+          className="fixed inset-0 bg-black opacity-40 z-40"
           onClick={handleFilter}
           />
         }

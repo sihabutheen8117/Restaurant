@@ -14,7 +14,7 @@ const Banner = (props : any) => {
 
    const slideFoods : carosFoods[] = [
       {
-        image : "/assets/banner/ncino.jpeg",
+        image : "/assets/banner/new_banner.jpg",
         title : "Cheese burger"
       },
       {
@@ -44,7 +44,7 @@ const Banner = (props : any) => {
           <div className='w-12 absolute h-full '
                onClick={() => scrollByStep("left")}
           >
-                 <i className="fas fa-chevron-left car-left-button text-4xl absolute md:top-35 top-20 z-10 md:left-5 left-3"
+                 <i className="fas fa-chevron-left car-left-button text-4xl absolute md:top-35 top-15 z-10 md:left-5 left-3 opacity-60"
                   ></i>
                  </div>
 
@@ -64,7 +64,7 @@ const Banner = (props : any) => {
                     <div className='w-12 absolute h-full  right-0'
                     onClick={() => scrollByStep("right")}
                     >
-                      <i className="fas fa-chevron-right car-right-button text-4xl absolute md:top-35 top-20 z-10 md:right-5 right-3"
+                      <i className="fas fa-chevron-right car-right-button text-4xl absolute md:top-35 top-15 z-10 md:right-5 right-3 opacity-60"
                       ></i>
                     </div>
       </div>

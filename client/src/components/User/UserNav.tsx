@@ -28,7 +28,7 @@ const UserNav = (props:any) => {
   }
 
   return (
-    <div className="pt-3 fixed top-0 right-0 left-0 z-50 bg-white pb-3">
+    <div className="pt-3 fixed top-0 right-0 left-0 z-30 bg-white pb-3">
       {
         toggle && <div
         className="fixed inset-0 bg-black opacity-40 z-40"
