@@ -229,7 +229,14 @@ const Page = () => {
             <button className='bg-green-600 py-2.5 rounded-xl text-lg px-6'
             onClick={handleOrderPlace}
             >
-              Order now 
+              {
+                newFoods.isPending ?
+                <svg viewBox="25 25 50 50" className='svg_loading'>
+                    <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                </svg>
+                :
+                "Order now"
+              }
             </button>
           </div>
         </div>

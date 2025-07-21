@@ -100,16 +100,16 @@ const UserProduct = (props : any) => {
 
         if (!foodQuery.isSuccess || !foodQuery.data?.data) return [];
       
+    
         const getEffectivePrice = (item: any) =>
-          item.offer_price !== undefined && item.offer_price !== -1
+          item.offer_price !== -1 && item.offer_price !== -1
             ? item.offer_price
             : item.price;
 
-      
         const filteredFoods = foodQuery.data.data.filter((item) =>
           (props.search == null || item.food_name.toLowerCase().includes(props.search.toLowerCase())) 
             &&
-          (item.offer_price === undefined
+          (item.offer_price === -1
             ? props.filters.price_range < item.price
             : props.filters.price_range < item.offer_price) 
             &&

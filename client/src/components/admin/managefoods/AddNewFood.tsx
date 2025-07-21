@@ -13,7 +13,7 @@ const AddNewFood = (props:any) => {
     const [ foodName , setFoodName ] = useState('') ;
     const [ foodDesc , setFoodDesc] = useState('') ;
     const [ price , setPrice] = useState('') ;
-    const [ offPrice , setOffPrice] = useState('') ;
+    const [ offPrice , setOffPrice] = useState('-1') ;
     const [ validity  , setValidity] = useState('') ;
     const [ foodImage  , setFoodImage ] = useState<string>('') ;
     const [ isEnable , setIsEnable ] = useState(false) ;

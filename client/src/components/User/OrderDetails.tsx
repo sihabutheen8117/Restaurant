@@ -2,6 +2,7 @@
 import React from 'react'
 import { getFoodDetailsWithoutReviews , deleteOrder } from '@/reactQuery/queries'
 import { useQuery , useMutation , useQueryClient} from '@tanstack/react-query';
+import MobileLoaders from '../Loaders/MobileLoaders';
 
 const OrderDetails = (props :any) => {
 
@@ -43,6 +44,13 @@ const OrderDetails = (props :any) => {
         </div>
         <div className='mx-5 h-9/12 overflow-y-auto border-t-2 border-b-2 border-gray-300'>
             {
+            get_ordered_food_query.isLoading ?
+                <div className=''>
+                    <MobileLoaders/>
+                    <MobileLoaders/>
+                    <MobileLoaders/>
+                </div>
+                :
             get_ordered_food_query.isSuccess &&  
             get_ordered_food_query.data.data.map( (item:any , index : any  ) => (
                 <div className='border-2 border-gray-200 rounded-lg mb-2' key={index}>
@@ -89,8 +97,17 @@ const OrderDetails = (props :any) => {
                 ?
                 <button className='ml-4 bg-red-500 text-white rounded-xl py-1 px-2'
                 onClick={()=>handleDeleteOrder()}
+                disabled = {delete_order_mutation.isPending}
                 >
-                    Cancel Order
+                    {
+                        delete_order_mutation.isPending ? 
+                        <svg viewBox="25 25 50 50" className='svg_loading'>
+                            <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                        </svg>
+                        :
+                        "Cancel Order"
+                    }
+                    
                 </button>
                 :
                 <button className='ml-4  text-green-600 py-1 px-2 border-2 border-green-300 rounded-xl'>
