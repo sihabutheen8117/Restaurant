@@ -379,7 +379,13 @@ FoodModuleRouter.get('/api/my_orders',
       const { _id }  = req.body;
      
       try {
-        const response = await Orders.findByIdAndDelete( _id )
+        const response = await Orders.findByIdAndDelete( _id ) ;
+        if(response)
+        {
+          req.io.emit('cancelled-orders', {
+            ...response
+          })
+        }
         res.status(200).send({
           status : "order deleted successfully"
 

@@ -68,6 +68,11 @@ export const useSocket = (userType = 'user', userData = {}) => {
         setOrders(prev => [orderData._doc, ...prev]);
       });
 
+      newSocket.on('cancelled-orders', (orderData) => {
+        console.log('Cancelled orders received from socket:', orderData._doc._id);
+        setOrders(prev =>  prev.filter(order => order._id !== orderData._doc._id));
+      });
+
       console.log("admin connected to the socket io")
 
       // newSocket.on('order-status-changed', (statusData) => {

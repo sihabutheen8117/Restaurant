@@ -95,13 +95,7 @@ const NewOrders = (props : any) => {
                       {
                         orders &&
                         orders.map( (item:any , index : any) => {
-
-                          console.log("orders data ")
-                          console.log(orders)
-
                           const date = new Date(item.createdAt);
-
-                          // Convert to desired format (e.g., 'Jul 14, 2025' and '03:26 PM')
                           const formattedDate = date.toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',

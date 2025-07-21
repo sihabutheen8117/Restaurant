@@ -95,7 +95,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle new order from client
   socket.on('new-order', (orderData) => {
 
     console.log('New order received:', orderData);
