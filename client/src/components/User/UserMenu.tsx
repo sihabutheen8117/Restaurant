@@ -2,14 +2,12 @@
 
 import { playfair } from "@/utils/fonts"
 import { useState } from "react"
-import { UserFilters } from '@/reactQuery/itemInterfaces'
-import { setPriority } from "os"
 
 const UserMenu = (props : any) => {
 
-  const [ price_order , serPrice_order ] = useState(0) ;
+  const [ price_order , serPrice_order ] = useState(props.filters?.price_order || 0 ) ;
+  const [rating, setRating] = useState(props.filters?.ratings || 0);
 
-  const [rating, setRating] = useState(0);
   const totalStars = 5;
 
   const handleApply = () => {
@@ -18,6 +16,7 @@ const UserMenu = (props : any) => {
       ratings : rating ,
       price_range : rupees
     })
+    props.close()
   }
   
   const handleClick = (index : number) => {
@@ -28,10 +27,10 @@ const UserMenu = (props : any) => {
     setRupees(parseInt(rup))
   }
 
-  const [rupees , setRupees ] = useState(10)
+  const [rupees , setRupees ] = useState(props.filters?.price_range || 10)
   
   return (
-    <div className="mt-4 ml-3">
+    <div className="mt-14 md:mt-4 ml-3 md:fixed md:top-11">
         
       <div className="w-full h-screen py-1 border-r-2 border-gray-200">
         <div className="">

@@ -28,14 +28,14 @@ const UserNav = (props:any) => {
   }
 
   return (
-    <div className="pt-3 relative">
+    <div className="pt-3 fixed top-0 right-0 left-0 z-50 bg-white pb-3">
       {
         toggle && <div
         className="fixed inset-0 bg-black opacity-40 z-40"
         onClick={() => toggleProfile()}
         />
       }
-      <div className="flex justify-between px-3 ">
+      <div className="flex justify-between px-3">
         <div className={`${lexend.className} md:text-2xl text-lg pt-1 whitespace-nowrap`}>
             <span className={`text-[#FFF085] font-semibold`}>Al</span>-Khalid
         </div>
