@@ -22,6 +22,7 @@ const page = () => {
   const [ search , setSearch ] = useState('') ;
   const [ user_cart , set_user_cart ] = useState<CartItems[]>([])
   const [ filters , setFilters ] = useState<UserFilters>(defaultFilters) ;
+  const [ cat_filter , set_cat_filter ] = useState("All");
 
   const handleFilter = () => {
     setTogFilter(!togFilter)
@@ -79,7 +80,7 @@ const page = () => {
             </div>
             <div className="">
             <div className="md:block hidden">
-              <UserHeading/>
+              <UserHeading cat_filter={cat_filter} set_cat_filter={(data:string) => set_cat_filter(data)}/>
             </div>
             </div>
             <div className="md:mt-28 mt-2 mb-20">
@@ -87,7 +88,7 @@ const page = () => {
                   <Banner/>
                 </div>
                 <div className="md:px-7 px-2 md:my-7 md:mx-3">
-                  <UserProduct search={search} filters={filters} user_cart={user_cart} set_user_cart={set_user_cart}/> 
+                  <UserProduct search={search} filters={filters} user_cart={user_cart} set_user_cart={set_user_cart} cat_filter={cat_filter}/> 
                 </div> 
             </div>
           </div>

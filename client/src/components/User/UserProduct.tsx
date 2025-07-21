@@ -96,6 +96,7 @@ const UserProduct = (props : any) => {
     }
 
     const finalFoods : Food[] = useMemo(() => {
+
         if (!foodQuery.isSuccess || !foodQuery.data?.data) return [];
       
         const getEffectivePrice = (item: any) =>
@@ -105,11 +106,15 @@ const UserProduct = (props : any) => {
 
       
         const filteredFoods = foodQuery.data.data.filter((item) =>
-          (props.search == null || item.food_name.includes(props.search)) &&
+          (props.search == null || item.food_name.toLowerCase().includes(props.search.toLowerCase())) 
+            &&
           (item.offer_price === undefined
             ? props.filters.price_range < item.price
-            : props.filters.price_range < item.offer_price) &&
-            item.rating_count !== undefined && props.filters.ratings <= item.rating_count
+            : props.filters.price_range < item.offer_price) 
+            &&
+          item.rating_count !== undefined && props.filters.ratings <= item.rating_count 
+           &&
+          ( props.cat_filter == "All" || props.cat_filter == item.category )
         );
       
         const sortedFoods = [...filteredFoods].sort((a, b) => {
@@ -123,7 +128,8 @@ const UserProduct = (props : any) => {
           : props.filters.price_order === -1
           ? sortedFoods.reverse()
           : sortedFoods;
-      }, [foodQuery.isSuccess, foodQuery.data, props.search, props.filters]);
+
+    }, [foodQuery.isSuccess, foodQuery.data, props.search, props.filters ,props.cat_filter]);
 
       useEffect(() => {
           const cartData = localStorage.getItem("user_cart");
