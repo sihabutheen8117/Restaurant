@@ -30,7 +30,7 @@ const page = () => {
   {
     return(
       <Suspense fallback={<div>Loading...</div>}>
-        <div className=''>
+        <div className='mt-24'>
             <div className="z-20">
               <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
             </div>
@@ -45,10 +45,11 @@ const page = () => {
   }
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <div>
+    <div >
       <div className="z-20">
         <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
       </div>
+
       {
         view && 
         <div className=''>
@@ -61,7 +62,7 @@ const page = () => {
         </div>
       }
       
-      <div className='mx-4 my-4'>
+      <div className='mx-4 mt-24 mb-10'>
       {
         myOrdersQuery.isSuccess &&
         myOrdersQuery.data.data.map( (items :any, index : any) => {

@@ -139,7 +139,7 @@ const Page = () => {
           </div>
         </div>
       }
-      <div className='mb-10'>
+      <div className='mb-10 mt-24'>
           {
             userCart && 
             userCart.map( (item:any , index : any  ) => (
