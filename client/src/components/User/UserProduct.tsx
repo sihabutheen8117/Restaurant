@@ -265,11 +265,11 @@ const UserProduct = (props : any) => {
          {
             foodQuery.isSuccess && 
             finalFoods.map( (items , index ) => (
-                <div className='md:w-56 md:h-96 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
+                <div className='md:w-48 md:h-96 w-full md:mb-0 mb-3 h-40 rounded-2xl bg-gray-50 relative md:block flex'
                     key = {index}
                 >
-                    <div className='md:w-52 md:h-52 md:m-2 rounded-xl relative'>
-                        <img src={items.food_image} alt = {items.food_name} className='object-fit md:w-52 md:h-52 w-40 h-40 rounded-lg object-cover'
+                    <div className='md:w-48 md:h-48  rounded-xl relative'>
+                        <img src={items.food_image} alt = {items.food_name} className='object-fit md:w-48 md:h-48 w-40 h-40 rounded-lg object-cover'
                         onClick={viewItems}
                         />
                         <button className='hidden md:block'
@@ -318,7 +318,7 @@ const UserProduct = (props : any) => {
                             </div>
                                     
                         }
-                        <div className='mt-1 absolute md:right-3 right-0 md:-bottom-9 bottom-0'>
+                        <div className='mt-1 absolute md:right-9 right-0 md:-bottom-17 bottom-0'>
                         {
                             (foodQuantity[items._id ?? '']||0) == 0 ? 
                             <button

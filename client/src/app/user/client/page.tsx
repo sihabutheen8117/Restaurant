@@ -87,7 +87,7 @@ const page = () => {
                 <div className="mb-4 mt-1">
                   <Banner/>
                 </div>
-                <div className="md:px-7 px-2 md:my-7 md:mx-3">
+                <div className="md:px-7 px-2 md:my-7">
                   <UserProduct search={search} filters={filters} user_cart={user_cart} set_user_cart={set_user_cart} cat_filter={cat_filter}/> 
                 </div> 
             </div>
