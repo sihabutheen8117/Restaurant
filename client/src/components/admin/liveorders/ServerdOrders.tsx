@@ -18,6 +18,7 @@ const ServerdOrders = (props : any ) => {
     const [view , setView ] = useState(false) ;
     const [ view_orders , set_view_orders ] = useState({}) ;
     const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
+
     const handleView = () => {
         setView(!view) ;
         console.log(view);
@@ -47,7 +48,7 @@ const ServerdOrders = (props : any ) => {
         {
             view && 
             <div className=''>
-                <ViewOrders close={handleView} isNotLive={true} food_data={view_orders} order_adnl_details={order_adnl_details}/>
+                <ViewOrders close={handleView} isNotLive={true} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={true}/>
             </div>
         }
       <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
@@ -55,7 +56,7 @@ const ServerdOrders = (props : any ) => {
                     <table className='border-collapse w-full'>
                         <thead className='text-sm'>
                             <tr className='opacity-75'>
-                                <th className='text-left'>Order ID</th>
+                                <th className='text-left'>S.no</th>
                                 <th className='text-left'>Customer Name</th>
                                 <th className='text-left'>Date</th>
                                 <th className='text-left'>Time</th>
@@ -73,7 +74,6 @@ const ServerdOrders = (props : any ) => {
 
                                 const date = new Date(item.createdAt);
       
-                                // Convert to desired format (e.g., 'Jul 14, 2025' and '03:26 PM')
                                 const formattedDate = date.toLocaleDateString('en-US', {
                                   year: 'numeric',
                                   month: 'short',
@@ -93,7 +93,7 @@ const ServerdOrders = (props : any ) => {
                                 
                                 return (
                                 <tr className='h-10' key={index}>
-                                  <td className='py-2'>#02304</td>
+                                  <td className='py-2'>{index+1}</td>
                                   <td>{ item.user_name ? item.user_name : "errors" }</td>
                                   <td>{formattedDate}</td>
                                   <td>{formattedTime}</td>
@@ -109,7 +109,9 @@ const ServerdOrders = (props : any ) => {
                                       set_order_adnl_details({
                                         quantity : item.quandity ,
                                         total_cost : item.total_cost,
-                                        _id : item._id
+                                        _id : item._id ,
+                                        user_name : item.user_name,
+                                        order_type : item.order_type
                                       })
                                     }}
                                     ></i>

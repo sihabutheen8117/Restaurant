@@ -33,9 +33,6 @@ const ManualEntry = () => {
         );
       };
 
-    const handlePlaceEntry = (data:any) => {
-      place_entry_muation.mutate(data);
-    }
 
   return (
     <div>
@@ -60,7 +57,7 @@ const ManualEntry = () => {
                         onChange={ (e) => set_search(e.target.value)}
                       />
                       <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        { (search != "" && food_data.isSuccess && food_data.data.data.length > 0) && (
+                        { is_entry && (search != "" && food_data.isSuccess && food_data.data.data.length > 0) && (
                             <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
                                 {
                                 food_data.data.data
@@ -93,10 +90,11 @@ const ManualEntry = () => {
               remove_food={ (_id:any) => handleRemoveFood(_id)} 
               handleUpdateFoodQuandity={(data:any) => handleUpdateFoodQuandity(data)} 
               reset={() => set_selected_food([])}
-              handlePlaceEntry={(data:any) => handlePlaceEntry(data)}
             />
             :
-            <Entries/>
+            <Entries
+            search={search}
+            />
         }
         </div>
     </div>

@@ -4,6 +4,8 @@ import React from 'react'
 import { inter } from '@/utils/fonts'
 import { useQuery } from '@tanstack/react-query'
 import { get_entry_orders } from '@/reactQuery/queries'
+import ViewOrders from '../liveorders/ViewOrders'
+import { useState } from 'react'
 
 const Entries = (props:any) => {
 
@@ -12,8 +14,29 @@ const Entries = (props:any) => {
     queryFn : get_entry_orders
   })
 
+   const [view , setView ] = useState(false) ;
+   const [ view_orders , set_view_orders ] = useState({}) ;
+   const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
+   const handleView = () => {
+          setView(!view) ;
+          console.log(view);
+      }
+
   return (
     <div>
+       {
+            view && 
+            <div
+            className="fixed inset-0 bg-black opacity-40 z-10"
+            onClick={handleView}
+            />
+        }
+        {
+            view && 
+            <div className=''>
+                <ViewOrders close={handleView} isNotLive={true} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={true}/>
+            </div>
+        }
       <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
                   <div className={`${inter.className} mt-2`}>
                     <table className='border-collapse w-full'>
@@ -47,25 +70,31 @@ const Entries = (props:any) => {
                                   hour12: true,
                                 });
 
+                            if( !food.user_name?.toLowerCase().includes(props.search.toLowerCase()) && props.search != "" )
+                            {
+                                return ;
+                            }
                             return(
                               <tr className='h-10' key={index}>
                                   <td className='py-2'>{index+1}</td>
-                                  <td>{food.user_name}</td>
+                                  <td>{food.user_name ? food.user_name : "error"}</td>
                                   <td>{formattedDate}</td>
                                   <td>{formattedTime}</td>
                                   <td>&#8377; {food.total_cost}</td>
                                   <td>{food.quandity}</td>
                                   <td className='h-10 text-center'
                                     ><i className="fas fa-eye"
-                                    // onClick={() => {
-                                    //   set_view_orders(item.ordered_foods)
-                                    //   handleView()
-                                    //   set_order_adnl_details({
-                                    //     quantity : item.quandity ,
-                                    //     total_cost : item.total_cost,
-                                    //     _id : item._id
-                                    //   })
-                                    // }}
+                                    onClick={() => {
+                                      set_view_orders(food.ordered_foods)
+                                      handleView()
+                                      set_order_adnl_details({
+                                        quantity : food.quandity ,
+                                        total_cost : food.total_cost,
+                                        _id : food._id,
+                                        user_name : food.user_name,
+                                        order_type : food.order_type
+                                      })
+                                    }}
                                     ></i>
                                   </td>
                               </tr>

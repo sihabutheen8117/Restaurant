@@ -54,6 +54,7 @@ const ViewOrders = (props:any) => {
     <div className='bg-white z-50 inset-x-72 inset-y-20 absolute rounded-lg'>
         <div className={` ${inter.className} justify-between mx-4 my-2 flex font-semibold `}>
             <div>{props.order_adnl_details.user_name}</div>
+            <div className='font-medium'>{props.order_adnl_details.order_type}</div>
             <div>#0012</div>
         </div>
         <div>
@@ -89,13 +90,16 @@ const ViewOrders = (props:any) => {
                                     )})
                                   }
                         
-                                  <tr className={`${inter.className} font-semibold h-10 sticky bottom-0 z-10 bg-gray-100`}>
-                                            <td className=''>{}</td>
-                                            <td>{}</td>
-                                            <td>Total</td>
-                                            <td>{props.order_adnl_details.quantity}</td>
-                                            <td>&#8377;  {props.order_adnl_details.total_cost}</td>
+                                  {
+                                    props.is_table== false &&
+                                    <tr className={`${inter.className} font-semibold h-10 sticky bottom-0 z-10 bg-gray-100`}>
+                                        <td className=''>{}</td>
+                                        <td>{}</td>
+                                        <td>Total</td>
+                                        <td>{props.order_adnl_details.quantity}</td>
+                                        <td>&#8377;  {props.order_adnl_details.total_cost}</td>
                                     </tr>
+                                  }
                                   
                               </tbody>
                           </table>
@@ -120,6 +124,28 @@ const ViewOrders = (props:any) => {
                     </div>
                     }
         </div>
+        {
+            props.is_table== true && 
+            <div className="m-4 text-sm">
+                <table className="min-w-[250px] border border-gray-300 rounded-md overflow-hidden w-fit text-sm shadow-sm">
+                    <tbody>
+                    <tr className="border-b border-gray-200 hover:bg-amber-100  transition-all duration-300">
+                        <th className="text-left px-4 py-2 font-medium text-gray-600 bg-gray-100 w-32">Quantity</th>
+                        <td className="px-4 py-2 text-gray-900">{props.order_adnl_details.quantity}</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 hover:bg-amber-100  transition-all duration-300">
+                        <th className="text-left px-4 py-2 font-medium text-gray-600 bg-gray-100">Cost</th>
+                        <td className="px-4 py-2 text-gray-900">&#8377; {props.order_adnl_details.total_cost}</td>
+                    </tr>
+                    <tr className="hover:bg-amber-100 transition-all duration-300">
+                        <th className="text-left px-4 py-2 font-medium text-gray-600 bg-gray-100">Payment Type</th>
+                        <td className="px-4 py-2 text-gray-900">Online</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+
         <div className='flex w-full absolute bottom-2 justify-between text-sm'>
             <button className='bg-red-500 text-white px-3 py-1 rounded-xl mx-3'
             onClick={props.close}
