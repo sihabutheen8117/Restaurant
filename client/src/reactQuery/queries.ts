@@ -259,6 +259,25 @@ export const get_seved_orders  =  async() => {
   }
 }
 
+export const get_entry_orders =  async() => {
+
+  try{
+    const response = await axios.get(api+'/api/get_entry_orders',
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+
 export const set_user_name_for_anonymous  =  async(user_data : any ) => {
 
   try{

@@ -511,6 +511,27 @@ FoodModuleRouter.get('/api/my_orders',
       
   });
 
+  FoodModuleRouter.get('/api/get_entry_orders',
+    async (req, res) => {
+
+      try {
+        const results = await Orders.find({ order_status: 'paid' , order_type : "offline"});
+        if(! results )
+        {
+          return res.status(404).send({
+            status : "can't fetch the orders"
+          })
+        }
+        res.status(200).send(results);
+      } catch (error) {
+        console.error("Error in /api/my_orders:", error);
+        res.status(200).send({
+            status : "failed"
+        }); 
+      }
+      
+  });
+
 
   FoodModuleRouter.post('/api/update_food_details',
     async (req, res) => {
