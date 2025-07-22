@@ -53,6 +53,9 @@ const AddNewFood = (props:any) => {
             queryClient.invalidateQueries({
                 queryKey : ['foods']
             })
+            queryClient.invalidateQueries({
+                queryKey : ['manual_entry_foods']
+            })
             props.handleView()
         }
     })

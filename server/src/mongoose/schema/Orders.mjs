@@ -37,7 +37,7 @@ const OrdersSchema = mongoose.Schema({
         required : true
     },
     payment_type : {
-        type : mongoose.Schema.Types.String 
+        type : mongoose.Schema.Types.Boolean 
     },
     order_status : {
         type : mongoose.Schema.Types.String ,

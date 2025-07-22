@@ -68,6 +68,9 @@ const EditFoods = ( props : any) => {
             queryClient.invalidateQueries({
                 queryKey : ['categories']
             })
+            queryClient.invalidateQueries({
+                queryKey : ['manual_entry_foods']
+            })
             props.handle_view()
         }
     })

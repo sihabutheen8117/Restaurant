@@ -539,6 +539,63 @@ FoodModuleRouter.get('/api/my_orders',
         });
       }
   });
+
+
+  
+  FoodModuleRouter.get('/api/manual_entry/get_foods',
+    async (req, res) => {
+      try {
+        const foods = await Foods.find(
+          { isDisable: false },
+          {
+            food_name: 1,
+            price: 1,
+            offer_price: 1
+          }
+        );
+        res.status(200).json(foods);
+      } catch (error) {
+        console.error("Error in /api/manual_entry/get_foods:", error);
+        return res.status(500).send({
+          error: "Internal server error"
+        });
+      }
+  });
+
+
+  FoodModuleRouter.post('/api/place_entry' , async ( req , res ) => { 
+
+    try {
+        
+          const order_data = {
+                user_name : req.body.user_name ,
+                user_id : uuidv4() ,
+                ordered_foods : req.body.order_data,
+                quandity : req.body.quandity ,
+                total_cost : req.body.total_cost ,
+                order_type : "offline",
+                order_status : "paid" ,
+                payment_type : req.body.payment_type
+          }
+
+          const orders = new Orders(order_data)
+          const saved_order = await orders.save();
+
+        res.status(200).send({
+            status : "placing entry is successful" 
+        })
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.status(400).send({
+            level : "error" ,
+            details : "errors in placing the entries"
+        })
+    }
+
+})
+  
   
 
 export default FoodModuleRouter ;
