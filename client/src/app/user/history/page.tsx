@@ -6,6 +6,8 @@ import UserNav from '@/components/User/UserNav'
 import  { useRouter}  from 'next/navigation'
 import { myOrders } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
+import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
+import { inter } from '@/utils/fonts'
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
 
 const page = () => {
@@ -43,6 +45,22 @@ const page = () => {
       </Suspense>
     )    
   }
+  if(!myOrdersQuery.isLoading && (myOrdersQuery.isSuccess && myOrdersQuery.data.data.length ==0 ) )
+  {
+    return(
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className='mt-24'>
+            <div className="z-20">
+              <UserNav isSearch={false} isBack={true} goBack={() => handleGoBack()}/>
+            </div>
+            <div className='w-full h-9/12 flex items-center justify-center flex-col'>
+              <ItemsNotFound/>
+              <div className={`text-2xl font-medium tracking-wide ${inter.className} `}> No Orders Found !</div>
+            </div>
+        </div>
+      </Suspense>
+    )
+  }
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <div >
@@ -53,7 +71,7 @@ const page = () => {
       {
         view && 
         <div className=''>
-          <div className='fixed inset-0 bg-black opacity-15 z-10 h-screen'
+          <div className='fixed inset-0 bg-black opacity-15 z-40 h-screen'
           onClick={() => setView(!view)}>
           </div>
           <div className='fixed inset-x-10 inset-y-40 bg-white z-50'>
@@ -66,7 +84,6 @@ const page = () => {
       {
         myOrdersQuery.isSuccess &&
         myOrdersQuery.data.data.map( (items :any, index : any) => {
-          console.log(items)
           const orderDate = new Date(items.createdAt);
           const formattedDate = orderDate.toLocaleDateString('en-IN', {
             year: 'numeric',

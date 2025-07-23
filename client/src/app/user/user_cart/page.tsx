@@ -4,12 +4,15 @@ import React, { useEffect, useState } from 'react'
 import UserNav from '@/components/User/UserNav';
 import { useRouter } from 'next/navigation';
 import { placeOrder } from '@/reactQuery/queries';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation , useQueryClient } from '@tanstack/react-query';
 import PromptName from '@/components/User/PromptName';
+import UserNotify from '@/components/Loaders/UserNotify';
 
 const Page = () => {
 
   const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
+
+  const [ errors , set_errors ] = useState(false)
   
   const [userCart, setUserCart] = useState<any>(null);
   const [is_name, set_is_name] = useState<string | null>(null);
@@ -33,12 +36,13 @@ const Page = () => {
     router.push('/user/order_placed')
   }
 
+  const queryClient = useQueryClient() ;
   const newFoods = useMutation({
     mutationFn : placeOrder ,
     onSuccess : () => {
-        // queryClient.invalidateQueries({
-        //     queryKey : ['foods']
-        // })
+        queryClient.invalidateQueries({
+            queryKey : ["my_orders"]
+        })
         handleSuccessfullOrder()
         }
     })
@@ -50,6 +54,14 @@ const Page = () => {
       set_act_prompt(true)
       return ;
     }
+    if(userCart == null || userCart.length == 0)
+      {
+          set_errors(true) ;
+          setTimeout( ()=>{
+            router.push('/user/client')
+          } , 3000)
+          return ;
+      }
     const fieldsToKeep = ["_id", "quantity"];
     const filteredCart = userCart.map((item: any) => {
       const result: any = {};
@@ -60,8 +72,9 @@ const Page = () => {
       });
       return result;
     });
+    
+    set_errors(false) ;
     newFoods.mutate({ body : filteredCart , user_name : is_name }) ;
-    router.push('/user/order_placed');
   }
 
   const handleAddCart = (cart_data : any) => {
@@ -127,6 +140,20 @@ const Page = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <div>
+      {
+                  errors && (
+                      <div>
+                          <div 
+                              className="fixed inset-0 bg-black opacity-40 z-40"
+                              onClick={() => set_errors(false)}
+                          ></div>
+                          <div className="z-50 bg-white fixed rounded-lg 
+                                          top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                              <UserNotify info={"no foods in your cart ! , Please add Foods "}/>
+                          </div>
+                      </div>
+                  )
+        }
       <div className="z-20">
         <UserNav isSearch={false} isBack={true} goBack={() => handlePreOrder()}/>
       </div>
@@ -226,7 +253,7 @@ const Page = () => {
           </div>
           <div className='flex h-full items-center gap-3'>
             <span className='text-lg font-medium'>items : { userCart && userCart.length}</span>
-            <button className='bg-green-600 py-2.5 rounded-xl text-lg px-6'
+            <button className='bg-green-600 py-2.5 rounded-xl text-lg px-6 font-medium text-white'
             onClick={handleOrderPlace}
             >
               {

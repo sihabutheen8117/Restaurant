@@ -1,11 +1,13 @@
 "use client"
 
-import { elements } from 'chart.js'
+import { elements } from 'chart.js';
 import React from 'react'
 import { useState , useEffect } from 'react'
 
 
-const NotificationLoader = () => {
+const NotificationLoader = (props:any) => {
+
+
   const success = {
     element : (<svg aria-hidden="true" fill="none" viewBox="0 0 24 24" className='stroke-green-500'>
         <path
@@ -74,10 +76,32 @@ const NotificationLoader = () => {
     color : "bg-gray-500"
     }
 
+
+ let state ;
+ switch (props.state){
+    case "success" : 
+        state = success
+        break;
+    case "info" :
+        state = info 
+        break ;
+    case "warning" :
+        state = warning
+        break ;
+    case "error" :
+        state = error;
+        break ;
+    case "settings" :
+        state = settings;
+        break ;
+    default :
+        state = info ;
+ }
+
   return (
-    <div className='z-50'>
+    <div className='z-50 fixed bottom-10 right-10 mx-auto bg-white'>
         <ul className="notification-container">
-            <NotificationContent notifi_icon={success}/>
+            <NotificationContent notifi_icon={state} information={props.information} close={() => props.close()}/>
         </ul>
     </div>
   )
@@ -86,27 +110,29 @@ const NotificationLoader = () => {
 
 const NotificationContent = (props:any) => {
     return(
-    <li className="notification-item w-52 h-12">
+    <li className="notification-item w-fit  h-12 whitespace-nowrap min-w-52">
         <div className="notification-content">
-        <div className="notification-icon">
+        <div className="notification-icon text-xl">
             {
                 props.notifi_icon.element
             }
         </div>
-        <div className="notification-text">A notification for you.</div>
+        <div className="notification-text">{props.information}</div>
         </div>
-        <div className="notification-icon notification-close">
-        <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-            <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 18 17.94 6M18 18 6.06 6"
-            ></path>
-        </svg>
+        <div className="notification-icon notification-close"
+        onClick={() => props.close()}
+        >
+            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
+                <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18 17.94 6M18 18 6.06 6"
+                ></path>
+            </svg>
         </div>
-        <div className={`notification-progress-bar ${props.notifi_icon.color}`}></div>
+        <div className={`notification-progress-bar ${props.notifi_icon.color} `}></div>
     </li>
     )
 }

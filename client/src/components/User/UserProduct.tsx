@@ -8,12 +8,13 @@ import { Food } from '@/reactQuery/itemInterfaces'
 import { CartItems } from '@/reactQuery/itemInterfaces'
 import { useRouter } from 'next/navigation'
 import MobileLoaders from '../Loaders/MobileLoaders'
+import UserNotify from '../Loaders/UserNotify'
 
 const UserProduct = (props : any) => {
 
 
     const [foodQuantity , setFoodQuantity ] = useState<{ [key: string]: number }>({});
-    
+    const [ errors , set_errors ] = useState(false)
     const handleAddCart = (cart_data : CartItems ) => {
         
         // props.set_user_cart( (prev:any)=> [ ...prev , cart_data ]) ;
@@ -28,6 +29,12 @@ const UserProduct = (props : any) => {
     const router = useRouter() ;
 
     const handlePreOrder = () => {
+        if(props.user_cart?.length == 0 )
+        {
+            set_errors(true)
+            return ;
+        }
+        set_errors(false)
         localStorage.setItem("user_cart" , JSON.stringify(props.user_cart) ) ;
         localStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
         router.push('/user/user_cart')
@@ -158,6 +165,20 @@ const UserProduct = (props : any) => {
 
   return (
     <div>
+        {
+            errors && (
+                <div>
+                    <div 
+                        className="fixed inset-0 bg-black opacity-40 z-40"
+                        onClick={() => set_errors(false)}
+                    ></div>
+                    <div className="z-50 bg-white fixed rounded-lg 
+                                    top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <UserNotify info={"no foods in your cart ! , Please add Foods "}/>
+                    </div>
+                </div>
+            )
+        }
         {
            
             view && <div 

@@ -18,10 +18,6 @@ const ProfileElem = () => {
     <div className='w-full'>
         <div className='relative h-screen w-full'>
             <div className='w-full h-screen '>
-                <div className='hover:bg-gray-100 px-7 py-2'>
-                    <i className="fas fa-user pr-5"></i>
-                    Profile
-                </div>
                 <hr className='border-b-2 w-full border-gray-200'></hr> 
                 <div className='hover:bg-gray-100 px-7 py-2'
                 onClick={() => handleUserCart()}
