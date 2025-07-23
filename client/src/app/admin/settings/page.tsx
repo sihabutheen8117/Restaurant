@@ -5,7 +5,7 @@ import NotificationLoader from '@/components/Loaders/NotificationLoader'
 const Page = () => {
   const [error, set_error] = useState(false)
   const [visible, set_visible] = useState(false)
-  const timeoutRef = useRef(0)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSignin = () => {
     if (error && !visible) {
