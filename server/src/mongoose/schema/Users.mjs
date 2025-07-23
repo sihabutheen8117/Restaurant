@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { Foods } from './Foods.mjs'
 
 const UsersSchema = mongoose.Schema({
     isAdmin : {
@@ -26,5 +27,6 @@ const UsersSchema = mongoose.Schema({
     },
     { timestamps: true } 
 )
+
 
 export const Users = mongoose.model('Users' , UsersSchema)

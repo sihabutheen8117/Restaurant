@@ -39,6 +39,10 @@ const OrderSchema = mongoose.Schema({
     order_date : {
         type : mongoose.Schema.Types.Date,
         required : true 
+    } ,
+    quantity : {
+        type : mongoose.Schema.Types.Number ,
+        required : true 
     }
 })
 

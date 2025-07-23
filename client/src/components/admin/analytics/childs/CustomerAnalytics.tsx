@@ -1,14 +1,14 @@
 import React from 'react'
-import NotificationLoader from '@/components/Loaders/NotificationLoader'
+import Contruction from '@/components/admin/Contruction'
 
-const page = () => {
+const CustomerAnalytics = () => {
   return (
     <div>
       <div className='flex items-center justify-center h-screen inset-0 bg-gray-100 rounded-4xl opacity-50'>
-        <NotificationLoader/>
+        <Contruction/>
       </div>
     </div>
   )
 }
 
-export default page
+export default CustomerAnalytics

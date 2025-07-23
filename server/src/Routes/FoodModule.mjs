@@ -165,7 +165,7 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
     const body = req.body.body;
     const token = req.cookies.authorization;
 
-    console.log("place order user body ")
+    console.log("place order user body")
     console.log(body) ;
 
     let user_id;
@@ -270,6 +270,8 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
             });    
           }
           else{
+            console.log("Order saved to user account ") ;
+            console.log(saved_order._id);
             const rep = await Users.findByIdAndUpdate(user_obj_id, {
               $push: {
                 order_id: saved_order._id
@@ -280,6 +282,8 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
         res.status(200).send({
             status : "order placed successfully" 
         })
+
+        //save to foods schemas 
     }
     catch(error)
     {
