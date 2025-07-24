@@ -8,6 +8,9 @@ import { useState} from 'react'
 import ViewOrders from './ViewOrders'
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
+import { useRef , useEffect} from 'react'
+import NotificationLoader from '@/components/Loaders/NotificationLoader'
+
 
 const ServerdOrders = (props : any ) => {
 
@@ -15,9 +18,43 @@ const ServerdOrders = (props : any ) => {
         queryKey : ["completed_orders"] ,
         queryFn : get_seved_orders
     })
+
     const [view , setView ] = useState(false) ;
     const [ view_orders , set_view_orders ] = useState({}) ;
     const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
+
+
+
+    const [ information , set_information ] = useState("") ;
+    const [visible, set_visible] = useState(false)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handle_delete_success = () => {
+              if(visible && timeoutRef.current)
+              {
+                clearTimeout(timeoutRef.current) ;
+              }
+              set_visible(true)
+              set_information("successfully deleted !")
+              timeoutRef.current = setTimeout(() => {
+                set_visible(false)
+              }, 5000)
+            
+          }
+
+        useEffect(() => {
+                  return () => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+                  }
+                }, [])
+
+    const handleClose = () => {
+        if(timeoutRef.current)
+        {
+          clearTimeout(timeoutRef.current)
+        }
+        set_visible(false) ;
+      }
 
     const handleView = () => {
         setView(!view) ;
@@ -48,7 +85,7 @@ const ServerdOrders = (props : any ) => {
         {
             view && 
             <div className=''>
-                <ViewOrders close={handleView} isNotLive={true} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={true}/>
+                <ViewOrders close={handleView} isNotLive={true} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={true}  handle_delete_success={() => handle_delete_success()}/>
             </div>
         }
       <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
@@ -124,6 +161,8 @@ const ServerdOrders = (props : any ) => {
                     </table>
                   </div>
               </div>
+
+              {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}
     </div>
   )
 }

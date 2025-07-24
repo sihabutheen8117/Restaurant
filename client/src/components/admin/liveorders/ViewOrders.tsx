@@ -6,7 +6,7 @@ import {useMutation, useQuery , useQueryClient} from '@tanstack/react-query'
 import { deleteOrder } from '@/reactQuery/queries'
 import { payment_checkout } from '@/reactQuery/queries'
 
-import { useState } from 'react'
+import { useState  , useRef } from 'react'
 
 const ViewOrders = (props:any) => {
 
@@ -15,6 +15,7 @@ const ViewOrders = (props:any) => {
         queryKey : ["admin_orders"] ,
         queryFn : () => getFoodDetailsForOrders(props.food_data)
     })
+
 
     const queryClient = useQueryClient() ;
 
@@ -25,6 +26,7 @@ const ViewOrders = (props:any) => {
                 queryKey : ['all_pending_orders']
             })
             props.close()
+            props.handle_delete_success()
         }
     })
 
@@ -34,7 +36,8 @@ const ViewOrders = (props:any) => {
             queryClient.invalidateQueries({
                 queryKey : ['all_pending_orders']
             })
-            props.close()
+            props.close();
+            props.checkout_success();
         }
     })
 
@@ -43,6 +46,7 @@ const ViewOrders = (props:any) => {
             payment_type : payment_type ,
             _id : props.order_adnl_details._id
         })
+
     }
 
     const handleDetails = () => {
@@ -150,16 +154,31 @@ const ViewOrders = (props:any) => {
             <button className='bg-red-500 text-white px-3 py-1 rounded-xl mx-3'
             onClick={props.close}
             ><i className="fas fa-times"></i> cancel</button>
-            <div className='mx-3'>
+            <div className='mx-3 flex'>
                 
-                <button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'
+                <button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg flex gap-2 relative pl-8'
                 onClick={() => handleDetails()}
-                ><i className="fas fa-trash"></i> Delete</button>
+                ><i className="fas fa-trash absolute left-3 top-2"></i> 
+                        {delete_mutation.isPending ? 
+                        <svg viewBox="25 25 50 50" className='svg_loading'>
+                            <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                        </svg>
+                        :
+                        "delete"}
+                </button>
+
                 {
                     !props.isNotLive && 
-                    <button className='bg-green-400 text-white px-3 py-1 rounded-lg'
+                    <button className='bg-green-400 text-white px-3 py-1 rounded-lg flex gap-2 relative pl-10'
                     onClick={handle_checkout}
-                    ><i className="fas fa-money-check-alt "></i>  check out</button>
+                    ><i className="fas fa-money-check-alt absolute left-3 top-2"></i> {
+                        checkout_mutation.isPending ? 
+                        <svg viewBox="25 25 50 50" className='svg_loading'>
+                            <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                        </svg>
+                        :
+                        "check out"
+                    }</button>
                 }
             </div>
         </div>

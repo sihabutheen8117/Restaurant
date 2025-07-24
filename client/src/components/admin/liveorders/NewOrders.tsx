@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { inter } from '@/utils/fonts'
-import { useState , useEffect } from 'react'
+import { useState , useEffect, useRef } from 'react'
 import ViewOrders from './ViewOrders'
 import { getAllOrdesDetails } from '@/reactQuery/queries'
 import {  useQuery } from '@tanstack/react-query'
@@ -10,6 +10,7 @@ import  { useSocket } from "@/customHooks/useSocket"
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
 import SystemLoaders from '@/components/Loaders/SystemLoaders'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
+import NotificationLoader from '@/components/Loaders/NotificationLoader'
 
 const NewOrders = (props : any) => {
 
@@ -21,7 +22,51 @@ const NewOrders = (props : any) => {
         } : any = useSocket('admin', {
           name: "this is admin thats it"
         })
+
+      const [ information , set_information ] = useState("") ;
+      const [visible, set_visible] = useState(false)
+      const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     
+      const handle_checkout_success = () => {
+          if(visible && timeoutRef.current)
+          {
+            clearTimeout(timeoutRef.current) ;
+          }
+          set_visible(true)
+          set_information("successfully checkout !")
+          timeoutRef.current = setTimeout(() => {
+            set_visible(false)
+          }, 5000)
+        
+      }
+
+      const handle_delete_success = () => {
+          if(visible && timeoutRef.current)
+          {
+            clearTimeout(timeoutRef.current) ;
+          }
+          set_visible(true)
+          set_information("successfully deleted !")
+          timeoutRef.current = setTimeout(() => {
+            set_visible(false)
+          }, 5000)
+        
+      }
+    
+      const handleClose = () => {
+        if(timeoutRef.current)
+        {
+          clearTimeout(timeoutRef.current)
+        }
+        set_visible(false) ;
+      }
+
+      useEffect(() => {
+          return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
+          }
+        }, [])
+
         const [view , setView ] = useState(false) ;
         const [ view_orders , set_view_orders ] = useState({}) ;
         const [ order_adnl_details , set_order_adnl_details ] = useState({}) ;
@@ -66,7 +111,7 @@ const NewOrders = (props : any) => {
         {
             view && 
             <div className=''>
-                <ViewOrders close={handleView} isNotLive={props.isNotLive} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={false}/>
+                <ViewOrders close={handleView} isNotLive={props.isNotLive} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={false} checkout_success={() => handle_checkout_success()} handle_delete_success={() => handle_delete_success()}/>
             </div>
         }
         <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>
@@ -150,6 +195,7 @@ const NewOrders = (props : any) => {
               </table>
             </div>
         </div>
+        {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}
     </div>
   )
 }

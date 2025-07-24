@@ -71,6 +71,7 @@ const EditFoods = ( props : any) => {
             queryClient.invalidateQueries({
                 queryKey : ['manual_entry_foods']
             })
+            props.successful_update()
             props.handle_view()
         }
     })
@@ -81,6 +82,7 @@ const EditFoods = ( props : any) => {
             queryClient.invalidateQueries({
                 queryKey : ['foods']
             })
+            props.successful_delete()
             props.handle_view()
         }
     })
@@ -240,12 +242,21 @@ const EditFoods = ( props : any) => {
                 onChange={ () => setIsEnable(!isEnable)}
                 />
             </div>
-            <div className='text-sm absolute bottom-2 right-7 font-semibold'>
+            <div className='text-sm absolute bottom-2 right-7 font-semibold flex'>
             
-                    <button className='mr-4 px-2 py-1 bg-red-400 text-white rounded-xl hover:bg-red-500'
+                    <button className='mr-4 px-2 py-1 bg-red-400 text-white rounded-xl hover:bg-red-500 '
                     onClick={handleDeleteFood}
                     >
-                        <span className=""><i className="fas fa-trash"></i> Delete</span>
+                        <span className="flex gap-2 relative pl-5"><i className="fas fa-trash absolute top-0.5 left-1"></i>
+                        {
+                            deleteFoodMutaion.isPending ?
+                            <svg viewBox="25 25 50 50" className='svg_loading'>
+                                <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                            </svg>
+                            :
+                            " Delete"
+                        }
+                         </span>
                     </button>
 
                     <button className='mr-4 px-2 py-1 bg-gray-400 text-white rounded-xl hover:bg-gray-500'
@@ -257,7 +268,16 @@ const EditFoods = ( props : any) => {
                     <button className='mr-4 px-2 py-1 bg-green-400 text-white rounded-xl hover:bg-green-500'
                     onClick={handle_update_foods }
                     >
-                        <span className=""><i className="fas fa-check-circle"></i> Update</span>
+                        <span className="flex gap-2 relative pl-5"><i className="fas fa-check-circle absolute top-0.5 left-0"></i> 
+                        {
+                            update_food.isPending ?
+                            <svg viewBox="25 25 50 50" className='svg_loading'>
+                                <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                            </svg>
+                            :
+                            "Update"
+                        }
+                        </span>
                     </button>
                
             </div>

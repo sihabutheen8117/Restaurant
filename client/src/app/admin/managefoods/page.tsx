@@ -3,11 +3,12 @@
 import React from 'react'
 import { inter } from '@/utils/fonts'
 import ViewManageFoods from '@/components/admin/managefoods/ViewManageFoods'
-import { useState } from 'react'
+import { useState , useEffect , useRef } from 'react'
 import AddNewFood from '@/components/admin/managefoods/AddNewFood'
 import AddNewCategory from '@/components/admin/managefoods/AddNewCategory'
 import { get_all_categories } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
+import NotificationLoader from '@/components/Loaders/NotificationLoader'
 
 const page = () => {
 
@@ -16,6 +17,40 @@ const page = () => {
     const [ search ,setSearch ] = useState<string>("");
     const [ cat_filter , set_cat_filter ] = useState("All") ;
 
+
+
+    const [ information , set_information ] = useState("") ;
+        const [visible, set_visible] = useState(false)
+        const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+            
+        const handle_create_food = () => {
+                  if(visible && timeoutRef.current)
+                  {
+                    clearTimeout(timeoutRef.current) ;
+                  }
+                  set_visible(true)
+                  set_information("food created successfully!")
+                  timeoutRef.current = setTimeout(() => {
+                    set_visible(false)
+                  }, 5000)
+                
+              }
+        
+        const handleClose = () => {
+                if(timeoutRef.current)
+                {
+                  clearTimeout(timeoutRef.current)
+                }
+                set_visible(false) ;
+              }
+        
+        useEffect(() => {
+                  return () => {
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+                  }
+                }, [])
+
+
     const all_categories = useQuery({
         queryKey : ['categories'] ,
         queryFn : get_all_categories
@@ -23,7 +58,7 @@ const page = () => {
 
     const handleNewFood = () => {
         handleView() 
-        setSelectFload(<AddNewFood handleView={() => setView(false)} all_categories={all_categories.data}/>)
+        setSelectFload(<AddNewFood handleView={() => setView(false)} all_categories={all_categories.data} handle_create_food={() => handle_create_food()}/>)
     }
 
     const handleNewCategory = () => {
@@ -93,6 +128,7 @@ const page = () => {
         <div className=''>
             <ViewManageFoods filter={search}  all_categories={all_categories.data} cat_filter={cat_filter}/>
         </div>
+        {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}
     </div>
   )
 }

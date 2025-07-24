@@ -9,7 +9,6 @@ import { manual_entry_get_foods } from '@/reactQuery/queries'
 import { useState } from 'react'
 
 
-
 const ManualEntry = () => {
 
     const [ is_entry , set_is_entry  ] = useState(true) ;

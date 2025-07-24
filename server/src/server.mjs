@@ -14,6 +14,7 @@ import AuthRouter from './Routes/Auth.mjs';
 import FoodModuleRouter from './Routes/FoodModule.mjs';
 import UserRouter from './Routes/UserRoute.mjs';
 import AnalyticsRouter from './Routes/Analytics.mjs';
+import MainAnalytics from './Routes/MainAnalytics.mjs';
 
 dotenv.config()
 
@@ -196,6 +197,7 @@ app.use(AuthRouter);
 app.use(FoodModuleRouter);
 app.use(UserRouter)
 app.use(AnalyticsRouter)
+app.use(MainAnalytics)
 
 
 

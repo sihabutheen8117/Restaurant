@@ -2,11 +2,61 @@
 
 import React from 'react'
 import { inter } from '@/utils/fonts'
-import { useState } from 'react'
+import { useState , useRef , useEffect } from 'react'
 import { place_entry } from '@/reactQuery/queries'
 import { useMutation } from '@tanstack/react-query'
+import NotificationLoader from '@/components/Loaders/NotificationLoader'
 
 const NewEntry = (props:any) => {
+
+
+  const [ information , set_information ] = useState("") ;
+          const [visible, set_visible] = useState(false)
+          const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+          const [ state , set_state ] = useState("success") ;
+              
+          const handle_create_food = () => {
+                    if(visible && timeoutRef.current)
+                    {
+                      clearTimeout(timeoutRef.current) ;
+                    }
+                    set_state("success");
+                    set_visible(true)
+                    set_information("new entry created !")
+                    timeoutRef.current = setTimeout(() => {
+                      set_visible(false)
+                    }, 5000)
+                  
+                }
+          
+          const reset_handler = () => {
+            if(visible && timeoutRef.current)
+              {
+                clearTimeout(timeoutRef.current) ;
+              }
+              set_state("info");
+              set_visible(true)
+              set_information("entry reseted !")
+              timeoutRef.current = setTimeout(() => {
+                set_visible(false)
+              }, 5000)
+          }
+          
+          const handleClose = () => {
+                  if(timeoutRef.current)
+                  {
+                    clearTimeout(timeoutRef.current)
+                  }
+                  set_visible(false) ;
+                }
+          
+          useEffect(() => {
+                    return () => {
+                      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+                    }
+                  }, [])
+
+
 
   const [ order_details , set_order_details ] = useState({
     payment_type : false ,
@@ -20,6 +70,7 @@ const NewEntry = (props:any) => {
         payment_type : false ,
         user_name : "" ,
       })
+      handle_create_food()
       props.reset()
     }
   })
@@ -188,23 +239,31 @@ const NewEntry = (props:any) => {
                       payment_type : false ,
                       user_name : "" ,
                     })
+                    reset_handler()
                     props.reset()
                   }}
                   >
                     <i className="fas fa-rotate-left mr-1"></i>
                     reset
                   </button>
-                  <button className='ml-3 bg-green-500 rounded-xl px-2 py-0.5 text-white'
+                  <button className='ml-3 bg-green-500 rounded-xl px-2 py-0.5 text-white flex relative pl-7'
                   onClick={() => handleCreateEntry()}
                   >
-                    <i className="fas fa-edit mr-1"></i>  
-                    create Entry
+                    <i className="fas fa-edit mr-1 absolute top-1 left-2"></i> 
+                    {
+                      place_entry_mutation.isPending ? 
+                      <svg viewBox="25 25 50 50" className='svg_loading'>
+                          <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                      </svg>
+                      :
+                      "create Entry"
+                    } 
                   </button>
                 </div>
         </div>
 
       </div>
-
+      {visible && <NotificationLoader state={state} information={information} close={ () => handleClose()}/>}
     </div>
   )
 }

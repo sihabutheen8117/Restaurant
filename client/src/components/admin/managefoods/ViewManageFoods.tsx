@@ -3,11 +3,12 @@
 import React from 'react'
 import '../../../styles/mainStyles.css'
 import EditFoods from './EditFoods'
-import { useState } from 'react'
+import { useState ,useRef , useEffect} from 'react'
 import { getAllFoodForEdit } from '@/reactQuery/queries'
 import { useQuery } from '@tanstack/react-query'
 import { Food } from '@/reactQuery/itemInterfaces'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
+import NotificationLoader from '@/components/Loaders/NotificationLoader'
 
 const ViewManageFoods = (props: any) => {
 
@@ -19,6 +20,50 @@ const ViewManageFoods = (props: any) => {
         queryKey : ["foods" , "edit"] ,
         queryFn : () => getAllFoodForEdit()
     })
+
+    const [ information , set_information ] = useState("") ;
+    const [visible, set_visible] = useState(false)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+        
+    const handle_update_success = () => {
+              if(visible && timeoutRef.current)
+              {
+                clearTimeout(timeoutRef.current) ;
+              }
+              set_visible(true)
+              set_information("food successfully updated !")
+              timeoutRef.current = setTimeout(() => {
+                set_visible(false)
+              }, 5000)
+            
+          }
+    
+    const handle_delete_success = () => {
+              if(visible && timeoutRef.current)
+              {
+                clearTimeout(timeoutRef.current) ;
+              }
+              set_visible(true)
+              set_information("food successfully deleted !")
+              timeoutRef.current = setTimeout(() => {
+                set_visible(false)
+              }, 5000)
+            
+          }
+        
+    const handleClose = () => {
+            if(timeoutRef.current)
+            {
+              clearTimeout(timeoutRef.current)
+            }
+            set_visible(false) ;
+          }
+    
+    useEffect(() => {
+              return () => {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current)
+              }
+            }, [])
    
     const handleView = () => {
         setView( !view ) 
@@ -53,7 +98,13 @@ const ViewManageFoods = (props: any) => {
                 <div className='fixed inset-0 bg-black opacity-40 z-10'
                 onClick={handleView}> </div>
                 <div className='z-50 bg-white fixed inset-x-50 inset-y-20 rounded-xl'>
-                    <EditFoods food_data={selectedFood} handle_view={ () => setView(false)}  all_categories={props.all_categories}/>
+                    <EditFoods 
+                    food_data={selectedFood} 
+                    handle_view={ () => setView(false)}  
+                    all_categories={props.all_categories} 
+                    successful_update={() => handle_update_success()}
+                    successful_delete={() => handle_delete_success()}
+                    />
                 </div>
             </div>
         }
@@ -111,6 +162,7 @@ const ViewManageFoods = (props: any) => {
             ))
         }
       </div>
+      {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}
     </div>
   )
 }

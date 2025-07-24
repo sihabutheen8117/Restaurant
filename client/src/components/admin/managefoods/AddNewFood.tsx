@@ -56,6 +56,7 @@ const AddNewFood = (props:any) => {
             queryClient.invalidateQueries({
                 queryKey : ['manual_entry_foods']
             })
+            props.handle_create_food() 
             props.handleView()
         }
     })
@@ -192,7 +193,7 @@ const AddNewFood = (props:any) => {
                 onChange={ () => setIsEnable(!isEnable)}
                 />
             </div>
-            <div className='text-sm absolute bottom-2 right-7 font-semibold'>
+            <div className='text-sm absolute bottom-2 right-7 font-semibold flex'>
 
                     <button className='mr-4 px-2 py-1 bg-gray-400 text-white rounded-xl hover:bg-gray-500'
                     onClick={props.handleView}
@@ -203,7 +204,16 @@ const AddNewFood = (props:any) => {
                     <button className='mr-4 px-2 py-1 bg-green-400 text-white rounded-xl hover:bg-green-500'
                     onClick={addFoods}
                     >
-                        <span className=""><i className="fas fa-check-circle"></i> Apply</span>
+                        <span className="flex gap-2 pl-5 relative"><i className="fas fa-check-circle absolute top-1 left-0"></i> 
+                        {
+                            newFoods.isPending ? 
+                            <svg viewBox="25 25 50 50" className='svg_loading'>
+                                <circle r="20" cy="50" cx="50" className='circle_loading stroke-white' ></circle>
+                            </svg>
+                            :
+                            "Create Food"
+                        }
+                        </span>
                     </button>
                
             </div>
