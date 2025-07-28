@@ -148,7 +148,8 @@ const ServerdOrders = (props : any ) => {
                                         total_cost : item.total_cost,
                                         _id : item._id ,
                                         user_name : item.user_name,
-                                        order_type : item.order_type
+                                        order_type : item.order_type,
+                                        payment_type : item.payment_type
                                       })
                                     }}
                                     ></i>

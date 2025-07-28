@@ -3,6 +3,7 @@ import { verifyToken , genToken } from "../middlewares/authmiddleware.mjs";
 import { Users } from "../mongoose/schema/Users.mjs";
 import { Foods } from "../mongoose/schema/Foods.mjs";
 import { Orders } from "../mongoose/schema/Orders.mjs";
+import {AnonymousUser} from '../mongoose/schema/AnonymousUser.mjs'
 
 const AnalyticsRouter = Router() ;
 
@@ -20,7 +21,10 @@ AnalyticsRouter.get( "/api/get_countables" ,
           const categories = await Foods.distinct('category');
           const count_cats = categories.length;
 
-          const total_customers = await Users.countDocuments() ;
+          const total_customers  = await Users.countDocuments() ;
+          const total_anonymouse_users = await AnonymousUser.countDocuments() ;
+
+          const final_customers_count = total_customers + total_anonymouse_users ;
 
           const total_sales = result[0]?.totalSales || 0;
           res.status(200).send(
@@ -29,7 +33,7 @@ AnalyticsRouter.get( "/api/get_countables" ,
               total_orders : total_orders ,
               total_sales : total_sales ,
               total_categories : count_cats ,
-              total_customers : total_customers
+              total_customers : final_customers_count 
             }
           )
         }

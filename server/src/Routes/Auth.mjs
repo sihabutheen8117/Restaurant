@@ -60,7 +60,7 @@ AuthRouter.post( "/api/authendicate/login" ,
 AuthRouter.post("/api/authendicate/register" ,
     async(req , res , next) => {
         const user_data = req.body ;
-        
+        console.log(user_data)
         const final_data = {
             ...user_data ,
             isAdmin : false 
@@ -76,7 +76,8 @@ AuthRouter.post("/api/authendicate/register" ,
             }
             const token = genToken({
                 isAnonymous : false ,
-                user_id: response._id 
+                user_id: response._id ,
+                user_name : response.user_name
             }) ;
 
             res.cookie("authorization" , token , {

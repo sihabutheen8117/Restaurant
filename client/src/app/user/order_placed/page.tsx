@@ -8,8 +8,8 @@ import { useEffect } from 'react';
 const Page = () => {
 
   useEffect( ()=>{
-      localStorage.setItem("user_cart" , "") ;
-      localStorage.setItem("food_quantity" , ""  )
+      sessionStorage.setItem("user_cart" , "") ;
+      sessionStorage.setItem("food_quantity" , ""  )
   } ,[])
 
   return (

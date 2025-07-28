@@ -4,6 +4,7 @@ import { Users } from "../mongoose/schema/Users.mjs";
 import { Foods } from "../mongoose/schema/Foods.mjs";
 import { Orders } from "../mongoose/schema/Orders.mjs";
 import { AnonymousUser } from "../mongoose/schema/AnonymousUser.mjs";
+import xlsx from 'xlsx';
 import mongoose from 'mongoose'
 
 const MainAnalytics = Router() ;
@@ -397,7 +398,8 @@ MainAnalytics.get('/orders/overview', async (req, res) => {
     });
 
     const recentRevenue = await Orders.aggregate([
-      { $match: { createdAt: { $gte: sevenDaysAgo } } },
+      { $match: { createdAt: { $gte: sevenDaysAgo } , 
+                order_status : "paid" } },
       { $group: { _id: null, revenue: { $sum: "$total_cost" } } }
     ]);
 
@@ -571,5 +573,249 @@ MainAnalytics.get('/orders/food-analysis', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+
+
+
+
+
+//////////////////////
+
+
+MainAnalytics.post('/download-orders', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'Start date and end date are required' });
+    }
+
+    // Convert dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Include the entire end date
+
+    console.log(`Fetching orders from ${start} to ${end}`);
+
+    // Fetch paid orders within the date range
+    const orders = await Orders.find({
+      payment_type: true, // Only paid orders
+      createdAt: {
+        $gte: start,
+        $lte: end
+      }
+    }).sort({ createdAt: -1 });
+
+    console.log(`Found ${orders.length} paid orders`);
+
+    if (orders.length === 0) {
+      return res.status(404).json({ error: 'No paid orders found in the specified date range' });
+    }
+
+    // Prepare data for Excel
+    const excelData = [];
+
+    for (const order of orders) {
+      // Get user details
+      let userName = order.user_name || 'Anonymous User';
+      let userEmail = 'N/A';
+      
+      // Try to get user details from Users collection
+      if (order.user_id) {
+        try {
+          // Check if user_id is a valid MongoDB ObjectId (24 hex characters)
+          const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(order.user_id);
+          
+          if (isValidObjectId) {
+            // Query Users collection for registered users
+            const user = await Users.findById(order.user_id);
+            if (user) {
+              userName = user.user_name;
+              userEmail = user.user_email;
+            }
+          } else {
+            // For UUID strings, check AnonymousUser collection
+            const anonymousUser = await AnonymousUser.findOne({ user_id: order.user_id });
+            if (anonymousUser) {
+              userName = 'Anonymous User';
+              userEmail = 'Anonymous';
+            } else {
+              // Fallback for any other string format
+              userName = 'Guest User';
+              userEmail = 'N/A';
+            }
+          }
+        } catch (userError) {
+          console.error(`Error fetching user details for ${order.user_id}:`, userError);
+          userName = 'Unknown User';
+          userEmail = 'N/A';
+        }
+      }
+
+      // Process each food item in the order
+      for (const orderedFood of order.ordered_foods) {
+        try {
+          const food = await Foods.findById(orderedFood._id);
+          
+          const rowData = {
+            'Order ID': order._id,
+            'Order Date': order.createdAt.toLocaleDateString(),
+            'Order Time': order.createdAt.toLocaleTimeString(),
+            'User ID': order.user_id || 'Anonymous',
+            'User Name': userName,
+            'User Email': userEmail,
+            'Food ID': orderedFood._id,
+            'Food Name': food ? food.food_name : 'Unknown Food',
+            'Food Description': food ? food.describtion : 'N/A',
+            'Food Category': food ? food.category : 'N/A',
+            'Unit Price': food ? food.price : 0,
+            'Offer Price': food ? (food.offer_price || 'N/A') : 'N/A',
+            'Quantity Ordered': orderedFood.quantity,
+            'Item Total': food ? (food.price * orderedFood.quantity) : 0,
+            'Order Total': order.total_cost,
+            'Order Type': order.order_type,
+            'Payment Status': order.payment_type ? 'Paid' : 'Pending',
+            'Order Status': order.order_status,
+            'Total Items in Order': order.quandity
+          };
+          
+          excelData.push(rowData);
+        } catch (foodError) {
+          console.error(`Error fetching food details for ${orderedFood._id}:`, foodError);
+          // Add row with unknown food details
+          const rowData = {
+            'Order ID': order._id,
+            'Order Date': order.createdAt.toLocaleDateString(),
+            'Order Time': order.createdAt.toLocaleTimeString(),
+            'User ID': order.user_id || 'Anonymous',
+            'User Name': userName,
+            'User Email': userEmail,
+            'Food ID': orderedFood._id,
+            'Food Name': 'Unknown Food',
+            'Food Description': 'N/A',
+            'Food Category': 'N/A',
+            'Unit Price': 0,
+            'Offer Price': 'N/A',
+            'Quantity Ordered': orderedFood.quantity,
+            'Item Total': 0,
+            'Order Total': order.total_cost,
+            'Order Type': order.order_type,
+            'Payment Status': 'Paid',
+            'Order Status': order.order_status,
+            'Total Items in Order': order.quandity
+          };
+          
+          excelData.push(rowData);
+        }
+      }
+    }
+
+    // Create workbook and worksheet
+    const workbook = xlsx.utils.book_new();
+    const worksheet = xlsx.utils.json_to_sheet(excelData);
+
+    // Auto-size columns
+    const columnWidths = [];
+    const headers = Object.keys(excelData[0] || {});
+    
+    headers.forEach((header, index) => {
+      let maxWidth = header.length;
+      excelData.forEach(row => {
+        const cellValue = row[header] ? row[header].toString() : '';
+        maxWidth = Math.max(maxWidth, cellValue.length);
+      });
+      columnWidths.push({ wch: Math.min(maxWidth + 2, 50) }); // Max width of 50 characters
+    });
+    
+    worksheet['!cols'] = columnWidths;
+
+    // Add worksheet to workbook
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'Orders Report');
+
+    // Generate Excel file buffer
+    const excelBuffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+    // Create filename with date range
+    const startDateStr = start.toISOString().split('T')[0];
+    const endDateStr = end.toISOString().split('T')[0];
+    const filename = `orders_report_${startDateStr}_to_${endDateStr}.xlsx`;
+
+    // Set response headers for file download
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Length': excelBuffer.length
+    });
+
+    console.log(`Generated Excel file with ${excelData.length} rows`);
+
+    // Send the Excel file
+    res.send(excelBuffer);
+
+  } catch (error) {
+    console.error('Error generating Excel file:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate Excel file',
+      details: error.message 
+    });
+  }
+});
+
+// Summary endpoint to get order statistics
+MainAnalytics.post('/orders-summary', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: 'Start date and end date are required' });
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    // Get summary statistics
+    const totalOrders = await Orders.countDocuments({
+      payment_type: true,
+      createdAt: { $gte: start, $lte: end }
+    });
+
+    const totalRevenue = await Orders.aggregate([
+      {
+        $match: {
+          payment_type: true,
+          createdAt: { $gte: start, $lte: end }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$total_cost' }
+        }
+      }
+    ]);
+
+    const revenue = totalRevenue.length > 0 ? totalRevenue[0].total : 0;
+
+    res.json({
+      totalOrders,
+      totalRevenue: revenue,
+      dateRange: {
+        start: startDate,
+        end: endDate
+      }
+    });
+
+  } catch (error) {
+    console.error('Error getting orders summary:', error);
+    res.status(500).json({ 
+      error: 'Failed to get orders summary',
+      details: error.message 
+    });
+  }
+});
+
 
 export default MainAnalytics ; 

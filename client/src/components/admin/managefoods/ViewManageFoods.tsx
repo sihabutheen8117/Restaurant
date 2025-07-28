@@ -111,8 +111,20 @@ const ViewManageFoods = (props: any) => {
       <div className='md:flex md:gap-3 md:flex-wrap'>
         {
             foodQuery.isSuccess && 
-            foodQuery.data.data.map( (items , index ) => (
-                ((props.filter == "" || items.food_name.toLowerCase().includes(props.filter.toLowerCase())) && ( props.cat_filter =="All" || props.cat_filter == items.category ) ) &&
+            foodQuery.data.data.map( (items , index ) => {
+
+                let daysLeft = 0 ;
+                if(items.offer_validity != null ){
+                    const targetDate : any = new Date(items.offer_validity);
+                    const today : any = new Date();
+                    targetDate.setHours(0, 0, 0, 0);
+                    today.setHours(0, 0, 0, 0);
+                    const diffInMs = targetDate - today;
+                    daysLeft = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+                }
+
+                return (
+                ((props.filter == "" || items.food_name.toLowerCase().includes(props.filter.toLowerCase())) && ( props.cat_filter =="All" || props.cat_filter == items.category || (props.cat_filter =="Disabled" && items.isDisable == true ) ) ) &&
                 <div className='md:w-40 md:h-80 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
                     key = {index}
                 >
@@ -123,7 +135,13 @@ const ViewManageFoods = (props: any) => {
                         <div className='hidden md:block'>
                             <i className="fas fa-pen text-gray-600 absolute top-2 right-2 bg-white rounded-full px-2 py-0.5"
                             onClick={() => handleFoodDetails(items)}
-                            ></i>   
+                            ></i> 
+                            {
+                                items.isDisable && 
+                                <div className="absolute top-2 left-2 bg-red-100 rounded-full px-2 py-0.5 text-xs text-red-800">
+                                    Disabled    
+                                </div>   
+                            }  
                         </div>
                         
                     </div>
@@ -157,9 +175,15 @@ const ViewManageFoods = (props: any) => {
                                 }
                             </div>
                         </div>
+                        {
+                            items.offer_price != -1 &&
+                            <div className='text-sm font-medium opacity-50'>
+                                offer expires in { daysLeft } days
+                            </div>
+                        }
                     </div>
                 </div>
-            ))
+            )})
         }
       </div>
       {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}

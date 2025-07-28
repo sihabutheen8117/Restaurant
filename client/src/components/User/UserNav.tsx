@@ -17,7 +17,7 @@ const UserNav = (props:any) => {
         const userName = searchParams.get("user_name") || "" ;
         if(userName != "")
         {
-            localStorage.setItem("user_name", userName );
+          sessionStorage.setItem("user_name", userName );
         }
     } ,[])
 

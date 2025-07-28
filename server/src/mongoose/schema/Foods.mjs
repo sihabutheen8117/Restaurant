@@ -43,6 +43,10 @@ const OrderSchema = mongoose.Schema({
     quantity : {
         type : mongoose.Schema.Types.Number ,
         required : true 
+    } ,
+    total_cost : {
+        type : mongoose.Schema.Types.Number ,
+        required : true 
     }
 })
 
@@ -62,7 +66,8 @@ const FoodSchema = mongoose.Schema({
     },
     price : {
         type : mongoose.Schema.Types.Number,
-        required : true 
+        required : true ,
+        set: val => Number(val.toFixed(2))
     },
     offer_price : {
         type : mongoose.Schema.Types.Number
@@ -78,12 +83,17 @@ const FoodSchema = mongoose.Schema({
     reviews : [ReviewSchema],
     ratings : [
         {
-            rater_id : {
+            user_id : {
+                type : mongoose.Schema.Types.String,
+                required : true ,
+            },
+            user_name : {
                 type : mongoose.Schema.Types.String,
                 required : true
             },
             stars : {
-                type : mongoose.Schema.Types.Number
+                type : mongoose.Schema.Types.Number ,
+                required : true 
             }
         }
     ],
@@ -96,7 +106,7 @@ const FoodSchema = mongoose.Schema({
     category : {
         type : mongoose.Schema.Types.String
     },
-    orders : [OrderSchema]
+    orders : [OrderSchema] 
 })
 
 

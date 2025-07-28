@@ -35,8 +35,8 @@ const UserProduct = (props : any) => {
             return ;
         }
         set_errors(false)
-        localStorage.setItem("user_cart" , JSON.stringify(props.user_cart) ) ;
-        localStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
+        sessionStorage.setItem("user_cart" , JSON.stringify(props.user_cart) ) ;
+        sessionStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
         router.push('/user/user_cart')
     }
 
@@ -140,14 +140,14 @@ const UserProduct = (props : any) => {
     }, [foodQuery.isSuccess, foodQuery.data, props.search, props.filters ,props.cat_filter]);
 
       useEffect(() => {
-          const cartData = localStorage.getItem("user_cart");
-          const food_quantity = localStorage.getItem("food_quantity") ;
+          const cartData = sessionStorage.getItem("user_cart");
+          const food_quantity = sessionStorage.getItem("food_quantity") ;
           if (cartData && food_quantity) {
             try {
               props.set_user_cart(JSON.parse(cartData));
               setFoodQuantity(JSON.parse(food_quantity));
             } catch (err) {
-              console.error("Invalid JSON in localStorage:", err);
+              console.error("Invalid JSON in sessionStorage:", err);
             }
           }
         }, []);
@@ -310,8 +310,8 @@ const UserProduct = (props : any) => {
                         </div>
                         <div className='md:mt-1.5 mt-2 flex justify-between ml-1'>
                             <i className="fas fa-star text-yellow-500">
-                                <span className='text-black font-semibold text-sm pl-1'> {items.rating_count} / 5 </span>
-                                <span className='text-black opacity-40 text-xs pl-1'>(107)</span> 
+                                <span className='text-black font-semibold text-sm pl-1'> {items.rating_stars} / 5 </span>
+                                <span className='text-black opacity-40 text-xs pl-1'>({items.rating_count})</span> 
                             </i>
                             <div className='px-2 opacity-75 text-sm'>{items.review_count} reviews</div>
                         </div>

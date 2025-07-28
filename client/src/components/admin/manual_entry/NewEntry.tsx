@@ -88,10 +88,14 @@ const NewEntry = (props:any) => {
       { totalQty: 0, totalCost: 0 }
     );
 
-    const order_data = props.selected_food.map( (items:any) => ({
+    const order_data = props.selected_food.map( (items:any) => {
+      const price = items.offer_price == -1 ? items.price : items.offer_price ;
+      return ({
       _id : items._id ,
-      quantity : items.quandity  
-    }))
+      quantity : items.quandity  ,
+      food_name : items.food_name ,
+      price : price 
+    })})
 
     const final_data = {
       ...order_details ,

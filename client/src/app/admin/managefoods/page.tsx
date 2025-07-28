@@ -15,7 +15,7 @@ const page = () => {
     const [view , setView ] = useState(false) ;
     const [selectFloat , setSelectFload] : any = useState();
     const [ search ,setSearch ] = useState<string>("");
-    const [ cat_filter , set_cat_filter ] = useState("All") ;
+    const [ cat_filter , set_cat_filter ] = useState(["All"]) ;
 
 
 
@@ -71,7 +71,7 @@ const page = () => {
         setView( !view ) 
     }
 
-    const category = ["All", ...(all_categories.data?.data || [])];
+    const category = ["All","Disabled" , ...(all_categories.data?.data || [])];
 
   return (
     <div className='flex flex-col w-full'>

@@ -18,7 +18,7 @@ const Page = () => {
   const [is_name, set_is_name] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedName = localStorage.getItem("user_name");
+    const storedName = sessionStorage.getItem("user_name");
     set_is_name(storedName);
   }, []);
 
@@ -27,8 +27,8 @@ const Page = () => {
   const router = useRouter() ;
   
   const handlePreOrder = () => {
-      localStorage.setItem("user_cart" , JSON.stringify(userCart) ) ;
-      localStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
+      sessionStorage.setItem("user_cart" , JSON.stringify(userCart) ) ;
+      sessionStorage.setItem("food_quantity" ,JSON.stringify(foodQuantity)  )
       router.push('/user/client')
   }
 
@@ -47,6 +47,17 @@ const Page = () => {
         }
     })
 
+  function filterCartItems(userCart: any ){
+      return userCart.map((item:any) => {
+        return {
+          _id: item._id,
+          quantity: item.quantity,
+          food_name: item.food_name,
+          price: item.offer_price !== -1 ? item.offer_price : item.price,
+        };
+      });
+    }
+
   const handleOrderPlace = () => {
 
     if(is_name == "" || is_name == undefined || is_name == null)
@@ -54,6 +65,7 @@ const Page = () => {
       set_act_prompt(true)
       return ;
     }
+    
     if(userCart == null || userCart.length == 0)
       {
           set_errors(true) ;
@@ -62,17 +74,7 @@ const Page = () => {
           } , 3000)
           return ;
       }
-    const fieldsToKeep = ["_id", "quantity"];
-    const filteredCart = userCart.map((item: any) => {
-      const result: any = {};
-      fieldsToKeep.forEach((key: string) => {
-        if (key in item) {
-          result[key] = item[key];
-        }
-      });
-      return result;
-    });
-    
+    const filteredCart = filterCartItems(userCart) ;
     set_errors(false) ;
     newFoods.mutate({ body : filteredCart , user_name : is_name }) ;
   }
@@ -125,14 +127,14 @@ const Page = () => {
   }
   useEffect(() => {
     router.prefetch('/user/order_placed')
-    const cartData = localStorage.getItem("user_cart");
-    const food_quantity = localStorage.getItem("food_quantity") ;
+    const cartData = sessionStorage.getItem("user_cart");
+    const food_quantity = sessionStorage.getItem("food_quantity") ;
     if (cartData && food_quantity) {
       try {
         setUserCart(JSON.parse(cartData));
         setFoodQuantity(JSON.parse(food_quantity));
       } catch (err) {
-        console.error("Invalid JSON in localStorage:", err);
+        console.error("Invalid JSON in sessionStorage:", err);
       }
     }
   }, []);
@@ -245,7 +247,7 @@ const Page = () => {
                 {
                   userCart && 
                   userCart.reduce((total:any, item:any) => {
-                    const effectivePrice = item.offer_price == null ? item.price : item.offer_price ;
+                    const effectivePrice = item.offer_price == -1 ? item.price : item.offer_price ;
                     return total + effectivePrice * item.quantity;
                   }, 0)
                 }

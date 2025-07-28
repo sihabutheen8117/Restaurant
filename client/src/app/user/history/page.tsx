@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
 import { inter } from '@/utils/fonts'
 import MobileLoaders from '@/components/Loaders/MobileLoaders'
+import RatingsPage from '@/components/User/RatingsPage'
 
 const page = () => {
 
@@ -21,11 +22,15 @@ const page = () => {
 
   const [ order_details , set_order_details ] = useState({}) ;
   const [ total__details ,set_total_details ] = useState({}) ;
+  const [ view_ratings , set_view_ratings ] = useState(false) ;
+  const [ ratings_details , set_ratings_details ] = useState({});
+  const [order_id , set_order_id ] = useState()
+  const [ israted , set_israted ] = useState(false) ;
+  const [ rated_data , set_rated_data ] = useState([{}]) ;
 
   const handleGoBack = () => {
     router.push('/user/client');
   }
-
   const [ view , setView ] = useState(false) ;
 
   if(myOrdersQuery.isLoading)
@@ -79,11 +84,29 @@ const page = () => {
           </div>
         </div>
       }
+      {
+        view_ratings && 
+        <div className=''>
+          <div className='fixed inset-0 bg-black opacity-15 z-40 h-screen'
+          onClick={() => set_view_ratings(!view_ratings)}>
+          </div>
+          <div className='fixed inset-x-10 inset-y-40 bg-white z-50'>
+            <RatingsPage 
+              ratings_details={ratings_details}
+              order_id={order_id}
+              israted={israted}
+              rated_data={rated_data}
+              close={() => set_view_ratings(false)}
+              />
+          </div>
+        </div>
+      }
       
       <div className='mx-4 mt-24 mb-10'>
       {
         myOrdersQuery.isSuccess &&
         myOrdersQuery.data.data.map( (items :any, index : any) => {
+          console.log(items)
           const orderDate = new Date(items.createdAt);
           const formattedDate = orderDate.toLocaleDateString('en-IN', {
             year: 'numeric',
@@ -118,7 +141,10 @@ const page = () => {
                         <button className='bg-green-400 text-white hover:bg-green-500 px-3 py-1 rounded-xl'
                         onClick={() => {
                           setView(!view)
-                          set_order_details({ order_food_data : items.ordered_foods , status : items.order_status , order_id : items._id})
+                          set_order_details({
+                             order_food_data : items.ordered_foods ,
+                             status : items.order_status , 
+                             order_id : items._id})
                           set_total_details({
                             total_cost : items.total_cost,
                             quandity : items.quandity
@@ -129,6 +155,35 @@ const page = () => {
                         </button>
                     </div>
                 </div>
+                <div className='my-1 text-green-600 '>
+                  {
+                    items.isRated == true && 
+                    <div className='text-center'>
+                      ThankYou for your ratings
+                    </div>
+                  }
+                </div>
+                {
+                  items.order_status == "paid" &&
+                  <button className={`py-1.5  text-white font-medium text-sm rounded-md w-full mt-1 ${items.isRated ? "bg-green-400" : "bg-blue-400" }`}
+                  onClick={() => {
+                    set_ratings_details({
+                        food_data : items.ordered_foods ,
+                    })
+                    set_order_id(items._id)
+                    set_view_ratings(true);
+                    set_israted(items.isRated)
+                    set_rated_data(items.ratings)
+                  }}
+                  >
+                    {
+                      items.isRated == true ?
+                      "View your ratings"
+                      :
+                      "leave a ratings"
+                    }
+                  </button>
+                }
             </div>
             )
         })

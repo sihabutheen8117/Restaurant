@@ -15,6 +15,10 @@ import FoodModuleRouter from './Routes/FoodModule.mjs';
 import UserRouter from './Routes/UserRoute.mjs';
 import AnalyticsRouter from './Routes/Analytics.mjs';
 import MainAnalytics from './Routes/MainAnalytics.mjs';
+import SettingsRouter from './Routes/Settings.mjs';
+import CloudUpload from './Routes/CloudUpload.mjs';
+
+import { startOfferCleanupJob } from './jobs/updateExpiredOffers.mjs';
 
 dotenv.config()
 
@@ -31,7 +35,10 @@ app.use(cookieParser())
 //mongodb://localhost/alkhalid_server
 
 mongoose.connect(process.env.MONGO_DB_CONNECT)
-    .then( ()=> console.log("Connected to Database"))
+    .then( ()=> {
+      console.log("Connected to Database")
+      startOfferCleanupJob()
+    })
     .catch( (err) => console.log(err))
 
 const PORT = process.env.PORT ;
@@ -198,6 +205,8 @@ app.use(FoodModuleRouter);
 app.use(UserRouter)
 app.use(AnalyticsRouter)
 app.use(MainAnalytics)
+app.use(SettingsRouter)
+app.use(CloudUpload)
 
 
 

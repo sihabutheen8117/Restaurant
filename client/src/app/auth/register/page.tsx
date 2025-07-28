@@ -21,8 +21,8 @@ const page = () => {
     const register_mutation = useMutation({
         mutationFn : registerUser,
         onSuccess: (data: any) => {
-            localStorage.setItem("user_name", data.user_name);
-            router.push('../user/client') // <-- Moved here
+            sessionStorage.setItem("user_name", data.user_name);
+            router.push('../user/client')
             set_err(false)
         },
         onError: (error:any, variables, context) => {

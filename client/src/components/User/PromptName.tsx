@@ -8,7 +8,7 @@ const PromptName = (props : any) => {
 
   const handleSummit = () => 
   {
-    localStorage.setItem("user_name" , name );
+    sessionStorage.setItem("user_name" , name );
     props.setUser(name)
     props.close() ;
   }

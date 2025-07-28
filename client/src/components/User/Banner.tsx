@@ -54,7 +54,7 @@ const Banner = (props : any) => {
                       >
                         {slideFoods.map((food, index) => (
                             <div key={index} className='flex-shrink-0 md:w-full md:h-80 w-full h-40 md:rounded-3xl rounded-2xl'>
-                              <img src={food.image} alt={food.title} className='w-full bg-red-600 md:h-80 h-40 md:rounded-3xl rounded-2xl object-fit object-cover'/>
+                              <img src={food.image} alt={food.title} className='w-full md:h-80 h-40 md:rounded-3xl rounded-2xl object-fit object-cover'/>
                             </div>
                           ))}
                      

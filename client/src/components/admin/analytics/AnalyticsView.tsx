@@ -8,15 +8,22 @@ import { useState } from 'react'
 import CustomerAnalytics from './childs/CustomerAnalytics'
 import FoodsAnalytics from './childs/FoodsAnalytics'
 import OrdersAnalytics from './childs/OrdersAnalytics'
+import AnalyticsOverView from './childs/AnalyticsOverView'
 
 function AnalyticsView() {
 
-  const [ view , set_view ] = useState('1') ;
+  const [ view , set_view ] = useState('4') ;
+
+  console.log(view)
 
   return (
     <div>
       <div className='w-full mt-2 px-3 flex whitespace-nowrap justify-between'>
             <div className=''>
+
+                <button className={` ${inter.className} text-sm px-2   py-2 mr-2 font-semibold opacity-75 border-b-2 ${ view == '4' ? "border-amber-400 bg-amber-50" : "border-gray-300 bg-white"}  `}
+                    onClick={() => set_view('4')}
+                >Overview</button>
 
                 <button className={` ${inter.className} text-sm px-2   py-2 mr-2 font-semibold opacity-75 border-b-2 ${ view == '1' ? "border-amber-400 bg-amber-50" : "border-gray-300 bg-white"}  `}
                     onClick={() => set_view('1')}
@@ -41,6 +48,7 @@ function AnalyticsView() {
             {view === '1' && <FoodsAnalytics />}
             {view === '2' && <CustomerAnalytics />}
             {view === '3' && <OrdersAnalytics />}
+            {view === '4' && <AnalyticsOverView view={(data:string) => set_view(data)}/>}
         </div>
     </div>
   )

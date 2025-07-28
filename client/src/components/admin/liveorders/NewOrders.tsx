@@ -23,7 +23,7 @@ const NewOrders = (props : any) => {
           name: "this is admin thats it"
         })
 
-      const [ information , set_information ] = useState("") ;
+      const [information , set_information ] = useState("") ;
       const [visible, set_visible] = useState(false)
       const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     
@@ -83,6 +83,7 @@ const NewOrders = (props : any) => {
         
             useEffect(() => {
               if (get_all_orders.isSuccess) {
+                console.log(get_all_orders.data.data)
                 setOrders(get_all_orders.data.data); 
               }
             }, [get_all_orders.data]);
@@ -111,7 +112,14 @@ const NewOrders = (props : any) => {
         {
             view && 
             <div className=''>
-                <ViewOrders close={handleView} isNotLive={props.isNotLive} food_data={view_orders} order_adnl_details={order_adnl_details} is_table={false} checkout_success={() => handle_checkout_success()} handle_delete_success={() => handle_delete_success()}/>
+                <ViewOrders close={handleView}
+                  isNotLive={props.isNotLive}
+                  food_data={view_orders}
+                  order_adnl_details={order_adnl_details}
+                  is_table={false}
+                  checkout_success={() => handle_checkout_success()}
+                  handle_delete_success={() => handle_delete_success()}
+                />
             </div>
         }
         <div className='rounded-lg bg-gray-100 shadow-lg p-2 mt-2'>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function StatCard({ title, value, icon, change, changeType = 'neutral' }) {
+export default function StatCard({ title, value, icon, change, changeType = 'neutral' }) {
   const changeColor = changeType === 'positive' ? 'text-green-600' : 
                      changeType === 'negative' ? 'text-red-600' : 'text-gray-600';
   

@@ -119,7 +119,8 @@ FoodModuleRouter.get( '/api/get_all_foods_for_edit' , async(req , res )=> {
                   }}, 
                   describtion : 1 ,
                   ingredients : 1 ,
-                  isDisable : 1 
+                  isDisable : 1 ,
+                  offer_validity : 1 ,
               }
             }
           ]);
@@ -181,7 +182,8 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
             const uniq_uuid = uuidv4()
 
             const newAnonymUser = new AnonymousUser({
-                user_id : uniq_uuid
+                user_id : uniq_uuid ,
+                user_name : req.body.user_name 
             })
 
             const response = await newAnonymUser.save() ;
@@ -283,7 +285,6 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
             status : "order placed successfully" 
         })
 
-        //save to foods schemas 
     }
     catch(error)
     {
@@ -380,6 +381,7 @@ FoodModuleRouter.get('/api/my_orders',
   FoodModuleRouter.post('/api/delete_orders', 
     verifyToken,
     async (req, res) => {
+
       const { _id }  = req.body;
      
       try {
@@ -469,7 +471,7 @@ FoodModuleRouter.get('/api/my_orders',
 
   FoodModuleRouter.post('/api/payment_checkout', 
     async (req, res) => {
-      const { payment_type , _id} = req.body;
+      const { payment_type , _id } = req.body;
       try {
         const response = await Orders.findByIdAndUpdate( _id ,
           {
@@ -479,9 +481,41 @@ FoodModuleRouter.get('/api/my_orders',
         )
         console.log("from checkout")
         console.log(response)
+
         res.status(200).send({
             status : "order checket out"
         }); 
+
+        const checkout_foods = response.ordered_foods ;
+
+        for (const item of checkout_foods) {
+          const foodId = item._id;
+          const quantity = item.quantity || 1;
+
+          // Find the full food details from the 'foods' list fetched earlier
+          const food = await Foods.findOne({ _id: item._id });
+          if (!food) continue;
+
+          const effectivePrice = food.offer_price === -1 ? food.price : food.offer_price;
+          console.log(food)
+          console.log(effectivePrice) ;
+          console.log(food.offer_price)
+          console.log(food.price)
+          const totalItemCost = effectivePrice * quantity; 
+
+          const updated_food = await Foods.findByIdAndUpdate(foodId, {
+            $push: {
+              orders: {
+                order_id: _id ,
+                order_date: response.createdAt ,
+                quantity: quantity,
+                total_cost: totalItemCost
+              }
+            }
+          });
+
+          console.log(updated_food)
+        }
 
       } catch (error) {
         console.error("Error in /api/my_orders:", error);
@@ -620,7 +654,145 @@ FoodModuleRouter.get('/api/my_orders',
     }
 
 })
-  
+
+
+
+FoodModuleRouter.post('/api/user_ratings', 
+  verifyToken,
+  async (req, res) => { 
+    try {
+      const new_review = req.body;
+      const user_data = req.user_data;
+      
+      // Debug: Check user_data
+      console.log("User data:", user_data);
+      
+      // Validate user data
+      const { user_id, user_name } = user_data;
+      if (!user_id || !user_name) {
+        console.log("Missing user credentials:", { user_id, user_name });
+        return res.status(400).send({
+          level: "error",
+          details: "Missing user credentials"
+        });
+      }
+
+      // Validate request body
+      if (!new_review.reviews || !Array.isArray(new_review.reviews) || new_review.reviews.length === 0) {
+        return res.status(400).send({
+          level: "error",
+          details: "Invalid reviews data"
+        });
+      }
+
+      const bulkOps = [];
+
+      // Build bulk operations for Foods collection
+      for (const review of new_review.reviews) {
+        if (!review.food_id || !review.stars) {
+          console.log("Invalid review data:", review);
+          continue;
+        }
+
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: review.food_id },
+            update: {
+              $push: {
+                ratings: {
+                  user_id,
+                  user_name,
+                  stars: review.stars,
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Execute bulk operations only if we have valid operations
+      if (bulkOps.length === 0) {
+        return res.status(400).send({
+          level: "error",
+          details: "No valid reviews to process"
+        });
+      }
+
+      // Update Foods collection with new ratings
+      const food_res = await Foods.bulkWrite(bulkOps);
+      console.log("Foods bulk write result:", food_res);
+
+      // Update Orders collection
+      const order_res = await Orders.updateOne(
+        { 
+          _id: new_review.order_id,
+          isRated: false 
+        },
+        {
+          $push: {
+            ratings: {
+              $each: new_review.reviews.map(review => ({
+                food_id: review.food_id,
+                food_name: review.food_name,
+                stars: review.stars
+              }))
+            }
+          },
+          $set: {
+            isRated: true 
+          }
+        }
+      );
+      console.log("Order update result:", order_res);
+
+      // Calculate and update average ratings for affected foods using updateOne
+      const foodIds = new_review.reviews.map(r => r.food_id);
+      
+      const averageUpdatePromises = foodIds.map(async (foodId) => {
+        // Get the updated food to calculate average
+        const food = await Foods.findById(foodId);
+        
+        if (food && food.ratings && food.ratings.length > 0) {
+          const totalStars = food.ratings.reduce((acc, rating) => acc + rating.stars, 0);
+          const avgStars = totalStars / food.ratings.length;
+          const roundedAvg = parseFloat(avgStars.toFixed(2));
+          
+          // Use updateOne to avoid validation issues with existing data
+          return await Foods.updateOne(
+            { _id: foodId },
+            { $set: { rating_stars: roundedAvg } }
+          );
+        }
+        return null;
+      });
+
+      const averageUpdateResults = await Promise.all(averageUpdatePromises);
+      console.log("Updated foods with average ratings:", averageUpdateResults.filter(r => r !== null).length);
+
+      // Send success response
+      res.status(200).send({
+        status: "Successful",
+        message: "Ratings submitted successfully",
+        data: {
+          foods_updated: food_res.modifiedCount,
+          order_updated: order_res.modifiedCount > 0
+        }
+      });
+
+    } catch (error) {
+      console.error("Error in user ratings:", error);
+      
+      // Only send error response if headers haven't been sent already
+      if (!res.headersSent) {
+        res.status(500).send({
+          level: "error",
+          details: "Error processing user ratings",
+          message: error.message
+        });
+      }
+    }
+  }
+);
   
 
 export default FoodModuleRouter ;

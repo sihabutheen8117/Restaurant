@@ -3,13 +3,13 @@
 import React from 'react'
 import { useMutation , useQueryClient} from '@tanstack/react-query' 
 import { update_food_details, deleteFood } from '@/reactQuery/queries'
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
 import { Food  } from '@/reactQuery/itemInterfaces'
 
 const EditFoods = ( props : any) => {
 
     console.log("from edit food props ");
-    console.log(props) ;
+    console.log(props.food_data) ;
 
     const queryClient = useQueryClient()
 
@@ -17,7 +17,7 @@ const EditFoods = ( props : any) => {
     const [ foodDesc , setFoodDesc] = useState(props.food_data.describtion) ;
     const [ price , setPrice] = useState(props.food_data.price) ;
     const [ offPrice , setOffPrice] = useState(props.food_data.offer_price) ;
-    const [ validity  , setValidity] = useState('') ;
+    const [ validity  , setValidity] = useState("") ;
     const [ foodImage  , setFoodImage ] = useState<string>(props.food_data.food_image) ;
     const [ isEnable , setIsEnable ] = useState(props.food_data.isDisable) ;
     const [ category , setCategory ] = useState(props.food_data.category) ;
@@ -25,6 +25,12 @@ const EditFoods = ( props : any) => {
     const [ preview_image , set_preview_image ] = useState('');
     const [ new_category , set_new_category ] = useState("") ;
     const [ is_image_changed , set_changes ] = useState(false ) ;
+
+    useEffect(() => {
+        if(props.food_data.offer_validity == null ) return ;
+        const formatted = new Date(props.food_data.offer_validity).toISOString().split("T")[0];
+        setValidity(formatted);  // e.g., "2025-07-26"
+      }, []);
 
     const handleImageChange = (e:any) => {
         const file = e.target.files[0];
@@ -166,7 +172,7 @@ const EditFoods = ( props : any) => {
                     <div className='relative flex' >
                         <div className='block font-medium text-gray-700 pt-2 mr-2'>Price</div>
                         <input
-                            value={props.food_data.price}
+                            value={price}
                             type="number"
                             id="name"
                             placeholder="000"
@@ -178,7 +184,7 @@ const EditFoods = ( props : any) => {
                     <div className='relative flex' >
                         <div className='block font-medium text-gray-700 pt-2 mr-2'>Offer Price</div>
                         <input
-                            value={props.food_data.offer_price}
+                            value={offPrice}
                             type="number"
                             id="name"
                             placeholder="000"
@@ -195,7 +201,7 @@ const EditFoods = ( props : any) => {
                             id="name"
                             placeholder="000"
                             className="relative text-sm mt-1 block w-32 font-semibold rounded-md border border-gray-300 shadow-sm px-1 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                            
+                            value={validity}
                             onChange={ (e) => setValidity(e.target.value)}
                             />
                     </div>
@@ -291,6 +297,7 @@ const EditFoods = ( props : any) => {
                     className={`block w-1/2 rounded-md border border-gray-300 bg-white px-3 py-1.5 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 text-sm ${ new_category != "" && "text-gray-400" }`}
                     disabled = { new_category != "" }
                     onChange={ (e) => setCategory(e.target.value)}
+                    value={category}
                     >
                         {
                             props.all_categories.data.map( (cates : any , index : any ) => (

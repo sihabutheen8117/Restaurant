@@ -20,7 +20,7 @@ const page = () => {
     const login_mutation = useMutation({
         mutationFn: loginUser,
         onSuccess: ( data: any) => {
-          localStorage.setItem("user_name", data.data.user_name);
+          sessionStorage.setItem("user_name", data.data.user_name);
           set_err(false)
           router.push('../user/client'); // <-- Moved here
         },

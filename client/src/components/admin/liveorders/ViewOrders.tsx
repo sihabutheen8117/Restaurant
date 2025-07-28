@@ -11,11 +11,6 @@ import { useState  , useRef } from 'react'
 const ViewOrders = (props:any) => {
 
     const [ payment_type , set_payment_type ] = useState(false)
-    const orders = useQuery({
-        queryKey : ["admin_orders"] ,
-        queryFn : () => getFoodDetailsForOrders(props.food_data)
-    })
-
 
     const queryClient = useQueryClient() ;
 
@@ -76,22 +71,18 @@ const ViewOrders = (props:any) => {
                               </thead>
                               <tbody className=' text-sm h-3 overflow-y-auto'>
                                   {
-                                    orders.isSuccess && 
-                                    orders.data.data.map( (item:any ,index : any)=>{
-                                        
-                                        const effectivePrice = item.offer_price == -1 ?item.price : item.offer_price
-                                        
-                                        return (
+                                    props.food_data.map( (item:any ,index : any)=>
+                                    (
                                         <tr className='text-sm h-7' key={index}>
                                             <td className=''>{index+1}</td>
                                             <td>{item.food_name}</td>
                                             <td>&#8377; {
-                                                effectivePrice
+                                                item.price
                                             }</td>
                                             <td>{item.quantity}</td>
-                                            <td>&#8377; { item.quantity * effectivePrice }</td>
+                                            <td>&#8377; { item.quantity * item.price}</td>
                                         </tr>
-                                    )})
+                                    ))
                                   }
                         
                                   {
@@ -143,7 +134,7 @@ const ViewOrders = (props:any) => {
                     </tr>
                     <tr className="hover:bg-amber-100 transition-all duration-300">
                         <th className="text-left px-4 py-2 font-medium text-gray-600 bg-gray-100">Payment Type</th>
-                        <td className="px-4 py-2 text-gray-900">Online</td>
+                        <td className="px-4 py-2 text-gray-900">{props.order_adnl_details.payment_type == true ? "UPI / Cards" : "Cash"}</td>
                     </tr>
                     </tbody>
                 </table>

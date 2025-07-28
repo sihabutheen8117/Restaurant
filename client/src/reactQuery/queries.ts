@@ -15,7 +15,7 @@ export const registerUser = async (userData : any ) => {
         {
           withCredentials : true 
         });
-        
+        console.log(response)
         return response.data; 
       } catch (error : any ) {
         console.error(error);
@@ -415,10 +415,6 @@ export const get_all_categories  =  async() => {
   }
 }
 
-
-
-
-
 export const manual_entry_get_foods  =  async() => {
   try{
     const response = await axios.get(api+'/api/manual_entry/get_foods',
@@ -439,6 +435,24 @@ export const manual_entry_get_foods  =  async() => {
 export const  place_entry  =  async(food_data : any) => {
   try{
     const response = await axios.post(api+'/api/place_entry',
+      food_data ,
+      {
+        withCredentials : true 
+      }
+    ) ;
+    console.log(response)
+    return response
+  }
+  catch(err)
+  {
+    console.log(err);
+    throw err ;
+  }
+}
+
+export const user_ratings =  async(food_data : any) => {
+  try{
+    const response = await axios.post(api+'/api/user_ratings',
       food_data ,
       {
         withCredentials : true 

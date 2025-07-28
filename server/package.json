@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -23,8 +24,11 @@
     "google-auth-library": "^10.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.0",
+    "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "socket.io": "^4.8.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
   },
   "type": "module",
   "devDependencies": {
