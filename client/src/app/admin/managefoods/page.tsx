@@ -20,10 +20,10 @@ const page = () => {
 
 
     const [ information , set_information ] = useState("") ;
-        const [visible, set_visible] = useState(false)
-        const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [visible, set_visible] = useState(false)
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
             
-        const handle_create_food = () => {
+    const handle_create_food = () => {
                   if(visible && timeoutRef.current)
                   {
                     clearTimeout(timeoutRef.current) ;
@@ -36,7 +36,7 @@ const page = () => {
                 
               }
         
-        const handleClose = () => {
+    const handleClose = () => {
                 if(timeoutRef.current)
                 {
                   clearTimeout(timeoutRef.current)
@@ -44,7 +44,7 @@ const page = () => {
                 set_visible(false) ;
               }
         
-        useEffect(() => {
+    useEffect(() => {
                   return () => {
                     if (timeoutRef.current) clearTimeout(timeoutRef.current)
                   }

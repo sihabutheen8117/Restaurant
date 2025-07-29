@@ -1,62 +1,75 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 import { ShoppingBag, TrendingUp, Users } from 'lucide-react';
 import StatCard from '@/components/analytics/StatCard';
+import {
+  overview_orders,
+  orders_trends,
+  orders_customer_insights,
+  orders_food_analysis
+} from '@/reactQuery/analyticsQuery'
+import { useQuery } from '@tanstack/react-query';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57'];
 
 export default function OrdersAnalytics() {
-  const [data, setData] = useState({
-    overview: {},
-    trends: [],
-    customerInsights: {},
-    foodAnalysis: {}
-  });
-  const [loading, setLoading] = useState(true);
   const [trendPeriod, setTrendPeriod] = useState('day');
 
-  useEffect(() => {
-    fetchOrdersData();
-  }, [trendPeriod]);
+  // React Query implementations
+  const overviewQuery = useQuery({
+    queryKey: ["overview_orders"],
+    queryFn: overview_orders
+  });
 
-  const fetchOrdersData = async () => {
-    try {
-      const [overviewRes, trendsRes, customerRes, foodRes] = await Promise.all([
-        fetch('http://localhost:3001/orders/overview'),
-        fetch(`http://localhost:3001/orders/trends?period=${trendPeriod}`),
-        fetch('http://localhost:3001/orders/customer-insights'),
-        fetch('http://localhost:3001/orders/food-analysis')
-      ]);
+  const trendsQuery = useQuery({
+    queryKey: ["orders_trends", trendPeriod],
+    queryFn: () => orders_trends(trendPeriod)
+  });
 
-      const [overview, trends, customerInsights, foodAnalysis] = await Promise.all([
-        overviewRes.json(),
-        trendsRes.json(),
-        customerRes.json(),
-        foodRes.json()
-      ]);
+  const customerInsightsQuery = useQuery({
+    queryKey: ["orders_customer_insights"],
+    queryFn: orders_customer_insights
+  });
 
-      setData({
-        overview,
-        trends: trends.orderTrends || [],
-        customerInsights,
-        foodAnalysis
-      });
-    } catch (error) {
-      console.error('Error fetching orders data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const foodAnalysisQuery = useQuery({
+    queryKey: ["orders_food_analysis"],
+    queryFn: orders_food_analysis
+  });
 
-  if (loading) {
+  // Check if any query is loading
+  const isLoading = overviewQuery.isLoading || trendsQuery.isLoading || 
+                   customerInsightsQuery.isLoading || foodAnalysisQuery.isLoading;
+
+  // Check if any query has error
+  const hasError = overviewQuery.error || trendsQuery.error || 
+                   customerInsightsQuery.error || foodAnalysisQuery.error;
+
+  // Extract data from queries
+  const overviewData = overviewQuery.data || {};
+  const trendsData = trendsQuery.data?.orderTrends || [];
+  const customerInsightsData = customerInsightsQuery.data || {};
+  const foodAnalysisData = foodAnalysisQuery.data || {};
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">Error loading data</h2>
+          <p className="text-gray-600">Please try refreshing the page</p>
+        </div>
       </div>
     );
   }
@@ -74,25 +87,25 @@ export default function OrdersAnalytics() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Orders"
-            value={data.overview.totalOrders || 0}
+            value={overviewData.totalOrders || 0}
             icon={<ShoppingBag className="h-8 w-8 text-purple-600" />}
-            change={`${data.overview.recentOrders || 0} last 7 days`}
+            change={`${overviewData.recentOrders || 0} last 7 days`}
           />
           <StatCard
             title="Total Revenue"
-            value={`${(data.overview.revenueMetrics?.totalRevenue || 0).toFixed(2)}`}
+            value={`₹${(overviewData.revenueMetrics?.totalRevenue || 0).toFixed(2)}`}
             icon={<TrendingUp className="h-8 w-8 text-green-600" />}
-            change={`${(data.overview.recentRevenue || 0).toFixed(2)} this week`}
+            change={`₹${(overviewData.recentRevenue || 0).toFixed(2)} this week`}
           />
           <StatCard
             title="Avg Order Value"
-            value={`${(data.overview.revenueMetrics?.avgOrderValue || 0).toFixed(2)}`}
+            value={`₹${(overviewData.revenueMetrics?.avgOrderValue || 0).toFixed(2)}`}
             icon={<TrendingUp className="h-8 w-8 text-blue-600" />}
             change="Per order average"
           />
           <StatCard
             title="Items Sold"
-            value={data.overview.revenueMetrics?.totalQuantity || 0}
+            value={overviewData.revenueMetrics?.totalQuantity || 0}
             icon={<Users className="h-8 w-8 text-yellow-600" />}
             change="Total items"
           />
@@ -114,7 +127,7 @@ export default function OrdersAnalytics() {
             </select>
           </div>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data.trends}>
+            <LineChart data={trendsData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="_id" />
               <YAxis yAxisId="left" />
@@ -135,7 +148,7 @@ export default function OrdersAnalytics() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={data.overview.statusDistribution || []}
+                  data={overviewData.statusDistribution || []}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -144,7 +157,7 @@ export default function OrdersAnalytics() {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(data.overview.statusDistribution || []).map((entry, index) => (
+                  {(overviewData.statusDistribution || []).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -157,7 +170,7 @@ export default function OrdersAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Type</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.overview.typeDistribution || []}>
+              <BarChart data={overviewData.typeDistribution || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="_id" />
                 <YAxis />
@@ -173,7 +186,7 @@ export default function OrdersAnalytics() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={data.overview.paymentDistribution || []}
+                  data={overviewData.paymentDistribution || []}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -182,7 +195,7 @@ export default function OrdersAnalytics() {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(data.overview.paymentDistribution || []).map((entry, index) => (
+                  {(overviewData.paymentDistribution || []).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -197,7 +210,7 @@ export default function OrdersAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers by Orders</h3>
             <div className="space-y-3">
-              {(data.customerInsights.topCustomersByCount || []).slice(0, 5).map((customer, index) => (
+              {(customerInsightsData.topCustomersByCount || []).slice(0, 5).map((customer, index) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div className="font-medium text-gray-900">{customer.userName || customer._id}</div>
                   <div className="font-bold text-purple-600">{customer.orderCount} orders</div>
@@ -209,13 +222,13 @@ export default function OrdersAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers by Revenue</h3>
             <div className="space-y-3">
-              {(data.customerInsights.topCustomersByRevenue || []).slice(0, 5).map((customer, index) => (
+              {(customerInsightsData.topCustomersByRevenue || []).slice(0, 5).map((customer, index) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{customer.userName || customer._id}</div>
                     <div className="text-sm text-gray-500">{customer.orderCount} orders</div>
                   </div>
-                  <div className="font-bold text-green-600">${customer.totalSpent.toFixed(2)}</div>
+                  <div className="font-bold text-green-600">₹{customer.totalSpent.toFixed(2)}</div>
                 </div>
               ))}
             </div>

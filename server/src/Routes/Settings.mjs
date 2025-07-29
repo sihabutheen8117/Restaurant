@@ -99,36 +99,54 @@ SettingsRouter.post( "/api/settings/food_management" , async (req , res ) => {
     }
 })
 
-SettingsRouter.post( "/api/settings/pricing" , async (req , res ) => {
-    try{
-        const { type , price } = req.body ;
-        console.log(type)
-        console.log(price) 
-        if( type == "per" )
-        {
+SettingsRouter.post("/api/settings/pricing", async (req, res) => {
+    try {
+        const { type, price } = req.body;
+        
+        if (type === "per") {
             const multiplier = 1 + (price / 100);
-            const updated = await Foods.updateMany({}, { $mul: { price: multiplier } });
-            console.log(updated)
-            return res.status(200).send({
-                status : "successfully price updated"
-            })
+            
+            await Foods.updateMany(
+                {},
+                [
+                    {
+                        $set: {
+                            price: {
+                                $round: [
+                                    { $multiply: ["$price", multiplier] },
+                                    2  // Round to 2 decimal places
+                                ]
+                            }
+                        }
+                    }
+                ]
+            );
+        } else {
+            await Foods.updateMany(
+                {},
+                [
+                    {
+                        $set: {
+                            price: {
+                                $round: [
+                                    { $add: ["$price", price] },
+                                    2
+                                ]
+                            }
+                        }
+                    }
+                ]
+            );
         }
-     
-        const updated = await Foods.updateMany({}, { $inc: { price: price } });
-        console.log(updated)
         
         return res.status(200).send({
-            status : "successfully price updated"
-        })
+            status: "successfully price updated"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ error: "Failed to update prices" });
     }
-    catch(err)
-    {
-        console.log(err) ;
-        res.status(500).send({
-            status : {err}
-        })
-    }
-})
+});
 
 
 SettingsRouter.post( "/api/settings/delete_unchecked_orders" , async (req , res ) => {

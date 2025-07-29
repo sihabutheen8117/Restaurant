@@ -1,12 +1,53 @@
 'use client';
 
+import React from 'react'
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { download_summary } from '@/reactQuery/analyticsQuery'
 
-export default function DownloadOrdersPage() {
+export default function FetchSummary() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const download_mutation = useMutation({
+    mutationFn: download_summary,
+    onSuccess: (response) => {
+      // Handle successful download
+      handleFileDownload(response);
+    },
+    onError: (error) => {
+      console.error('Download failed:', error);
+      setError('Failed to download orders. Please try again.');
+    }
+  });
+
+  const handleFileDownload = async (response) => {
+    try {
+      // Get the filename from the response headers (axios format)
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = 'orders_report.xlsx';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Create blob and download (response.data is already a blob with responseType: 'blob')
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('File download failed:', error);
+      setError('Failed to process downloaded file. Please try again.');
+    }
+  };
 
   const handleDownload = async () => {
     if (!startDate || !endDate) {
@@ -19,52 +60,13 @@ export default function DownloadOrdersPage() {
       return;
     }
 
-    setIsLoading(true);
     setError('');
 
-    try {
-      const response = await fetch('http://localhost:3001/download-orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          startDate,
-          endDate,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // Get the filename from the response headers
-      const contentDisposition = response.headers.get('content-disposition');
-      let filename = 'orders_report.xlsx';
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
-      }
-
-      // Create blob and download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-    } catch (error) {
-      console.error('Download failed:', error);
-      setError('Failed to download orders. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Use the mutation instead of direct fetch
+    download_mutation.mutate({
+      startDate,
+      endDate,
+    });
   };
 
   return (
@@ -111,14 +113,14 @@ export default function DownloadOrdersPage() {
 
           <button
             onClick={handleDownload}
-            disabled={isLoading}
+            disabled={download_mutation.isPending}
             className={`w-full py-2 px-4 rounded-md font-medium text-white transition-colors ${
-              isLoading
+              download_mutation.isPending
                 ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             }`}
           >
-            {isLoading ? (
+            {download_mutation.isPending ? (
               <div className="flex items-center justify-center">
                 <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

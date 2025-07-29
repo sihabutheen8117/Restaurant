@@ -136,7 +136,7 @@ const AddNewFood = (props:any) => {
                             id="name"
                             placeholder="000"
                             className="relative mt-1 block w-28 font-semibold rounded-md border border-gray-300 shadow-sm px-3 pl-5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                            
+                          
                             onChange={ (e) => setOffPrice(e.target.value)}
                             />
                         <span className="absolute top-2 right-24 text-lg text-gray-800">₹</span>

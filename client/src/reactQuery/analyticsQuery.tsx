@@ -153,6 +153,18 @@ export const foods_performance = async () => {
       throw error;
     }
 }
-
+export const download_summary = async (data: any) => {
+  try {
+    const response = await axios.post(api + '/download-orders', data, {
+      withCredentials: true,
+      responseType: 'blob', 
+    });
+    console.log(response);
+    return response; 
+  } catch (error: any) {
+    console.error(error);
+    throw error;
+  }
+};
 
 

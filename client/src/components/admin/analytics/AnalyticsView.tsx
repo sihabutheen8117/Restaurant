@@ -9,12 +9,13 @@ import CustomerAnalytics from './childs/CustomerAnalytics'
 import FoodsAnalytics from './childs/FoodsAnalytics'
 import OrdersAnalytics from './childs/OrdersAnalytics'
 import AnalyticsOverView from './childs/AnalyticsOverView'
+import FetchSummary from '../FetchSummary'
+import { useRouter } from 'next/navigation'
 
 function AnalyticsView() {
 
   const [ view , set_view ] = useState('4') ;
-
-  console.log(view)
+  const router = useRouter() ;
 
   return (
     <div>
@@ -38,7 +39,9 @@ function AnalyticsView() {
                 >Orders</button>
             </div>
 
-            <button className={`${inter.className} text-xs flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 rounded-lg shadow-md transition-all duration-200 font-semibold my-1`}>
+            <button className={`${inter.className} text-xs flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 rounded-lg shadow-md transition-all duration-200 font-semibold my-1`}
+            onClick={ () => router.push("../admin/download_summary")}
+            >
                 <i className="fa-solid fa-file-excel text-white text-sm"></i>
                 <span>Export to Excel</span>
             </button>

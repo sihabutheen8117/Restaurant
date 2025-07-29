@@ -32,7 +32,7 @@ export const bulk_food_availability_update = async (food_data : any ) => {
       }
 }
 
-export const global_price_update = async ( price_data : any ) => {
+export const global_price_update = async ( price_data : { type : string , price : number } ) => {
     try {
         const response = await axios.post(api+'/api/settings/pricing',
             price_data ,

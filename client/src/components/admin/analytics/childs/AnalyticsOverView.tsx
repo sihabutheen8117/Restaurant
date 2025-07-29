@@ -1,7 +1,3 @@
-"use client"
-
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import {
   Users,
   ShoppingBag,
@@ -10,10 +6,10 @@ import {
   DollarSign,
   Activity,
 } from 'lucide-react';
-import { useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  overview_users ,
-  overview_foods ,
+  overview_users,
+  overview_foods,
   overview_orders 
 } from '@/reactQuery/analyticsQuery'
 
@@ -74,46 +70,64 @@ type AnalyticsCardProps = {
   icon: React.ReactNode;
   href: string;
   stats: AnalyticsStat[];
-  view : any
+  view: any;
 };
 
-export default function AnalyticsOverView(props:any) {
-  
-  const [dashboardData, setDashboardData] = useState<DashboardData>({
-    users: {},
-    foods: { categoryDistribution: [] },
-    orders: {},
+export default function AnalyticsOverView(props: any) {
+  const overview_users_query = useQuery({
+    queryKey: ["overview_users"],
+    queryFn: overview_users
   });
 
-  const [loading, setLoading] = useState(true);
+  const overview_foods_query = useQuery({
+    queryKey: ["overview_foods"],
+    queryFn: overview_foods
+  });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const overview_orders_query = useQuery({
+    queryKey: ["overview_orders"],
+    queryFn: overview_orders
+  });
 
-  const fetchDashboardData = async () => {
-    try {
-      const [usersRes, foodsRes, ordersRes] = await Promise.all([
-        fetch('http://localhost:3001/users/overview'),
-        fetch('http://localhost:3001/foods/overview'),
-        fetch('http://localhost:3001/orders/overview'),
-      ]);
+  // Calculate loading state based on all queries
+  const isLoading = overview_users_query.isLoading || 
+                   overview_foods_query.isLoading || 
+                   overview_orders_query.isLoading;
 
-      const [users, foods, orders] = await Promise.all([
-        usersRes.json(),
-        foodsRes.json(),
-        ordersRes.json(),
-      ]);
+  // Calculate error state
+  const hasError = overview_users_query.error || 
+                   overview_foods_query.error || 
+                   overview_orders_query.error;
 
-      setDashboardData({ users, foods, orders });
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Prepare dashboard data with proper fallbacks
+  const dashboardData: DashboardData = {
+    users: overview_users_query.data || {},
+    foods: overview_foods_query.data || { categoryDistribution: [] },
+    orders: overview_orders_query.data || {},
   };
 
-  if (loading) {
+  // Handle error state
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">Error loading dashboard data</div>
+          <button 
+            onClick={() => {
+              overview_users_query.refetch();
+              overview_foods_query.refetch();
+              overview_orders_query.refetch();
+            }}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -155,9 +169,9 @@ export default function AnalyticsOverView(props:any) {
           />
           <StatCard
             title="Total Revenue"
-            value={`$${(dashboardData.orders.revenueMetrics?.totalRevenue || 0).toFixed(2)}`}
-            icon={<DollarSign className="h-8 w-8 text-yellow-600" />}
-            change={`$${(dashboardData.orders.recentRevenue || 0).toFixed(2)} this week`}
+            value={`₹${(dashboardData.orders.revenueMetrics?.totalRevenue || 0).toFixed(2)}`}
+            icon={<div className="text-3xl text-yellow-600">&#8377; </div>}
+            change={`₹${(dashboardData.orders.recentRevenue || 0).toFixed(2)} this week`}
             changeType="positive"
           />
         </div>
@@ -165,7 +179,7 @@ export default function AnalyticsOverView(props:any) {
         {/* Analytics Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <AnalyticsCard
-            view = { (data:any) => props.view(data) }
+            view={(data: any) => props.view(data)}
             title="Customer Analytics"
             description="Detailed insights into user registration, activity, and behavior patterns"
             icon={<Users className="h-12 w-12 text-blue-600" />}
@@ -178,7 +192,7 @@ export default function AnalyticsOverView(props:any) {
           />
 
           <AnalyticsCard
-            view = { (data:any) => props.view(data) }
+            view={(data: any) => props.view(data)}
             title="Food Analytics"
             description="Performance metrics for your menu items, ratings, and popularity"
             icon={<Package className="h-12 w-12 text-green-600" />}
@@ -191,7 +205,7 @@ export default function AnalyticsOverView(props:any) {
           />
 
           <AnalyticsCard
-            view = { (data:any) => props.view(data) }
+            view={(data: any) => props.view(data)}
             title="Order Analytics"
             description="Comprehensive order analysis, trends, and customer insights"
             icon={<Activity className="h-12 w-12 text-purple-600" />}
@@ -200,11 +214,11 @@ export default function AnalyticsOverView(props:any) {
               { label: 'Total Orders', value: dashboardData.orders.totalOrders || 0 },
               {
                 label: 'Avg Order Value',
-                value: `$${(dashboardData.orders.revenueMetrics?.avgOrderValue || 0).toFixed(2)}`,
+                value: `₹${(dashboardData.orders.revenueMetrics?.avgOrderValue || 0).toFixed(2)}`,
               },
               {
                 label: 'Total Revenue',
-                value: `$${(dashboardData.orders.revenueMetrics?.totalRevenue || 0).toFixed(0)}`,
+                value: `₹${(dashboardData.orders.revenueMetrics?.totalRevenue || 0).toFixed(0)}`,
               },
             ]}
           />
@@ -220,7 +234,7 @@ export default function AnalyticsOverView(props:any) {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {dashboardData.foods.categoryDistribution.length || 0}
+                {dashboardData.foods.categoryDistribution?.length || 0}
               </div>
               <div className="text-sm text-gray-600">Food Categories</div>
             </div>
@@ -261,7 +275,7 @@ function StatCard({ title, value, icon, change, changeType }: StatCardProps) {
 }
 
 // Reusable AnalyticsCard component
-function AnalyticsCard({ title, description, icon, href, stats , view }: AnalyticsCardProps) {
+function AnalyticsCard({ title, description, icon, href, stats, view }: AnalyticsCardProps) {
   return (
     <div>
       <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow cursor-pointer">
@@ -278,8 +292,9 @@ function AnalyticsCard({ title, description, icon, href, stats , view }: Analyti
             </div>
           ))}
         </div>
-        <button className="mt-4 flex items-center text-blue-600 text-sm font-medium"
-        onClick={() => view(href)}
+        <button 
+          className="mt-4 flex items-center text-blue-600 text-sm font-medium"
+          onClick={() => view(href)}
         >
           View Details <TrendingUp className="h-4 w-4 ml-1" />
         </button>
@@ -287,4 +302,3 @@ function AnalyticsCard({ title, description, icon, href, stats , view }: Analyti
     </div>
   );
 }
-

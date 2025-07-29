@@ -1,13 +1,20 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 import { Users, UserPlus, Activity } from 'lucide-react';
 import StatCard from '@/components/analytics/StatCard';
+import { useQuery } from '@tanstack/react-query';
+import {
+  users_registration_trends,
+  users_activity,
+  overview_users
+} from '@/reactQuery/analyticsQuery';
 
+// Keep your existing type definitions
 type TrendData = {
   _id: string;
   totalRegistrations: number;
@@ -50,52 +57,58 @@ type ActivityData = {
   mostActiveUsers: MostActiveUser[];
 };
 
-type UserData = {
-  overview: Partial<OverviewData>;
-  trends: TrendData[];
-  activity: Partial<ActivityData>;
-  foodAnalysis?: FoodAnalysis;
-};
-
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function CustomerAnalytics() {
-  const [data, setData] = useState<UserData>({
-    overview: {},
-    trends: [],
-    activity: {},
-  });
-  const [loading, setLoading] = useState<boolean>(true);
   const [timePeriod, setTimePeriod] = useState<'day' | 'week' | 'month' | 'year'>('month');
 
-  useEffect(() => {
-    fetchUsersData();
-  }, [timePeriod]);
+  // React Query implementation for all data fetching
+  const {
+    data: overviewData,
+    isLoading: overviewLoading,
+    error: overviewError
+  } = useQuery({
+    queryKey: ["overview_users"],
+    queryFn: overview_users
+  });
 
-  const fetchUsersData = async () => {
-    try {
-      const [overviewRes, trendsRes, activityRes] = await Promise.all([
-        fetch('http://localhost:3001/users/overview'),
-        fetch(`http://localhost:3001/users/registration-trends?period=${timePeriod}`),
-        fetch('http://localhost:3001/users/activity')
-      ]);
+  const {
+    data: trendsData,
+    isLoading: trendsLoading,
+    error: trendsError
+  } = useQuery({
+    queryKey: ["users_registration_trends", timePeriod],
+    queryFn: () => users_registration_trends(timePeriod)
+  });
 
-      const [overview, trends, activity] = await Promise.all([
-        overviewRes.json(),
-        trendsRes.json(),
-        activityRes.json()
-      ]);
+  const {
+    data: activityData,
+    isLoading: activityLoading,
+    error: activityError
+  } = useQuery({
+    queryKey: ["users_activity"],
+    queryFn: users_activity
+  });
 
+  // Combined loading state
+  const isLoading = overviewLoading || trendsLoading || activityLoading;
 
-      setData({ overview, trends, activity });
-    } catch (error) {
-      console.error('Error fetching users data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Error handling
+  if (overviewError || trendsError || activityError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Data</h2>
+          <p className="text-gray-600">
+            {overviewError?.message || trendsError?.message || activityError?.message || 'An error occurred while fetching data'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  if (loading) {
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -103,15 +116,20 @@ export default function CustomerAnalytics() {
     );
   }
 
+  // Prepare data with fallbacks
+  const overview = overviewData || {};
+  const trends = trendsData || [];
+  const activity = activityData || {};
+
   const userTypeData = [
-    { name: 'Customers', value: data.overview.totalCustomers || 0, color: '#0088FE' },
-    { name: 'Admins', value: data.overview.totalAdmins || 0, color: '#00C49F' },
-    { name: 'Anonymous', value: data.overview.totalAnonymousUsers || 0, color: '#FFBB28' }
+    { name: 'Customers', value: overview.totalCustomers || 0, color: '#0088FE' },
+    { name: 'Admins', value: overview.totalAdmins || 0, color: '#00C49F' },
+    { name: 'Anonymous', value: overview.totalAnonymousUsers || 0, color: '#FFBB28' }
   ];
 
   const userActivityData = [
-    { name: 'With Orders', value: data.overview.usersWithOrders || 0, color: '#0088FE' },
-    { name: 'Without Orders', value: data.overview.usersWithoutOrders || 0, color: '#FF8042' }
+    { name: 'With Orders', value: overview.usersWithOrders || 0, color: '#0088FE' },
+    { name: 'Without Orders', value: overview.usersWithoutOrders || 0, color: '#FF8042' }
   ];
 
   return (
@@ -122,33 +140,35 @@ export default function CustomerAnalytics() {
           <p className="text-gray-600 mt-2">Detailed insights into user behavior and registration patterns</p>
         </div>
 
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Users"
-            value={data.overview.totalUsers || 0}
+            value={overview.totalUsers || 0}
             icon={<Users className="h-8 w-8 text-blue-600" />}
-            change={`${data.overview.userGrowthRate || 0}% growth rate`}
+            change={`${overview.userGrowthRate || 0}% growth rate`}
           />
           <StatCard
             title="New Users (30d)"
-            value={data.overview.recentUsers || 0}
+            value={overview.recentUsers || 0}
             icon={<UserPlus className="h-8 w-8 text-green-600" />}
             change="Last 30 days"
           />
           <StatCard
             title="Active Users"
-            value={data.overview.usersWithOrders || 0}
+            value={overview.usersWithOrders || 0}
             icon={<Activity className="h-8 w-8 text-purple-600" />}
             change="Users with orders"
           />
           <StatCard
             title="Anonymous Users"
-            value={data.overview.totalAnonymousUsers || 0}
+            value={overview.totalAnonymousUsers || 0}
             icon={<Users className="h-8 w-8 text-yellow-600" />}
             change="Guest checkouts"
           />
         </div>
 
+        {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-center mb-4">
@@ -164,17 +184,23 @@ export default function CustomerAnalytics() {
                 <option value="year">Yearly</option>
               </select>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data.trends}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="_id" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="totalRegistrations" stroke="#8884d8" strokeWidth={2} />
-                <Line type="monotone" dataKey="customerRegistrations" stroke="#82ca9d" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            {trendsLoading ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={trends}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="_id" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="totalRegistrations" stroke="#8884d8" strokeWidth={2} />
+                  <Line type="monotone" dataKey="customerRegistrations" stroke="#82ca9d" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -201,11 +227,12 @@ export default function CustomerAnalytics() {
           </div>
         </div>
 
+        {/* Charts Row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">User Activity Distribution</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.activity.activityDistribution || []}>
+              <BarChart data={activity.activityDistribution || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="_id" />
                 <YAxis />
@@ -239,6 +266,7 @@ export default function CustomerAnalytics() {
           </div>
         </div>
 
+        {/* Most Ordered Foods Table */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Most Ordered Foods</h3>
           <div className="overflow-x-auto">
@@ -251,7 +279,7 @@ export default function CustomerAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(data.foodAnalysis?.mostOrderedFoods || []).map((food, index) => (
+                {(activity.foodAnalysis?.mostOrderedFoods || []).map((food, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{food._id}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{food.totalQuantity}</td>
@@ -263,6 +291,7 @@ export default function CustomerAnalytics() {
           </div>
         </div>
 
+        {/* Most Active Users Table */}
         <div className="bg-white rounded-lg shadow p-6 mt-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Most Active Users</h3>
           <div className="overflow-x-auto">
@@ -276,7 +305,7 @@ export default function CustomerAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(data.activity.mostActiveUsers || []).map((user, index) => (
+                {(activity.mostActiveUsers || []).map((user, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{user.user_name}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{user.user_email}</td>
@@ -290,10 +319,7 @@ export default function CustomerAnalytics() {
             </table>
           </div>
         </div>
-
       </div>
     </div>
   );
 }
-
-

@@ -141,7 +141,7 @@ MainAnalytics.get('/users/activity', async (req, res) => {
 // FOODS ANALYTICS ROUTES
 // =============================================================================
 
-// GET /api/analytics/foods/overview
+
 MainAnalytics.get('/foods/overview', async (req, res) => {
   try {
     const totalFoods = await Foods.countDocuments();
@@ -350,7 +350,7 @@ MainAnalytics.get('/foods/performance', async (req, res) => {
 // ORDERS ANALYTICS ROUTES
 // =============================================================================
 
-// GET /api/analytics/orders/overview
+
 MainAnalytics.get('/orders/overview', async (req, res) => {
   try {
     const totalOrders = await Orders.countDocuments();
@@ -370,6 +370,9 @@ MainAnalytics.get('/orders/overview', async (req, res) => {
     // Payment type distribution
     const paymentDistribution = await Orders.aggregate([
       {
+        $match: { order_status: 'paid' } 
+      },
+      {
         $group: {
           _id: "$payment_type",
           count: { $sum: 1 }
@@ -377,8 +380,10 @@ MainAnalytics.get('/orders/overview', async (req, res) => {
       }
     ]);
 
-    // Revenue metrics
     const revenueMetrics = await Orders.aggregate([
+      {
+        $match: { order_status: 'paid' } 
+      },
       {
         $group: {
           _id: null,
@@ -389,7 +394,6 @@ MainAnalytics.get('/orders/overview', async (req, res) => {
       }
     ]);
 
-    // Recent orders (last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
@@ -576,12 +580,181 @@ MainAnalytics.get('/orders/food-analysis', async (req, res) => {
 
 
 
+// download orders data - export to excel sheet
 
 
+// MainAnalytics.post('/download-orders', async (req, res) => {
+//   try {
+//     const { startDate, endDate } = req.body;
 
+//     if (!startDate || !endDate) {
+//       return res.status(400).json({ error: 'Start date and end date are required' });
+//     }
 
+//     const start = new Date(startDate);
+//     const end = new Date(endDate);
+//     end.setHours(23, 59, 59, 999); 
 
-//////////////////////
+//     console.log(`Fetching orders from ${start} to ${end}`);
+
+//     const orders = await Orders.find({
+//       order_status : "paid" , 
+//       createdAt: {
+//         $gte: start,
+//         $lte: end
+//       }
+//     }).sort({ createdAt: -1 });
+
+//     console.log(`Found ${orders.length} paid orders`);
+
+//     if (orders.length === 0) {
+//       return res.status(404).json({ error: 'No paid orders found in the specified date range' });
+//     }
+
+//     const excelData = [];
+
+//     for (const order of orders) {
+//       // Get user details
+//       let userName = order.user_name || 'Anonymous User';
+//       let userEmail = 'N/A';
+      
+//       if (order.user_id) {
+//         try {
+//           const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(order.user_id);
+          
+//           if (isValidObjectId) {
+//             // Query Users collection for registered users
+//             const user = await Users.findById(order.user_id);
+//             if (user) {
+//               userName = user.user_name;
+//               userEmail = user.user_email;
+//             }
+//           } else {
+//             // For UUID strings, check AnonymousUser collection
+//             const anonymousUser = await AnonymousUser.findOne({ user_id: order.user_id });
+//             if (anonymousUser) {
+//               userName = 'Anonymous User';
+//               userEmail = 'Anonymous';
+//             } else {
+//               userName = 'Guest User';
+//               userEmail = 'N/A';
+//             }
+//           }
+//         } catch (userError) {
+//           console.error(`Error fetching user details for ${order.user_id}:`, userError);
+//           userName = 'Unknown User';
+//           userEmail = 'N/A';
+//         }
+//       }
+
+//       // Process each food item in the order
+//       for (const orderedFood of order.ordered_foods) {
+//         try {
+//           const food = await Foods.findById(orderedFood._id);
+          
+//           const rowData = {
+//             'Order ID': order._id,
+//             'Order Date': order.createdAt.toLocaleDateString(),
+//             'Order Time': order.createdAt.toLocaleTimeString(),
+//             'User ID': order.user_id || 'Anonymous',
+//             'User Name': userName,
+//             'User Email': userEmail,
+//             'Food ID': orderedFood._id,
+//             'Food Name': food ? food.food_name : 'Unknown Food',
+//             'Food Description': food ? food.describtion : 'N/A',
+//             'Food Category': food ? food.category : 'N/A',
+//             'Unit Price': food ? food.price : 0,
+//             'Offer Price': food ? (food.offer_price || 'N/A') : 'N/A',
+//             'Quantity Ordered': orderedFood.quantity,
+//             'Item Total': food ? (food.price * orderedFood.quantity) : 0,
+//             'Order Total': order.total_cost,
+//             'Order Type': order.order_type,
+//             'Payment Status': order.payment_type ? 'Paid' : 'Pending',
+//             'Order Status': order.order_status,
+//             'Total Items in Order': order.quandity
+//           };
+          
+//           excelData.push(rowData);
+//         } catch (foodError) {
+//           console.error(`Error fetching food details for ${orderedFood._id}:`, foodError);
+//           // Add row with unknown food details
+//           const rowData = {
+//             'Order ID': order._id,
+//             'Order Date': order.createdAt.toLocaleDateString(),
+//             'Order Time': order.createdAt.toLocaleTimeString(),
+//             'User ID': order.user_id || 'Anonymous',
+//             'User Name': userName,
+//             'User Email': userEmail,
+//             'Food ID': orderedFood._id,
+//             'Food Name': 'Unknown Food',
+//             'Food Description': 'N/A',
+//             'Food Category': 'N/A',
+//             'Unit Price': 0,
+//             'Offer Price': 'N/A',
+//             'Quantity Ordered': orderedFood.quantity,
+//             'Item Total': 0,
+//             'Order Total': order.total_cost,
+//             'Order Type': order.order_type,
+//             'Payment Status': 'Paid',
+//             'Order Status': order.order_status,
+//             'Total Items in Order': order.quandity
+//           };
+          
+//           excelData.push(rowData);
+//         }
+//       }
+//     }
+
+//     // Create workbook and worksheet
+//     const workbook = xlsx.utils.book_new();
+//     const worksheet = xlsx.utils.json_to_sheet(excelData);
+
+//     // Auto-size columns
+//     const columnWidths = [];
+//     const headers = Object.keys(excelData[0] || {});
+    
+//     headers.forEach((header, index) => {
+//       let maxWidth = header.length;
+//       excelData.forEach(row => {
+//         const cellValue = row[header] ? row[header].toString() : '';
+//         maxWidth = Math.max(maxWidth, cellValue.length);
+//       });
+//       columnWidths.push({ wch: Math.min(maxWidth + 2, 50) }); // Max width of 50 characters
+//     });
+    
+//     worksheet['!cols'] = columnWidths;
+
+//     // Add worksheet to workbook
+//     xlsx.utils.book_append_sheet(workbook, worksheet, 'Orders Report');
+
+//     // Generate Excel file buffer
+//     const excelBuffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+//     // Create filename with date range
+//     const startDateStr = start.toISOString().split('T')[0];
+//     const endDateStr = end.toISOString().split('T')[0];
+//     const filename = `orders_report_${startDateStr}_to_${endDateStr}.xlsx`;
+
+//     // Set response headers for file download
+//     res.set({
+//       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//       'Content-Disposition': `attachment; filename="${filename}"`,
+//       'Content-Length': excelBuffer.length
+//     });
+
+//     console.log(`Generated Excel file with ${excelData.length} rows`);
+
+//     // Send the Excel file
+//     res.send(excelBuffer);
+
+//   } catch (error) {
+//     console.error('Error generating Excel file:', error);
+//     res.status(500).json({ 
+//       error: 'Failed to generate Excel file',
+//       details: error.message 
+//     });
+//   }
+// });
 
 
 MainAnalytics.post('/download-orders', async (req, res) => {
@@ -592,16 +765,15 @@ MainAnalytics.post('/download-orders', async (req, res) => {
       return res.status(400).json({ error: 'Start date and end date are required' });
     }
 
-    // Convert dates to Date objects
     const start = new Date(startDate);
     const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // Include the entire end date
+    end.setHours(23, 59, 59, 999); 
 
     console.log(`Fetching orders from ${start} to ${end}`);
 
-    // Fetch paid orders within the date range
+    // Fetch paid orders in the date range
     const orders = await Orders.find({
-      payment_type: true, // Only paid orders
+      order_status: "paid",
       createdAt: {
         $gte: start,
         $lte: end
@@ -614,18 +786,19 @@ MainAnalytics.post('/download-orders', async (req, res) => {
       return res.status(404).json({ error: 'No paid orders found in the specified date range' });
     }
 
-    // Prepare data for Excel
-    const excelData = [];
+    // Arrays to store data for different sheets
+    const orderDetailsData = [];
+    const foodSalesData = {};
+    let grandTotal = 0;
 
+    // Process each order
     for (const order of orders) {
       // Get user details
       let userName = order.user_name || 'Anonymous User';
       let userEmail = 'N/A';
       
-      // Try to get user details from Users collection
       if (order.user_id) {
         try {
-          // Check if user_id is a valid MongoDB ObjectId (24 hex characters)
           const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(order.user_id);
           
           if (isValidObjectId) {
@@ -639,10 +812,9 @@ MainAnalytics.post('/download-orders', async (req, res) => {
             // For UUID strings, check AnonymousUser collection
             const anonymousUser = await AnonymousUser.findOne({ user_id: order.user_id });
             if (anonymousUser) {
-              userName = 'Anonymous User';
+              userName = anonymousUser.user_name || 'Anonymous User';
               userEmail = 'Anonymous';
             } else {
-              // Fallback for any other string format
               userName = 'Guest User';
               userEmail = 'N/A';
             }
@@ -657,82 +829,159 @@ MainAnalytics.post('/download-orders', async (req, res) => {
       // Process each food item in the order
       for (const orderedFood of order.ordered_foods) {
         try {
+          // Get food details from Foods collection
           const food = await Foods.findById(orderedFood._id);
           
-          const rowData = {
-            'Order ID': order._id,
-            'Order Date': order.createdAt.toLocaleDateString(),
-            'Order Time': order.createdAt.toLocaleTimeString(),
-            'User ID': order.user_id || 'Anonymous',
+          const foodName = (orderedFood.food_name || 'Unknown Food');
+          const unitPrice = (orderedFood.price || 0);
+          const offerPrice = 'N/A';
+          const quantity = orderedFood.quantity;
+          const itemTotal = unitPrice * quantity;
+
+          // Add to order details sheet data
+          const orderRowData = {
+            'Order Date': order.createdAt.toLocaleDateString('en-GB'),
+            'Order Time': order.createdAt.toLocaleTimeString('en-GB'),
             'User Name': userName,
             'User Email': userEmail,
-            'Food ID': orderedFood._id,
-            'Food Name': food ? food.food_name : 'Unknown Food',
-            'Food Description': food ? food.describtion : 'N/A',
-            'Food Category': food ? food.category : 'N/A',
-            'Unit Price': food ? food.price : 0,
-            'Offer Price': food ? (food.offer_price || 'N/A') : 'N/A',
-            'Quantity Ordered': orderedFood.quantity,
-            'Item Total': food ? (food.price * orderedFood.quantity) : 0,
-            'Order Total': order.total_cost,
-            'Order Type': order.order_type,
-            'Payment Status': order.payment_type ? 'Paid' : 'Pending',
-            'Order Status': order.order_status,
-            'Total Items in Order': order.quandity
+            'Food Name': foodName,
+            'Food Price': unitPrice,
+            'Offer Price': offerPrice,
+            'Quantity': quantity,
+            'Item Total': itemTotal
           };
           
-          excelData.push(rowData);
+          orderDetailsData.push(orderRowData);
+
+          // Aggregate food sales data for second sheet
+          const foodKey = orderedFood._id;
+          if (!foodSalesData[foodKey]) {
+            foodSalesData[foodKey] = {
+              foodName: foodName,
+              totalQuantity: 0,
+              totalRevenue: 0
+            };
+          }
+          
+          foodSalesData[foodKey].totalQuantity += quantity;
+          foodSalesData[foodKey].totalRevenue += itemTotal;
+          
+          grandTotal += itemTotal;
+
         } catch (foodError) {
           console.error(`Error fetching food details for ${orderedFood._id}:`, foodError);
-          // Add row with unknown food details
-          const rowData = {
-            'Order ID': order._id,
-            'Order Date': order.createdAt.toLocaleDateString(),
-            'Order Time': order.createdAt.toLocaleTimeString(),
-            'User ID': order.user_id || 'Anonymous',
+          
+          // Add row with available data even if food lookup fails
+          const fallbackName = orderedFood.food_name || 'Unknown Food';
+          const fallbackPrice = orderedFood.price || 0;
+          const quantity = orderedFood.quantity;
+          const itemTotal = fallbackPrice * quantity;
+
+          const orderRowData = {
+            'Order Date': order.createdAt.toLocaleDateString('en-GB'),
+            'Order Time': order.createdAt.toLocaleTimeString('en-GB'),
             'User Name': userName,
             'User Email': userEmail,
-            'Food ID': orderedFood._id,
-            'Food Name': 'Unknown Food',
-            'Food Description': 'N/A',
-            'Food Category': 'N/A',
-            'Unit Price': 0,
+            'Food Name': fallbackName,
+            'Food Price': fallbackPrice,
             'Offer Price': 'N/A',
-            'Quantity Ordered': orderedFood.quantity,
-            'Item Total': 0,
-            'Order Total': order.total_cost,
-            'Order Type': order.order_type,
-            'Payment Status': 'Paid',
-            'Order Status': order.order_status,
-            'Total Items in Order': order.quandity
+            'Quantity': quantity,
+            'Item Total': itemTotal
           };
           
-          excelData.push(rowData);
+          orderDetailsData.push(orderRowData);
+
+          // Add to food sales data
+          const foodKey = orderedFood._id;
+          if (!foodSalesData[foodKey]) {
+            foodSalesData[foodKey] = {
+              foodName: fallbackName,
+              totalQuantity: 0,
+              totalRevenue: 0
+            };
+          }
+          
+          foodSalesData[foodKey].totalQuantity += quantity;
+          foodSalesData[foodKey].totalRevenue += itemTotal;
+          
+          grandTotal += itemTotal;
         }
       }
     }
 
-    // Create workbook and worksheet
-    const workbook = xlsx.utils.book_new();
-    const worksheet = xlsx.utils.json_to_sheet(excelData);
-
-    // Auto-size columns
-    const columnWidths = [];
-    const headers = Object.keys(excelData[0] || {});
-    
-    headers.forEach((header, index) => {
-      let maxWidth = header.length;
-      excelData.forEach(row => {
-        const cellValue = row[header] ? row[header].toString() : '';
-        maxWidth = Math.max(maxWidth, cellValue.length);
+    // Prepare food sales summary data for second sheet
+    const foodSalesSummary = [];
+    Object.values(foodSalesData).forEach(item => {
+      foodSalesSummary.push({
+        'Food Name': item.foodName,
+        'Total Items Sold': item.totalQuantity,
+        'Total Revenue': parseFloat(item.totalRevenue.toFixed(2))
       });
-      columnWidths.push({ wch: Math.min(maxWidth + 2, 50) }); // Max width of 50 characters
     });
-    
-    worksheet['!cols'] = columnWidths;
 
-    // Add worksheet to workbook
-    xlsx.utils.book_append_sheet(workbook, worksheet, 'Orders Report');
+    // Sort by total revenue descending
+    foodSalesSummary.sort((a, b) => b['Total Revenue'] - a['Total Revenue']);
+
+    // Prepare summary data for third sheet
+    const summaryData = [
+      {
+        'Metric': 'Total Orders',
+        'Value': orders.length
+      },
+      {
+        'Metric': 'Total Items Sold',
+        'Value': orderDetailsData.reduce((sum, row) => sum + row.Quantity, 0)
+      },
+      {
+        'Metric': 'Total Revenue',
+        'Value': parseFloat(grandTotal.toFixed(2))
+      },
+      {
+        'Metric': 'Average Order Value',
+        'Value': parseFloat((grandTotal / orders.length).toFixed(2))
+      },
+      {
+        'Metric': 'Date Range',
+        'Value': `${start.toLocaleDateString('en-GB')} to ${end.toLocaleDateString('en-GB')}`
+      }
+    ];
+
+    // Create workbook
+    const workbook = xlsx.utils.book_new();
+
+    // Helper function to auto-size columns
+    const autoSizeColumns = (data) => {
+      if (!data || data.length === 0) return [];
+      
+      const columnWidths = [];
+      const headers = Object.keys(data[0]);
+      
+      headers.forEach((header) => {
+        let maxWidth = header.length;
+        data.forEach(row => {
+          const cellValue = row[header] ? row[header].toString() : '';
+          maxWidth = Math.max(maxWidth, cellValue.length);
+        });
+        columnWidths.push({ wch: Math.min(maxWidth + 2, 50) });
+      });
+      
+      return columnWidths;
+    };
+
+    // Create and add first sheet - Order Details
+    const orderDetailsSheet = xlsx.utils.json_to_sheet(orderDetailsData);
+    orderDetailsSheet['!cols'] = autoSizeColumns(orderDetailsData);
+    xlsx.utils.book_append_sheet(workbook, orderDetailsSheet, 'Order Details');
+
+    // Create and add second sheet - Food Sales Summary
+    const foodSalesSheet = xlsx.utils.json_to_sheet(foodSalesSummary);
+    foodSalesSheet['!cols'] = autoSizeColumns(foodSalesSummary);
+    xlsx.utils.book_append_sheet(workbook, foodSalesSheet, 'Food Sales Summary');
+
+    // Create and add third sheet - Overall Summary
+    const summarySheet = xlsx.utils.json_to_sheet(summaryData);
+    summarySheet['!cols'] = autoSizeColumns(summaryData);
+    xlsx.utils.book_append_sheet(workbook, summarySheet, 'Summary');
 
     // Generate Excel file buffer
     const excelBuffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
@@ -740,7 +989,7 @@ MainAnalytics.post('/download-orders', async (req, res) => {
     // Create filename with date range
     const startDateStr = start.toISOString().split('T')[0];
     const endDateStr = end.toISOString().split('T')[0];
-    const filename = `orders_report_${startDateStr}_to_${endDateStr}.xlsx`;
+    const filename = `orders_sales_report_${startDateStr}_to_${endDateStr}.xlsx`;
 
     // Set response headers for file download
     res.set({
@@ -749,7 +998,7 @@ MainAnalytics.post('/download-orders', async (req, res) => {
       'Content-Length': excelBuffer.length
     });
 
-    console.log(`Generated Excel file with ${excelData.length} rows`);
+    console.log(`Generated Excel file with ${orderDetailsData.length} order details, ${foodSalesSummary.length} food items, and summary data`);
 
     // Send the Excel file
     res.send(excelBuffer);

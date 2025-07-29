@@ -1,11 +1,17 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 import { Package, Star, TrendingUp, DollarSign } from 'lucide-react';
 import StatCard from '@/components/analytics/StatCard';
+import { useQuery } from '@tanstack/react-query';
+import { 
+  overview_foods,
+  foods_popular,
+  foods_performance
+} from '@/reactQuery/analyticsQuery';
 
 type CategoryDistribution = {
   _id: string;
@@ -35,7 +41,7 @@ type PopularFood = {
   price: number;
   totalOrders: number;
   rating_stars?: number;
-  reviews?: unknown[]; // You can replace unknown with a proper type if needed
+  reviews?: unknown[];
 };
 
 type Popular = {
@@ -63,52 +69,62 @@ type Performance = {
   foodsPerformance?: PerformanceItem[];
 };
 
-type AnalyticsData = {
-  overview: Overview;
-  popular: Popular;
-  performance: Performance;
-};
-
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
 
 export default function FoodsAnalytics() {
-  const [data, setData] = useState<AnalyticsData>({
-    overview: {},
-    popular: {},
-    performance: {}
+  // React Query hooks for all data fetching
+  const overviewQuery = useQuery({
+    queryKey: ["overview_foods"],
+    queryFn: overview_foods
   });
-  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    fetchFoodsData();
-  }, []);
+  const popularQuery = useQuery({
+    queryKey: ["foods_popular"],
+    queryFn: foods_popular
+  });
 
-  const fetchFoodsData = async () => {
-    try {
-      const [overviewRes, popularRes, performanceRes] = await Promise.all([
-        fetch('http://localhost:3001/foods/overview'),
-        fetch('http://localhost:3001/foods/popular'),
-        fetch('http://localhost:3001/foods/performance')
-      ]);
+  const performanceQuery = useQuery({
+    queryKey: ["foods_performance"],
+    queryFn: foods_performance
+  });
 
-      const [overview, popular, performance] = await Promise.all([
-        overviewRes.json(),
-        popularRes.json(),
-        performanceRes.json()
-      ]);
+  // Check if any query is loading
+  const isLoading = overviewQuery.isLoading || popularQuery.isLoading || performanceQuery.isLoading;
 
-      setData({ overview, popular, performance });
-    } catch (error) {
-      console.error('Error fetching foods data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Check if any query has an error
+  const hasError = overviewQuery.error || popularQuery.error || performanceQuery.error;
 
-  if (loading) {
+  // Get data from queries with fallbacks
+  const overviewData: Overview = overviewQuery.data || {};
+  const popularData: Popular = popularQuery.data || {};
+  const performanceData: Performance = performanceQuery.data || {};
+
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">Error loading analytics data</div>
+          <button
+            onClick={() => {
+              overviewQuery.refetch();
+              popularQuery.refetch();
+              performanceQuery.refetch();
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -126,27 +142,27 @@ export default function FoodsAnalytics() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Foods"
-            value={data.overview.totalFoods || 0}
+            value={overviewData.totalFoods || 0}
             icon={<Package className="h-8 w-8 text-green-600" />}
-            change={`${data.overview.activeFoods || 0} active`}
+            change={`${overviewData.activeFoods || 0} active`}
           />
           <StatCard
             title="Average Rating"
-            value={(data.overview.averageRating || 0).toFixed(1)}
+            value={(overviewData.averageRating || 0).toFixed(1)}
             icon={<Star className="h-8 w-8 text-yellow-600" />}
-            change={`${data.overview.totalRatedFoods || 0} rated items`}
+            change={`${overviewData.totalRatedFoods || 0} rated items`}
           />
           <StatCard
             title="Foods with Offers"
-            value={data.overview.foodsWithOffers || 0}
+            value={overviewData.foodsWithOffers || 0}
             icon={<TrendingUp className="h-8 w-8 text-blue-600" />}
             change="Active promotions"
           />
           <StatCard
             title="Avg Price"
-            value={`${(data.overview.priceAnalysis?.avgPrice || 0).toFixed(2)}`}
-            icon={<DollarSign className="h-8 w-8 text-purple-600" />}
-            change={`${data.overview.priceAnalysis?.minPrice || 0} - ${data.overview.priceAnalysis?.maxPrice || 0}`}
+            value={`₹${(overviewData.priceAnalysis?.avgPrice || 0).toFixed(2)}`}
+            icon={<div className="text-3xl text-purple-600" >&#8377;</div>}
+            change={`₹${overviewData.priceAnalysis?.minPrice || 0} - ₹${overviewData.priceAnalysis?.maxPrice || 0}`}
           />
         </div>
 
@@ -158,7 +174,7 @@ export default function FoodsAnalytics() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={data.overview.categoryDistribution || []}
+                  data={overviewData.categoryDistribution || []}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -167,7 +183,7 @@ export default function FoodsAnalytics() {
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(data.overview.categoryDistribution || []).map((entry, index) => (
+                  {(overviewData.categoryDistribution || []).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -180,7 +196,7 @@ export default function FoodsAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Revenue Performance</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data.performance.categoryPerformance || []}>
+              <BarChart data={performanceData.categoryPerformance || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="_id" />
                 <YAxis />
@@ -197,11 +213,11 @@ export default function FoodsAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Most Ordered Foods</h3>
             <div className="space-y-3">
-              {(data.popular.popularFoods || []).slice(0, 5).map((food, index) => (
+              {(popularData.popularFoods || []).slice(0, 5).map((food, index) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{food.food_name}</div>
-                    <div className="text-sm text-gray-500">{food.category} • ${food.price}</div>
+                    <div className="text-sm text-gray-500">{food.category} • &#8377;{food.price}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-bold text-green-600">{food.totalOrders} orders</div>
@@ -216,7 +232,7 @@ export default function FoodsAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Best Rated Foods</h3>
             <div className="space-y-3">
-              {(data.popular.bestRatedFoods || []).slice(0, 5).map((food, index) => (
+              {(popularData.bestRatedFoods || []).slice(0, 5).map((food, index) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{food.food_name}</div>
@@ -249,13 +265,13 @@ export default function FoodsAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(data.performance.foodsPerformance || []).slice(0, 10).map((food, index) => (
+                {(performanceData.foodsPerformance || []).slice(0, 10).map((food, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{food.food_name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{food.category}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${food.price}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">&#8377;{food.price}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{food.totalOrders}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${food.totalRevenue.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">&#8377;{food.totalRevenue.toFixed(2)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {food.rating_stars ? `⭐ ${food.rating_stars}` : 'N/A'}
                     </td>
@@ -274,8 +290,27 @@ export default function FoodsAnalytics() {
             </table>
           </div>
         </div>
+
+        {/* Refresh Button */}
+        <div className="mt-8 flex justify-center">
+          <button
+            onClick={() => {
+              overviewQuery.refetch();
+              popularQuery.refetch();
+              performanceQuery.refetch();
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            ) : (
+              <TrendingUp className="h-4 w-4" />
+            )}
+            Refresh Data
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-
