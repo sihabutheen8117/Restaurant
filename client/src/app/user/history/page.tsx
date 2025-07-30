@@ -23,7 +23,7 @@ const page = () => {
   const [ order_details , set_order_details ] = useState({}) ;
   const [ total__details ,set_total_details ] = useState({}) ;
   const [ view_ratings , set_view_ratings ] = useState(false) ;
-  const [ ratings_details , set_ratings_details ] = useState({});
+  const [ ratings_details , set_ratings_details ] = useState<any>({});
   const [order_id , set_order_id ] = useState()
   const [ israted , set_israted ] = useState(false) ;
   const [ rated_data , set_rated_data ] = useState([{}]) ;
@@ -93,7 +93,7 @@ const page = () => {
           <div className='fixed inset-x-10 inset-y-40 bg-white z-50'>
             <RatingsPage 
               ratings_details={ratings_details}
-              order_id={order_id}
+              order_id={order_id || ""}
               israted={israted}
               rated_data={rated_data}
               close={() => set_view_ratings(false)}

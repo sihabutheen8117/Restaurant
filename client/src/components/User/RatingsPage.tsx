@@ -10,7 +10,8 @@ import { user_ratings } from '@/reactQuery/queries'
 
 type Reviews = {
     _id: string,
-    ratings: number
+    ratings: number,
+    stars : any 
 }
 
 interface RatingsPageProps {
@@ -28,7 +29,7 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
     console.log(rated_data);
     const get_ordered_food_query = useQuery({
         queryKey: ["order_food_details", ratings_details?.food_data],
-        queryFn: () => getFoodDetailsWithoutReviews(ratings_details.food_data),
+        queryFn: () => getFoodDetailsWithoutReviews(ratings_details?.food_data),
         enabled: !!ratings_details?.food_data // Only run query if food_data exists
     })
 
