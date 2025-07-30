@@ -9,6 +9,7 @@ import {  useQuery } from '@tanstack/react-query'
 import  { useSocket } from "@/customHooks/useSocket"
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 import NotificationLoader from '@/components/Loaders/NotificationLoader'
+import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
 
 const NewOrders = (props : any) => {
 
@@ -143,7 +144,6 @@ const NewOrders = (props : any) => {
                       </tr>
                   </thead>
                   <tbody className='text-sm'>
-                  
                       {
                         orders &&
                         orders.map( (item:any , index : any) => {
@@ -199,6 +199,15 @@ const NewOrders = (props : any) => {
                       }
                   </tbody>
               </table>
+              {
+                orders.length == 0 && 
+                  <div className='w-full flex justify-center items-center'>
+                    <div className=''> 
+                      <ItemsNotFound/>
+                      <div className={`text-center mb-2 text-xl ${inter.className} font-medium text-gray-600`}>No Orders Found !</div>
+                    </div>
+                  </div>
+              }
             </div>
         </div>
         {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}

@@ -20,6 +20,9 @@ const ViewOrders = (props:any) => {
             queryClient.invalidateQueries({
                 queryKey : ['all_pending_orders']
             })
+            queryClient.invalidateQueries({
+                queryKey : ['completed_orders']
+            })
             props.close()
             props.handle_delete_success()
         }
@@ -30,6 +33,9 @@ const ViewOrders = (props:any) => {
         onSuccess : () => {
             queryClient.invalidateQueries({
                 queryKey : ['all_pending_orders']
+            })
+            queryClient.invalidateQueries({
+                queryKey : ['completed_orders']
             })
             props.close();
             props.checkout_success();

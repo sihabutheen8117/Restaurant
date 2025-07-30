@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { get_entry_orders } from '@/reactQuery/queries'
 import ViewOrders from '../liveorders/ViewOrders'
 import { useState } from 'react'
+import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
 
 const Entries = (props:any) => {
 
@@ -103,6 +104,18 @@ const Entries = (props:any) => {
                         }
                         </tbody>
                     </table>
+                  </div>
+                  <div className=''>
+                    {
+                      entry_mutation.isSuccess && 
+                      entry_mutation.data.data.length == 0 && 
+                      <div className='w-full flex justify-center items-center'>
+                          <div className=''> 
+                              <ItemsNotFound/>
+                          <div className={`text-center mb-2 text-xl ${inter.className} font-medium text-gray-600`}>No Foods Found!</div>
+                          </div>
+                      </div>
+                    }
                   </div>
               </div>
     </div>

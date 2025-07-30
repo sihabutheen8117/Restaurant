@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Food } from '@/reactQuery/itemInterfaces'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 import NotificationLoader from '@/components/Loaders/NotificationLoader'
+import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
+import { inter } from '@/utils/fonts'
 
 const ViewManageFoods = (props: any) => {
 
@@ -185,6 +187,18 @@ const ViewManageFoods = (props: any) => {
                 </div>
             )})
         }
+      </div>
+      <div className=''>
+      {
+        foodQuery.isSuccess && 
+        foodQuery.data.data.length == 0 && 
+        <div className='w-full flex justify-center items-center'>
+            <div className=''> 
+                <ItemsNotFound/>
+            <div className={`text-center mb-2 text-xl ${inter.className} font-medium text-gray-600`}>No Foods Found!</div>
+            </div>
+        </div>
+      }
       </div>
       {visible && <NotificationLoader state={"success"} information={information} close={ () => handleClose()}/>}
     </div>

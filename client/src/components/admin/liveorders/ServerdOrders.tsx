@@ -10,6 +10,7 @@ import MobileLoaders from '@/components/Loaders/MobileLoaders'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 import { useRef , useEffect} from 'react'
 import NotificationLoader from '@/components/Loaders/NotificationLoader'
+import ItemsNotFound from '@/components/Loaders/ItemsNotFound'
 
 
 const ServerdOrders = (props : any ) => {
@@ -160,6 +161,16 @@ const ServerdOrders = (props : any ) => {
                             }
                         </tbody>
                     </table>
+                    {
+                      served_orders.isSuccess && 
+                      served_orders.data.data.length == 0 && 
+                        <div className='w-full flex justify-center items-center'>
+                          <div className=''> 
+                            <ItemsNotFound/>
+                            <div className={`text-center mb-2 text-xl ${inter.className} font-medium text-gray-600`}>No Orders Found !</div>
+                          </div>
+                        </div>
+                    }
                   </div>
               </div>
 
