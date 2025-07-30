@@ -113,7 +113,7 @@ const UserProduct = (props : any) => {
             ? item.offer_price
             : item.price;
 
-        const filteredFoods = foodQuery.data.data.filter((item) =>
+        const filteredFoods = foodQuery.data.data.filter((item:any) =>
           (props.search == null || item.food_name.toLowerCase().includes(props.search.toLowerCase())) 
             &&
           (item.offer_price === -1
@@ -298,7 +298,7 @@ const UserProduct = (props : any) => {
                         onClick={() => handleFoodDetails(items)}
                         >
                             <i className="fas fa-eye text-gray-600 absolute top-2 right-2 bg-white rounded-full px-2 py-0.5"
-                            ></i>
+                            ></i>{}
                         </button>
                         
                     </div>
@@ -363,16 +363,16 @@ const UserProduct = (props : any) => {
                                     foodQuantity[items._id ?? ''] == 1 ? 
                                     <button className='text-sm'
                                         onClick={() => handleDelCart(items._id ?? '') }
-                                    ><i className="fas fa-trash pr-3"></i></button>
+                                    ><i className="fas fa-trash pr-3"></i>{}</button>
                                     :
                                     <button className='text-sm'
                                     onClick={() => handleDecCart(items._id ?? '')}
-                                    ><i className="fas fa-minus pr-3"></i></button>
+                                    ><i className="fas fa-minus pr-3"></i>{}</button>
                                 }
                                 <div className='font-semibold inline'>{foodQuantity[items._id ?? '']}</div>
                                 <button className='text-sm'
                                 onClick={() => handleIncCart(items._id ?? '') }
-                                ><i className="fas fa-plus pl-3"></i></button>
+                                ><i className="fas fa-plus pl-3"></i>{}</button>
                             </div>
                         }
                         </div>

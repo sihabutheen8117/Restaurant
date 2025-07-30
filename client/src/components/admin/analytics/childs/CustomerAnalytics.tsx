@@ -212,7 +212,7 @@ export default function CustomerAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }:any) => `${name} ${(percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -251,7 +251,7 @@ export default function CustomerAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }:any) => `${name} ${(percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -279,7 +279,7 @@ export default function CustomerAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(activity.foodAnalysis?.mostOrderedFoods || []).map((food, index) => (
+                {(activity.foodAnalysis?.mostOrderedFoods || []).map((food :any , index:any) => (
                   <tr key={index}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{food._id}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{food.totalQuantity}</td>
@@ -305,7 +305,7 @@ export default function CustomerAnalytics() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {(activity.mostActiveUsers || []).map((user, index) => (
+                {(activity.mostActiveUsers || []).map((user : any , index:any ) => (
                   <tr key={index}>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{user.user_name}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{user.user_email}</td>
