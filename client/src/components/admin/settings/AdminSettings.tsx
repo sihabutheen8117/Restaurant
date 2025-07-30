@@ -564,7 +564,7 @@ export default function AdminSettings() {
       <div className="bg-white rounded-lg shadow-sm border p-6 border-gray-300">
         <h3 className="text-lg font-semibold mb-4">Food Categories</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {settingsData.isSuccess && disabledCategories?.map((food, index) => (
+          {settingsData.isSuccess && disabledCategories?.map((food : any, index) => (
             <div className="p-4 border rounded-lg border-gray-300" key={index}> 
               <div className="flex items-center justify-between">
                 <span className="font-medium">{food.category}</span>
