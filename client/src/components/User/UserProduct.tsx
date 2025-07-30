@@ -191,99 +191,6 @@ const UserProduct = (props : any) => {
             </div>
         }
       <div className='md:flex md:gap-4 md:flex-wrap '>
-        {/* {
-            foodQuery.isSuccess && 
-            foodQuery.data.data.map( (items , index ) => (
-                props.search==null || items.food_name.includes(props.search) &&
-                items.offer_price == undefined ? props.filters.price_range < items.price : props.filters.price_range < items.offer_price &&
-                props.filters.ratings <= items.rating_count &&
-                <div className='md:w-56 md:h-96 w-full md:mb-0 mb-3  h-40 rounded-2xl bg-gray-50 relative md:block flex'
-                    key = {index}
-                >
-                    <div className='md:w-52 md:h-52 md:m-2 rounded-xl relative'>
-                        <img src={items.food_image} alt = {items.food_name} className='object-fit md:w-52 md:h-52 w-40 h-40 rounded-lg object-cover'
-                        onClick={viewItems}
-                        />
-                        <button className='hidden md:block'
-                        onClick={() => handleFoodDetails(items)}
-                        >
-                            <i className="fas fa-eye text-gray-600 absolute top-2 right-2 bg-white rounded-full px-2 py-0.5"
-                            ></i>
-                        </button>
-                        
-                    </div>
-                    <div className='relative flex-1 m-2 md:m-0'>
-                        <div className={`mx-1.5 font-semibold text-xl md:text-lg`}
-                        onClick={viewItems}
-                        >
-                            {items.food_name}
-                        </div>
-                        <div className='md:mt-1.5 mt-2 flex justify-between ml-1'>
-                            <i className="fas fa-star text-yellow-500">
-                                <span className='text-black font-semibold text-sm pl-1'> {items.rating_count} / 5 </span>
-                                <span className='text-black opacity-40 text-xs pl-1'>(107)</span> 
-                            </i>
-                            <div className='px-2 opacity-75 text-sm'>{items.review_count} reviews</div>
-                        </div>
-                        <div className='w-full'>
-                            <div className='inline-block relative ml-3 md:mt-1 mt-1 w-full'>
-                                <span className="absolute top-1 -left-2 text-sm text-gray-600">₹</span>
-                                {
-                                    items.offer_price == -1  ? 
-                                    <span className="text-2xl font-semibold ">{items.price}</span>
-                                    :
-                                    <>
-                                        <span className="text-2xl font-semibold mr-3">{items.offer_price}</span>
-                                        <div className='inline relative'>
-                                            <span className="absolute top-0 -left-2 text-xs text-gray-600">₹</span>
-                                            <span className="font-semibold line-through opacity-50 text-lg ">{items.price}</span>
-                                        </div>
-                                    </>
-                                }
-                            </div>
-                            
-                        </div>
-                        {
-                            items.offer_price != -1  && 
-                            <div className='bg-red-500 text-xs px-2 py-1 absolute left-0 md:-bottom-8 bottom-0 text-white font-semibold'>
-                                limited offer
-                            </div>
-                                    
-                        }
-                        <div className='mt-1 absolute md:right-3 right-0 md:-bottom-9 bottom-0'>
-                        {
-                            cart == 0 ? 
-                            <button
-                            className='px-4 py-1 bg-amber-300 text-sm rounded-full'
-                            onClick={handleIncCart}
-                            >
-                                Add to cart
-                                <i className='fas fa-shopping-cart pl-1'></i>
-                            </button>
-                            :
-                            <div className='border-2 border-amber-300 rounded-full px-4 py-0.5'>
-                                {
-                                    cart == 1 ? 
-                                    <button className='text-sm'
-                                    onClick={handleDecCart}
-                                    ><i className="fas fa-trash pr-3"></i></button>
-                                    :
-                                    <button className='text-sm'
-                                    onClick={handleDecCart}
-                                    ><i className="fas fa-minus pr-3"></i></button>
-                                }
-                                <div className='font-semibold inline'>{cart}</div>
-                                <button className='text-sm'
-                                onClick={handleIncCart}
-                                ><i className="fas fa-plus pl-3"></i></button>
-                            </div>
-                        }
-                        </div>
-                        
-                    </div>
-                </div>
-            ))
-        } */}
          {
             foodQuery.isSuccess && 
             finalFoods.map( (items , index ) => (
@@ -313,7 +220,7 @@ const UserProduct = (props : any) => {
                                 <span className='text-black font-semibold text-sm pl-1'> {items.rating_stars} / 5 </span>
                                 <span className='text-black opacity-40 text-xs pl-1'>({items.rating_count})</span> 
                             </i>
-                            <div className='px-2 opacity-75 text-sm'>{items.review_count} reviews</div>
+                            <div className='px-2 opacity-75 text-sm'></div>
                         </div>
                         <div className='w-full'>
                             <div className='inline-block relative ml-3 md:mt-1 mt-1 w-full'>

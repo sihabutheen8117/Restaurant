@@ -41,7 +41,18 @@ const MainNav = () => {
                 <span className=''>Made with <span className='text-[#FFF085] md:text-7xl text-2xl'>Love</span> </span><br></br>
                 <span><span className='text-[#FFF085] md:text-7xl text-2xl'>Served</span> with Joy</span><br></br>
                 <Link href={"user/client"}>
-                    <button className={`md:text-xl text-sm ${lexend.className} border-2 rounded-2xl px-2 hover:text-amber-200 fontrans`}>Order now</button>
+                <button
+                    className={`md:text-xl text-sm ${lexend.className} 
+                        border-2 border-[#F16767] 
+                        rounded-2xl px-4 md:py-2 py-1 
+                        font-semibold 
+                        bg-white text-[#F16767] 
+                        shadow-md hover:shadow-xl 
+                        transition-all duration-300 ease-in-out 
+                        hover:scale-105 hover:bg-amber-400 hover:text-white`}
+                    >
+                    Order now
+                    </button>
                 </Link>
             </div>
             <img src='assets/main_food_1.png' alt="food_1" className='md:h-64 h-24 z-[2] bg-black bg-radial from-black from-30% to-[#F16767] to-70%'/>
