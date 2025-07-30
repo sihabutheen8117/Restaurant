@@ -37,7 +37,7 @@ const AddNewCategory = (props : any ) => {
             <div className='border-b-2 border-gray-100 px-2 py-1 flex justify-between'>
               <span>chicken</span>
               <button className=' text-red-400 rounded-full hover:text-red-500 transition-colors duration-200'>
-                <i className="fas fa-times-circle"></i>
+                <i className="fas fa-times-circle">{}</i>
               </button>
             </div>
             <div className='border-b-2 border-gray-100 px-2 py-1'>

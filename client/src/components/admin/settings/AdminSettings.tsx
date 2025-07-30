@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  Settings, 
   Utensils, 
   DollarSign, 
   ShoppingCart, 
@@ -15,11 +14,6 @@ import {
   Upload,
   Trash2,
   RotateCcw,
-  Users,
-  Clock,
-  ChefHat,
-  Bell,
-  Shield,
   Save,
   AlertTriangle,
   FileSpreadsheet,
@@ -62,7 +56,7 @@ export default function AdminSettings() {
     information: ""
   });
   
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef(0);
   const queryClient = useQueryClient();
 
   // Queries
@@ -90,7 +84,7 @@ export default function AdminSettings() {
   });
 
   // Notification helper function
-  const showNotification = useCallback((state, information) => {
+  const showNotification = useCallback((state :any , information:any) => {
     if (notification.visible && timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -101,7 +95,7 @@ export default function AdminSettings() {
       information
     });
     
-    timeoutRef.current = setTimeout(() => {
+    setTimeout(() => {
       setNotification(prev => ({ ...prev, visible: false }));
     }, 5000);
   }, [notification.visible]);
@@ -189,7 +183,7 @@ export default function AdminSettings() {
   }, [settingsData.isSuccess]);
 
   useEffect(() => {
-    const allAreFalse = disabledCategories.every(cat => cat.allFoodsDisabled === true);
+    const allAreFalse = disabledCategories.every((cat:any) => cat.allFoodsDisabled === true);
     if (allAreFalse && disabledCategories.length > 0) {
       setAllDisabled(true);
     }
@@ -202,7 +196,7 @@ export default function AdminSettings() {
   }, []);
 
   // Image handling functions
-  const handleImageSelect = useCallback((e, type) => {
+  const handleImageSelect = useCallback((e :any , type:string ) => {
     const files = Array.from(e.target.files);
     const withPreview = files.map((file) => ({
       file,
@@ -211,7 +205,7 @@ export default function AdminSettings() {
 
     switch (type) {
       case 'special':
-        setStagedSpcImages(prev => [...prev, ...withPreview]);
+        setStagedSpcImages((prev) => [...prev, ...withPreview]);
         break;
       case 'certificate':
         setStagedCrtImages(prev => [...prev, ...withPreview]);
@@ -462,7 +456,7 @@ export default function AdminSettings() {
                         className='absolute bg-red-500 text-white font-bold p-1.5 rounded-md top-1 right-1 hover:bg-red-600'
                         onClick={() => handleImageRemove(idx, type)}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" />{}
                       </button>
                     </div>
                   ))}

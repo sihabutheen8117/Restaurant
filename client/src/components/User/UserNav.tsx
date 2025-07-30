@@ -51,7 +51,7 @@ const UserNav = (props:any) => {
                 {
                   props.isSearch &&
                   <button className="">
-                    <i className="text-gray-400 absolute fas fa-search md:left-87 left-44 top-2"></i>
+                    <i className="text-gray-400 absolute fas fa-search md:left-87 left-44 top-2"></i>{}
                   </button>
                 }
                 {

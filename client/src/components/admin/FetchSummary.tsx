@@ -22,7 +22,7 @@ export default function FetchSummary() {
     }
   });
 
-  const handleFileDownload = async (response) => {
+  const handleFileDownload = async (response:any) => {
     try {
       // Get the filename from the response headers (axios format)
       const contentDisposition = response.headers['content-disposition'];
@@ -41,7 +41,7 @@ export default function FetchSummary() {
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-      link.parentNode.removeChild(link);
+      link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('File download failed:', error);

@@ -152,12 +152,12 @@ export default function OrdersAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ _id, percent }) => `${_id} ${(percent * 100).toFixed(0)}%`}
+                  label={({ _id, percent }:any) => `${_id} ${(percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(overviewData.statusDistribution || []).map((entry, index) => (
+                  {(overviewData.statusDistribution || []).map((entry:any, index:any) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -190,12 +190,12 @@ export default function OrdersAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ _id, percent }) => `${_id ? 'Online' : 'Cash'} ${(percent * 100).toFixed(0)}%`}
+                  label={({ _id, percent }:any) => `${_id ? 'Online' : 'Cash'} ${(percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {(overviewData.paymentDistribution || []).map((entry, index) => (
+                  {(overviewData.paymentDistribution || []).map((entry:any, index:any) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -210,7 +210,7 @@ export default function OrdersAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers by Orders</h3>
             <div className="space-y-3">
-              {(customerInsightsData.topCustomersByCount || []).slice(0, 5).map((customer, index) => (
+              {(customerInsightsData.topCustomersByCount || []).slice(0, 5).map((customer:any, index:any) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div className="font-medium text-gray-900">{customer.userName || customer._id}</div>
                   <div className="font-bold text-purple-600">{customer.orderCount} orders</div>
@@ -222,7 +222,7 @@ export default function OrdersAnalytics() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Customers by Revenue</h3>
             <div className="space-y-3">
-              {(customerInsightsData.topCustomersByRevenue || []).slice(0, 5).map((customer, index) => (
+              {(customerInsightsData.topCustomersByRevenue || []).slice(0, 5).map((customer:any, index:any) => (
                 <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
                     <div className="font-medium text-gray-900">{customer.userName || customer._id}</div>

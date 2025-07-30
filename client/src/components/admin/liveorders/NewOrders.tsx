@@ -7,8 +7,6 @@ import ViewOrders from './ViewOrders'
 import { getAllOrdesDetails } from '@/reactQuery/queries'
 import {  useQuery } from '@tanstack/react-query'
 import  { useSocket } from "@/customHooks/useSocket"
-import MobileLoaders from '@/components/Loaders/MobileLoaders'
-import SystemLoaders from '@/components/Loaders/SystemLoaders'
 import LoaderSilentLion from '@/components/Loaders/LoaderSilentLion'
 import NotificationLoader from '@/components/Loaders/NotificationLoader'
 
@@ -194,7 +192,7 @@ const NewOrders = (props : any) => {
                             ></i></td>
                             {
                               props.isNotLive && 
-                              <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i></button></td>
+                              <td className='text-left'><button className='mr-4 text-white bg-red-500 px-2 py-1 rounded-lg'><i className="fas fa-trash"></i>{}</button></td>
                             }
                         </tr>
                         )})

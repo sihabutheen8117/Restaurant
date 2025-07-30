@@ -13,12 +13,7 @@ const DashCarts = () => {
 
     const get_countable_query = useQuery({
         queryKey : ["get_countables"] , 
-        queryFn : get_countables ,
-        onError: ( error:any) => {
-          if (error.response?.data?.redirectTo) {
-            router.push(error.response.data.redirectTo);
-          }
-        }
+        queryFn : get_countables 
       })
 
 
