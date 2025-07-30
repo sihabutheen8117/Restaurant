@@ -32,6 +32,11 @@ import {
 import NotificationLoader from '@/components/Loaders/NotificationLoader';
 import { useRouter } from 'next/navigation';
 
+type StagedImage = {
+  file: File;
+  preview: string;
+}
+
 export default function AdminSettings() {
 
   const router = useRouter() ;
@@ -45,9 +50,9 @@ export default function AdminSettings() {
   });
   
   // Image states
-  const [stagedSpcImages, setStagedSpcImages] = useState([]);
-  const [stagedCrtImages, setStagedCrtImages] = useState([]);
-  const [stagedBnrImages, setStagedBnrImages] = useState([]);
+  const [stagedSpcImages, setStagedSpcImages] = useState<StagedImage[]>([]);
+  const [stagedCrtImages, setStagedCrtImages] = useState<StagedImage[]>([]);
+  const [stagedBnrImages, setStagedBnrImages] = useState<StagedImage[]>([]);
 
   // Notification states
   const [notification, setNotification] = useState({
@@ -195,31 +200,37 @@ export default function AdminSettings() {
     };
   }, []);
 
-  // Image handling functions
-  const handleImageSelect = useCallback((e :any , type:string ) => {
-    const files = Array.from(e.target.files);
-    const withPreview = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
 
-    switch (type) {
-      case 'special':
-        setStagedSpcImages((prev) => [...prev, ...withPreview]);
-        break;
-      case 'certificate':
-        setStagedCrtImages(prev => [...prev, ...withPreview]);
-        break;
-      case 'banner':
-        setStagedBnrImages(prev => [...prev, ...withPreview]);
-        break;
-    }
-  }, []);
+  const handleImageSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+      const fileList = e.target.files;
+      if (!fileList) return; 
 
-  const handleImageRemove = useCallback((indexToRemove, type) => {
-    const updateState = (prev) => {
+      const files: File[] = Array.from(fileList);
+      const withPreview: StagedImage[] = files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+      switch (type) {
+        case 'special':
+          setStagedSpcImages((prev) => [...prev, ...withPreview]);
+          break;
+        case 'certificate':
+          setStagedCrtImages((prev) => [...prev, ...withPreview]);
+          break;
+        case 'banner':
+          setStagedBnrImages((prev) => [...prev, ...withPreview]);
+          break;
+      }
+    },
+    []
+  );
+  
+
+  const handleImageRemove = useCallback((indexToRemove : any , type : any ) => {
+    const updateState = (prev : any ) => {
       URL.revokeObjectURL(prev[indexToRemove].preview);
-      return prev.filter((_, index) => index !== indexToRemove);
+      return prev.filter((_ : any , index : any ) => index !== indexToRemove);
     };
 
     switch (type) {
@@ -235,7 +246,7 @@ export default function AdminSettings() {
     }
   }, []);
 
-  const handleImageUpload = useCallback(async (type) => {
+  const handleImageUpload = useCallback(async (type : any ) => {
     let images, folder;
     
     switch (type) {
@@ -266,11 +277,11 @@ export default function AdminSettings() {
     uploadImagesMutation.mutate({ formData, folder });
   }, [stagedSpcImages, stagedCrtImages, stagedBnrImages, uploadImagesMutation, showNotification]);
 
-  const handleImageRemoveOne = useCallback((publicId) => {
+  const handleImageRemoveOne = useCallback((publicId: any ) => {
     deleteHomeImagesMutation.mutate({ public_id: publicId });
   }, [deleteHomeImagesMutation]);
 
-  const clearStagedImages = useCallback((type) => {
+  const clearStagedImages = useCallback((type: any ) => {
     switch (type) {
       case 'special':
         stagedSpcImages.forEach(item => URL.revokeObjectURL(item.preview));
@@ -288,13 +299,13 @@ export default function AdminSettings() {
   }, [stagedSpcImages, stagedCrtImages, stagedBnrImages]);
 
   // Action handlers
-  const confirmAction = (action) => {
+  const confirmAction = (action: any ) => {
     setShowConfirmDialog(action);
   };
 
-  const handleCategoryToggle = useCallback((categoryName) => {
-    setDisabledCategories(prev =>
-      prev.map(cat =>
+  const handleCategoryToggle = useCallback((categoryName: any ) => {
+    setDisabledCategories((prev:any) =>
+      prev.map((cat:any) =>
         cat.category === categoryName
           ? { ...cat, allFoodsDisabled: !cat.allFoodsDisabled }
           : cat
@@ -388,7 +399,7 @@ export default function AdminSettings() {
     );
   };
 
-  const renderImageSection = (type, title, icon, images, stagedImages, queryData, color = "blue") => (
+  const renderImageSection = (type: any , title: any , icon: any , images: any , stagedImages: any , queryData: any , color = "blue") => (
     <div className="bg-white rounded-lg shadow-sm border p-6 border-gray-300">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
       <div className="space-y-4">
@@ -398,7 +409,7 @@ export default function AdminSettings() {
               <>
                 <div className='font-semibold text-gray-500'>Live {title}</div>
                 <div className='flex gap-4 flex-wrap mt-1'> 
-                  {queryData.data.images.map((item, key) => (
+                  {queryData.data.images.map((item: any , key: any ) => (
                     <div key={key} className={`rounded-md relative ${
                       type === 'banner' ? 'h-[160px] w-[400px]' : 
                       type === 'certificate' ? 'h-[100px] w-[200px]' : 
@@ -437,7 +448,7 @@ export default function AdminSettings() {
               <>
                 <div className='font-semibold text-gray-500 mt-3'>Selected {title}</div>
                 <div className='flex gap-4 flex-wrap mt-1'>
-                  {stagedImages.map((item, idx) => (
+                  {stagedImages.map((item: any , idx: any ) => (
                     <div key={idx} className={`rounded-md relative ${
                       type === 'banner' ? 'h-[160px] w-[400px]' : 
                       type === 'certificate' ? 'h-[100px] w-[200px]' : 
