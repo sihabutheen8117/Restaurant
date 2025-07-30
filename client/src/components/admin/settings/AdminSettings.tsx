@@ -359,7 +359,12 @@ export default function AdminSettings() {
       },
     };
 
-    const action = actions[showConfirmDialog];
+    const action : {
+      title : string ,
+      message : string ,
+      danger : boolean ,
+      action : any 
+    } = actions[showConfirmDialog];
 
     return (
       <div className="">
