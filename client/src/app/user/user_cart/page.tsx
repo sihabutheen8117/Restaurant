@@ -161,9 +161,9 @@ const Page = () => {
       </div>
       {
         act_prompt && 
-        <div className=''>
-          <div className='fixed bg-black inset-0 z-10 opacity-25' onClick={() => set_act_prompt(false)}></div>
-          <div className='fixed bg-white inset-x-10 inset-y-96 z-20 rounded-xl'>
+        <div className='h-screen w-full'>
+          <div className='fixed bg-black inset-0 z-40 opacity-25' onClick={() => set_act_prompt(false)}></div>
+          <div className='fixed bg-white inset-x-10 top-48 z-50 rounded-xl'>
             <PromptName close={() => set_act_prompt(false)} setUser={(name:any) => set_is_name(name)}/>
           </div>
         </div>
@@ -219,16 +219,16 @@ const Page = () => {
                                     foodQuantity[item._id ?? ''] == 1 ? 
                                     <button className='text-sm'
                                         onClick={() => handleDelCart(item._id ?? '') }
-                                    ><i className="fas fa-trash pr-3"></i></button>
+                                    ><i className="fas fa-trash pr-3"></i>{}</button>
                                     :
                                     <button className='text-sm'
                                     onClick={() => handleDecCart(item._id ?? '')}
-                                    ><i className="fas fa-minus pr-3"></i></button>
+                                    ><i className="fas fa-minus pr-3"></i>{}</button>
                                 }
                                 <div className='font-semibold inline'>{foodQuantity[item._id ?? '']}</div>
                                 <button className='text-sm'
                                 onClick={() => handleIncCart(item._id ?? '') }
-                                ><i className="fas fa-plus pl-3"></i></button>
+                                ><i className="fas fa-plus pl-3"></i>{}</button>
                             </div>
                         }
                     </div>

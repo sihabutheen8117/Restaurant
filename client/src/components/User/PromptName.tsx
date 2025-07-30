@@ -14,7 +14,7 @@ const PromptName = (props : any) => {
   }
 
   return (
-    <div className='m-3'>
+    <div className='m-3 h-28'>
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Please Enter you Name : 

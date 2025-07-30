@@ -135,30 +135,6 @@ const UserMenu = (props : any) => {
           </div>
         </div>
 
-        <div className="mt-5">
-          <div className={`${playfair.className} font-semibold`}>type</div>
-          <div className="mt-3">
-            <label className="pr-7"><input type="checkbox" name="diet" value="veg" className=""/> Veg</label>
-            <label><input type="checkbox" name="diet" value="veg" /> Non-veg</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Indian</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Italian</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Chinese</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Combo</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Limited deals</label><br/>
-          </div>
-        </div>
-
-        <div className="mt-5">
-          <div className={`${playfair.className} font-semibold`}>taste</div>
-          <div className="mt-3">
-            <label><input type="checkbox" name="diet" value="veg" /> Sweet</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Spicy</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Savory</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Medium</label><br/>
-            <label><input type="checkbox" name="diet" value="veg" /> Extra Spicy</label><br/>
-          </div>
-        </div>
-
       </div>
     </div>
   )
