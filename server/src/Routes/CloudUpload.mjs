@@ -1,8 +1,11 @@
 import { Router } from "express";
 import cloudinary from "../utils/cloudinary.mjs";
 import upload from "../middlewares/multer.mjs";
+import { verifyAdmin } from "../middlewares/authmiddleware.mjs";
 
 const CloudUpload =Router() ;
+
+CloudUpload.use(verifyAdmin);
 
 CloudUpload.post('/upload/cloud/:folder', upload.array('images', 10) , async (req, res) => {
     try {

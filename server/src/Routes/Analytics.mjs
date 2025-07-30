@@ -4,9 +4,11 @@ import { Users } from "../mongoose/schema/Users.mjs";
 import { Foods } from "../mongoose/schema/Foods.mjs";
 import { Orders } from "../mongoose/schema/Orders.mjs";
 import {AnonymousUser} from '../mongoose/schema/AnonymousUser.mjs'
+import { verifyAdmin } from "../middlewares/authmiddleware.mjs";
 
 const AnalyticsRouter = Router() ;
 
+AnalyticsRouter.use(verifyAdmin) ;
 
 AnalyticsRouter.get( "/api/get_countables" , 
     async(req , res ) => {

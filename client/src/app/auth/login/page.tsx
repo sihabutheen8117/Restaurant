@@ -22,7 +22,13 @@ const page = () => {
         onSuccess: ( data: any) => {
           sessionStorage.setItem("user_name", data.data.user_name);
           set_err(false)
-          router.push('../user/client'); // <-- Moved here
+          if( data.data.user_role == "admin" )
+          {
+            router.push('../admin/dashboard');
+          }
+          else{
+            router.push('../user/client'); // <-- Moved here
+          }
         },
         onError: (error:any, variables, context) => {
             set_err_message(error.response.data.message)

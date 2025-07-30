@@ -8,8 +8,6 @@ import { Food  } from '@/reactQuery/itemInterfaces'
 
 const EditFoods = ( props : any) => {
 
-    console.log("from edit food props ");
-    console.log(props.food_data) ;
 
     const queryClient = useQueryClient()
 

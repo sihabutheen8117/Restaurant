@@ -3,7 +3,6 @@ import React from 'react'
 import { inter } from '@/utils/fonts'
 import Link from 'next/link'
 
-
 const AdminPanel = () => {
 
   return (

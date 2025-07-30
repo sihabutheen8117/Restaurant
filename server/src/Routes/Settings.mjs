@@ -2,9 +2,11 @@ import { Router } from "express";
 import { Users } from "../mongoose/schema/Users.mjs";
 import { Orders } from '../mongoose/schema/Orders.mjs'
 import { Foods } from "../mongoose/schema/Foods.mjs";
+import { verifyAdmin } from "../middlewares/authmiddleware.mjs";
 
 const SettingsRouter =Router() ;
 
+SettingsRouter.use(verifyAdmin);
 
 SettingsRouter.get( "/api/settings/get_data" , async (req , res) => {
     try{

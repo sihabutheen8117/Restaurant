@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verifyToken ,verifyTokenHelper } from "../middlewares/authmiddleware.mjs";
+import { verifyToken ,verifyTokenHelper , verifyAdmin } from "../middlewares/authmiddleware.mjs";
 import { Foods } from "../mongoose/schema/Foods.mjs";
 import { Orders } from "../mongoose/schema/Orders.mjs";
 import { Users } from "../mongoose/schema/Users.mjs";
@@ -9,7 +9,9 @@ import { AnonymousUser } from "../mongoose/schema/AnonymousUser.mjs";
 
 const FoodModuleRouter = new Router() ;
 
-FoodModuleRouter.post( '/api/add_new_foods' , async(req , res )=> {
+FoodModuleRouter.post( '/api/add_new_foods' ,
+  verifyAdmin , 
+  async(req , res )=> {
     const food_data = req.body;
     try{
         const newFood = await Foods({
@@ -136,7 +138,9 @@ FoodModuleRouter.get( '/api/get_all_foods_for_edit' , async(req , res )=> {
     }
 })
 
-FoodModuleRouter.delete( '/api/delete_food' , async(req , res )=> {
+FoodModuleRouter.delete( '/api/delete_food' , 
+  verifyAdmin ,
+  async(req , res )=> {
 
     const { _id } = req.body;
     try{
@@ -192,7 +196,8 @@ FoodModuleRouter.post('/api/place_order' , async ( req , res ) => {
             user_id = await genAnonymousToken({
                 isAnonymous : true ,
                 user_id: user_obj_id ,
-                user_name : req.body.user_name
+                user_name : req.body.user_name ,
+                isAdmin : false 
             });
 
             res.cookie("authorization" , user_id , {
@@ -408,6 +413,7 @@ FoodModuleRouter.get('/api/my_orders',
   
 
   FoodModuleRouter.get('/api/get_all_orders_details',
+    verifyAdmin , 
     async (req, res) => {
 
       try {
@@ -529,6 +535,7 @@ FoodModuleRouter.get('/api/my_orders',
 
   
   FoodModuleRouter.get('/api/get_served_orders',
+    verifyAdmin , 
     async (req, res) => {
 
       try {
@@ -550,6 +557,7 @@ FoodModuleRouter.get('/api/my_orders',
   });
 
   FoodModuleRouter.get('/api/get_entry_orders',
+    verifyAdmin ,
     async (req, res) => {
 
       try {
@@ -572,6 +580,7 @@ FoodModuleRouter.get('/api/my_orders',
 
 
   FoodModuleRouter.post('/api/update_food_details',
+    verifyAdmin ,
     async (req, res) => {
       try {
         const { _id, ...food_data } = req.body;
@@ -602,6 +611,7 @@ FoodModuleRouter.get('/api/my_orders',
 
   
   FoodModuleRouter.get('/api/manual_entry/get_foods',
+    verifyAdmin ,
     async (req, res) => {
       try {
         const foods = await Foods.find(
@@ -622,7 +632,9 @@ FoodModuleRouter.get('/api/my_orders',
   });
 
 
-  FoodModuleRouter.post('/api/place_entry' , async ( req , res ) => { 
+  FoodModuleRouter.post('/api/place_entry' , 
+    verifyAdmin ,
+    async ( req , res ) => { 
 
     try {
         

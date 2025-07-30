@@ -1,10 +1,8 @@
-import axios from 'axios'
-
-const api = process.env.NEXT_PUBLIC_API_KEY;
+import apiClient from "@/utils/axiosConfig";
 
 export const get_settings_data = async () => {
     try {
-        const response = await axios.get(api+'/api/settings/get_data',
+        const response = await apiClient.get('/api/settings/get_data',
         {
           withCredentials : true 
         });
@@ -19,7 +17,7 @@ export const get_settings_data = async () => {
 
 export const bulk_food_availability_update = async (food_data : any ) => {
     try {
-        const response = await axios.post(api+'/api/settings/food_management',
+        const response = await apiClient.post('/api/settings/food_management',
             food_data ,
         {
           withCredentials : true 
@@ -34,7 +32,7 @@ export const bulk_food_availability_update = async (food_data : any ) => {
 
 export const global_price_update = async ( price_data : { type : string , price : number } ) => {
     try {
-        const response = await axios.post(api+'/api/settings/pricing',
+        const response = await apiClient.post('/api/settings/pricing',
             price_data ,
         {
           withCredentials : true 
@@ -49,7 +47,7 @@ export const global_price_update = async ( price_data : { type : string , price 
 
 export const delete_all_unchecked_orders = async ( ) => {
     try {
-        const response = await axios.post(api+'/api/settings/delete_unchecked_orders',
+        const response = await apiClient.post('/api/settings/delete_unchecked_orders',
         {
           withCredentials : true 
         });
@@ -63,7 +61,7 @@ export const delete_all_unchecked_orders = async ( ) => {
 
 export const home_content_update = async ( content_data : any ) => {
     try {
-        const response = await axios.post(api+'/api/settings/content_management',
+        const response = await apiClient.post('/api/settings/content_management',
             content_data ,
         {
           withCredentials : true 
@@ -78,7 +76,7 @@ export const home_content_update = async ( content_data : any ) => {
 
 export const system_reset = async (food_data : any ) => {
     try {
-        const response = await axios.post(api+'/api/settings/system_reset',
+        const response = await apiClient.post('/api/settings/system_reset',
             food_data ,
         {
           withCredentials : true 
@@ -93,8 +91,8 @@ export const system_reset = async (food_data : any ) => {
 
 export const upload_home_images = async ({ formData, folder }:any) => {
   try {
-    const response = await axios.post(
-      api + `/upload/cloud/${folder}`,
+    const response = await apiClient.post(
+      `/upload/cloud/${folder}`,
       formData, // Send formData directly, not wrapped in an object
       {
         withCredentials: true,
@@ -113,8 +111,8 @@ export const upload_home_images = async ({ formData, folder }:any) => {
 
 export const get_home_images = async ({ folder }:any) => {
   try {
-    const response = await axios.get(
-      api + `/images/folder/${folder}`,
+    const response = await apiClient.get(
+      `/images/folder/${folder}`,
       {
         withCredentials: true,
       }
@@ -129,8 +127,8 @@ export const get_home_images = async ({ folder }:any) => {
 
 export const delete_home_images = async (data : any ) => {
   try {
-    const response = await axios.post(
-      api + `/cloud/delete`,
+    const response = await apiClient.post(
+      `/cloud/delete`,
       data ,
       {
         withCredentials: true,

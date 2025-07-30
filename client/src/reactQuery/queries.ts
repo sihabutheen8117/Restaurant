@@ -1,16 +1,9 @@
-import axios from 'axios'
 import { Food } from '@/reactQuery/itemInterfaces'
-// Authendication queries 
-
-//https://restaurant-server-641z.onrender.com
-//http://localhost:3001
-
-const api = process.env.NEXT_PUBLIC_API_KEY;
-console.log("api key : "+api)
+import apiClient from "@/utils/axiosConfig";
 
 export const registerUser = async (userData : any ) => {
     try {
-        const response = await axios.post(api+'/api/authendicate/register',
+        const response = await apiClient.post('/api/authendicate/register',
         userData,
         {
           withCredentials : true 
@@ -26,7 +19,7 @@ export const registerUser = async (userData : any ) => {
 
 export const loginUser = async (userData :any) => {
     try {
-        const response = await axios.post(api+'/api/authendicate/login',
+        const response = await apiClient.post('/api/authendicate/login',
         userData,
         {
           withCredentials : true 
@@ -43,7 +36,7 @@ export const loginUser = async (userData :any) => {
 
 export const getAllFood = async() => {
   try{
-    const response = await axios.get<Food[]>(api+'/api/get_all_foods') ;
+    const response = await apiClient.get<Food[]>('/api/get_all_foods') ;
     console.log(response)
     return response
   }
@@ -56,7 +49,7 @@ export const getAllFood = async() => {
 
 export const placeOrder = async(order_details : any ) => {
   try{
-    const response = await axios.post(api+'/api/place_order',
+    const response = await apiClient.post('/api/place_order',
       order_details,
       {
         withCredentials : true 
@@ -76,7 +69,7 @@ export const placeOrder = async(order_details : any ) => {
 
 export const myOrders = async() => {
   try{
-    const response = await axios.get(api+'/api/my_orders',
+    const response = await apiClient.get('/api/my_orders',
       {
         withCredentials : true 
       }
@@ -105,7 +98,7 @@ export const getFoodDetails =  async() => {
 
 export const getFoodDetailsWithoutReviews =  async(food_details : any ) => {
   try{
-    const response = await axios.post(api+'/api/get_food_details_whithout_reviews',
+    const response = await apiClient.post('/api/get_food_details_whithout_reviews',
       food_details ,
       {
         withCredentials : true 
@@ -123,7 +116,7 @@ export const getFoodDetailsWithoutReviews =  async(food_details : any ) => {
 
 export const deleteOrder =  async(food_details : any ) => {
   try{
-    const response = await axios.post(api+'/api/delete_orders',
+    const response = await apiClient.post('/api/delete_orders',
       food_details ,
       {
         withCredentials : true 
@@ -144,7 +137,7 @@ export const deleteOrder =  async(food_details : any ) => {
 export const addNewFood =  async(food_data:Food) => {
   try{
     console.log(food_data.food_image)
-    const respose = await axios.post(api+"/api/add_new_foods",
+    const respose = await apiClient.post("/api/add_new_foods",
       food_data,
       {
         withCredentials : true 
@@ -161,7 +154,7 @@ export const addNewFood =  async(food_data:Food) => {
 
 export const getAllFoodForEdit = async() => {
   try{
-    const response = await axios.get<Food[]>(api+'/api/get_all_foods_for_edit') ;
+    const response = await apiClient.get<Food[]>('/api/get_all_foods_for_edit') ;
     console.log(response)
     return response
   }
@@ -175,7 +168,7 @@ export const getAllFoodForEdit = async() => {
 
 export const deleteFood = async( _id : string) => {
   try{
-    const response = await axios.delete(api+'/api/delete_food' ,
+    const response = await apiClient.delete('/api/delete_food' ,
       {
         data : {
           _id : _id
@@ -194,7 +187,7 @@ export const deleteFood = async( _id : string) => {
 
 export const getAllOrdesDetails = async() => {
   try{
-    const response = await axios.get(api+'/api/get_all_orders_details') ;
+    const response = await apiClient.get('/api/get_all_orders_details') ;
     console.log(response)
     return response
   }
@@ -207,7 +200,7 @@ export const getAllOrdesDetails = async() => {
 
 export const getFoodDetailsForOrders =  async(order_details : any ) => {
   try{
-    const response = await axios.post(api+'/api/get_food_details_for_orders',
+    const response = await apiClient.post('/api/get_food_details_for_orders',
       order_details ,
       {
         withCredentials : true 
@@ -225,7 +218,7 @@ export const getFoodDetailsForOrders =  async(order_details : any ) => {
 
 export const payment_checkout =  async(order_details : any ) => {
   try{
-    const response = await axios.post(api+'/api/payment_checkout',
+    const response = await apiClient.post('/api/payment_checkout',
       order_details ,
       {
         withCredentials : true 
@@ -244,7 +237,7 @@ export const payment_checkout =  async(order_details : any ) => {
 export const get_seved_orders  =  async() => {
 
   try{
-    const response = await axios.get(api+'/api/get_served_orders ',
+    const response = await apiClient.get('/api/get_served_orders ',
       {
         withCredentials : true 
       }
@@ -262,7 +255,7 @@ export const get_seved_orders  =  async() => {
 export const get_entry_orders =  async() => {
 
   try{
-    const response = await axios.get(api+'/api/get_entry_orders',
+    const response = await apiClient.get('/api/get_entry_orders',
       {
         withCredentials : true 
       }
@@ -281,7 +274,7 @@ export const get_entry_orders =  async() => {
 export const set_user_name_for_anonymous  =  async(user_data : any ) => {
 
   try{
-    const response = await axios.post(api+'/api/set_user_name_for_anonymous',
+    const response = await apiClient.post('/api/set_user_name_for_anonymous',
       user_data ,
       {
         withCredentials : true 
@@ -300,7 +293,7 @@ export const set_user_name_for_anonymous  =  async(user_data : any ) => {
 export const get_countables =  async( ) => {
 
   try{
-    const response = await axios.get(api+'/api/get_countables',
+    const response = await apiClient.get('/api/get_countables',
       {
         withCredentials : true 
       }
@@ -318,7 +311,7 @@ export const get_countables =  async( ) => {
 
 export const get_dashboard_analytics_orders_customers =  async( user_data : any) => {
   try{
-    const response = await axios.post(api+'/api/get_dashboard_analytics_orders_customers',
+    const response = await apiClient.post('/api/get_dashboard_analytics_orders_customers',
       {
         user_data
       }
@@ -339,7 +332,7 @@ export const get_dashboard_analytics_orders_customers =  async( user_data : any)
 
 export const get_dashboard_analytics_orders =  async( user_data : any) => {
   try{
-    const response = await axios.post(api+'/api/get_dashboard_analytics_total_orders',
+    const response = await apiClient.post('/api/get_dashboard_analytics_total_orders',
       {
         user_data
       }
@@ -360,7 +353,7 @@ export const get_dashboard_analytics_orders =  async( user_data : any) => {
 
 export const register_google_oauth  =  async() => {
   try{
-    const response = await axios.post(api+'/api/google/oauth',
+    const response = await apiClient.post('/api/google/oauth',
       {
         withCredentials : true 
       }
@@ -380,7 +373,7 @@ export const register_google_oauth  =  async() => {
 
 export const update_food_details  =  async(food_data : any ) => {
   try{
-    const response = await axios.post(api+'/api/update_food_details',
+    const response = await apiClient.post('/api/update_food_details',
       food_data ,
       {
         withCredentials : true 
@@ -400,7 +393,7 @@ export const update_food_details  =  async(food_data : any ) => {
 
 export const get_all_categories  =  async() => {
   try{
-    const response = await axios.get(api+'/api/get_all_categories',
+    const response = await apiClient.get('/api/get_all_categories',
       {
         withCredentials : true 
       }
@@ -417,7 +410,7 @@ export const get_all_categories  =  async() => {
 
 export const manual_entry_get_foods  =  async() => {
   try{
-    const response = await axios.get(api+'/api/manual_entry/get_foods',
+    const response = await apiClient.get('/api/manual_entry/get_foods',
       {
         withCredentials : true 
       }
@@ -434,7 +427,7 @@ export const manual_entry_get_foods  =  async() => {
 
 export const  place_entry  =  async(food_data : any) => {
   try{
-    const response = await axios.post(api+'/api/place_entry',
+    const response = await apiClient.post('/api/place_entry',
       food_data ,
       {
         withCredentials : true 
@@ -452,7 +445,7 @@ export const  place_entry  =  async(food_data : any) => {
 
 export const user_ratings =  async(food_data : any) => {
   try{
-    const response = await axios.post(api+'/api/user_ratings',
+    const response = await apiClient.post('/api/user_ratings',
       food_data ,
       {
         withCredentials : true 

@@ -33,10 +33,32 @@ AuthRouter.post( "/api/authendicate/login" ,
             }
             const user_name = user.user_name ;
 
+            if( user.isAdmin == true )
+            {
+                const token = genToken({
+                    isAnonymous : false ,
+                    user_id: user._id ,
+                    user_name : user.user_name ,
+                    isAdmin : true 
+                }) ;
+    
+                res.cookie("authorization" , token , {
+                    httpOnly : true ,
+                    secure :  true  ,
+                    sameSite : "None"
+                })
+
+                return res.status(200).send({
+                    user_name : user_name ,
+                    user_role : "admin"
+                })
+            }
+
             const token = genToken({
                 isAnonymous : false ,
                 user_id: user._id ,
-                user_name : user.user_name
+                user_name : user.user_name ,
+                isAdmin : false 
             }) ;
 
             res.cookie("authorization" , token , {
@@ -48,7 +70,8 @@ AuthRouter.post( "/api/authendicate/login" ,
             console.log( "user_name to send , after logged in " , user_name )
 
             res.status(200).send({
-                user_name : user_name
+                user_name : user_name ,
+                user_role : "cust"
             })
         }
         catch(error){
@@ -77,7 +100,8 @@ AuthRouter.post("/api/authendicate/register" ,
             const token = genToken({
                 isAnonymous : false ,
                 user_id: response._id ,
-                user_name : response.user_name
+                user_name : response.user_name ,
+                isAdmin : false 
             }) ;
 
             res.cookie("authorization" , token , {
@@ -87,7 +111,8 @@ AuthRouter.post("/api/authendicate/register" ,
             })
 
             res.status(200).send({
-                user_name : response.user_name
+                user_name : response.user_name ,
+                user_role : "cust"
             })
         }
         catch(error)
@@ -161,7 +186,8 @@ AuthRouter.post('/api/google/oauth', async (req, res) => {
             const token = genToken({
                 isAnonymous : false ,
                 user_id: find_user._id ,
-                user_name : user_data.name 
+                user_name : user_data.name  ,
+                isAdmin : false 
             }) ;
             res.cookie("authorization" , token , {
                 httpOnly : true ,

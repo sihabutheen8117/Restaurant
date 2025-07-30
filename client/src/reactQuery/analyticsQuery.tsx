@@ -1,12 +1,8 @@
-import axios from 'axios'
-
-const api = process.env.NEXT_PUBLIC_API_KEY;
-
-// overview
+import apiClient from "@/utils/axiosConfig";
 
 export const overview_users = async () => {
   try {
-      const response = await axios.get(api+'/users/overview',
+      const response = await apiClient.get('/users/overview',
       {
         withCredentials : true 
       });
@@ -20,7 +16,7 @@ export const overview_users = async () => {
 
 export const overview_foods = async () => {
   try {
-      const response = await axios.get(api+'/foods/overview',
+      const response = await apiClient.get('/foods/overview',
       {
         withCredentials : true 
       });
@@ -34,7 +30,7 @@ export const overview_foods = async () => {
 
 export const overview_orders = async () => {
   try {
-      const response = await axios.get(api+'/orders/overview',
+      const response = await apiClient.get('/orders/overview',
       {
         withCredentials : true 
       });
@@ -53,7 +49,7 @@ export const overview_orders = async () => {
 export const orders_trends = async ( tp : any ) => {
   const trendPeriod = tp ;
   try {
-      const response = await axios.get(api+`/orders/trends?period=${trendPeriod}`,
+      const response = await apiClient.get(`/orders/trends?period=${trendPeriod}`,
       {
         withCredentials : true 
       });
@@ -67,7 +63,7 @@ export const orders_trends = async ( tp : any ) => {
 
 export const orders_customer_insights = async () => {
   try {
-      const response = await axios.get(api+'/orders/customer-insights',
+      const response = await apiClient.get('/orders/customer-insights',
       {
         withCredentials : true 
       });
@@ -81,7 +77,7 @@ export const orders_customer_insights = async () => {
 
 export const orders_food_analysis = async () => {
   try {
-      const response = await axios.get(api+'/orders/food-analysis',
+      const response = await apiClient.get('/orders/food-analysis',
       {
         withCredentials : true 
       });
@@ -97,7 +93,7 @@ export const orders_food_analysis = async () => {
 export const users_registration_trends = async ( tp  : any ) => {
   const timePeriod = tp ;
   try {
-      const response = await axios.get(api+`/users/registration-trends?period=${timePeriod}`,
+      const response = await apiClient.get(`/users/registration-trends?period=${timePeriod}`,
       {
         withCredentials : true 
       });
@@ -111,7 +107,7 @@ export const users_registration_trends = async ( tp  : any ) => {
 
 export const users_activity = async () => {
   try {
-      const response = await axios.get(api+'/users/activity',
+      const response = await apiClient.get('/users/activity',
       {
         withCredentials : true 
       });
@@ -128,7 +124,7 @@ export const users_activity = async () => {
 
 export const foods_popular = async () => {
     try {
-        const response = await axios.get(api+'/foods/popular',
+        const response = await apiClient.get('/foods/popular',
         {
           withCredentials : true 
         });
@@ -142,7 +138,7 @@ export const foods_popular = async () => {
 
 export const foods_performance = async () => {
   try {
-      const response = await axios.get(api+'/foods/performance',
+      const response = await apiClient.get('/foods/performance',
       {
         withCredentials : true 
       });
@@ -155,7 +151,7 @@ export const foods_performance = async () => {
 }
 export const download_summary = async (data: any) => {
   try {
-    const response = await axios.post(api + '/download-orders', data, {
+    const response = await apiClient.post('/download-orders', data, {
       withCredentials: true,
       responseType: 'blob', 
     });

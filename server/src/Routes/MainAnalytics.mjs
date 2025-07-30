@@ -6,8 +6,11 @@ import { Orders } from "../mongoose/schema/Orders.mjs";
 import { AnonymousUser } from "../mongoose/schema/AnonymousUser.mjs";
 import xlsx from 'xlsx';
 import mongoose from 'mongoose'
+import { verifyAdmin } from "../middlewares/authmiddleware.mjs";
 
 const MainAnalytics = Router() ;
+
+MainAnalytics.use(verifyAdmin);
 
 MainAnalytics.get('/users/overview', async (req, res) => {
   try {
@@ -44,7 +47,7 @@ MainAnalytics.get('/users/overview', async (req, res) => {
   }
 });
 
-// GET /api/analytics/users/registration-trends
+
 MainAnalytics.get('/users/registration-trends', async (req, res) => {
   try {
     const { period = 'month' } = req.query; // day, week, month, year
@@ -86,7 +89,7 @@ MainAnalytics.get('/users/registration-trends', async (req, res) => {
   }
 });
 
-// GET /api/analytics/users/activity
+
 MainAnalytics.get('/users/activity', async (req, res) => {
   try {
     // Most active users (by order count)
@@ -532,10 +535,8 @@ MainAnalytics.get('/orders/customer-insights', async (req, res) => {
   }
 });
 
-// GET /api/analytics/orders/food-analysis
 MainAnalytics.get('/orders/food-analysis', async (req, res) => {
   try {
-    // Most ordered foods from orders collection
     const mostOrderedFoods = await Orders.aggregate([
       { $unwind: "$ordered_foods" },
       {

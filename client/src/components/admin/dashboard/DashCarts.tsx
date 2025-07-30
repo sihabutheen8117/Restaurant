@@ -4,14 +4,21 @@ import React from 'react'
 import { inter } from '@/utils/fonts'
 import { useQuery } from '@tanstack/react-query'
 import { get_countables } from '@/reactQuery/queries'
-
+import { useRouter } from 'next/navigation'
 
 
 const DashCarts = () => {
 
+    const router = useRouter() ;
+
     const get_countable_query = useQuery({
-        queryKey : ["get_countables"] ,
-        queryFn : get_countables 
+        queryKey : ["get_countables"] , 
+        queryFn : get_countables ,
+        onError: ( error:any) => {
+          if (error.response?.data?.redirectTo) {
+            router.push(error.response.data.redirectTo);
+          }
+        }
       })
 
 
