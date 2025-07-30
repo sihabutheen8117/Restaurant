@@ -8,23 +8,8 @@ import { Star } from 'lucide-react'
 import { Review } from '@/reactQuery/itemInterfaces'
 import { user_ratings } from '@/reactQuery/queries'
 
-type Reviews = {
-    _id: string,
-    ratings: number,
-    stars : any 
-}
 
-interface RatingsPageProps {
-    ratings_details: {
-        food_data: any[]
-    }
-    order_id: string
-    israted: boolean
-    rated_data : any[]
-    close : any 
-}
-
-const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }: RatingsPageProps) => {
+const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }:any) => {
     const queryClient = useQueryClient()
     console.log(rated_data);
     const get_ordered_food_query = useQuery({
@@ -46,7 +31,7 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
         }
     })
 
-    const [reviews, setReviews] = useState<Review[]>([])
+    const [reviews, setReviews] = useState<any>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
 
  
@@ -63,8 +48,8 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
 
     // Memoized star click handler to prevent unnecessary re-renders
     const handleStarClick = useCallback((foodId: string, starIndex: number) => {
-        setReviews(prev => 
-            prev.map(food =>
+        setReviews((prev:any) => 
+            prev.map((food:any) =>
                 food.food_id === foodId 
                     ? { ...food, stars: starIndex + 1 } 
                     : food
@@ -75,7 +60,7 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
     const handleSubmit = async () => {
         if (isSubmitting) return 
         
-        const hasUnratedItems = reviews.some(review => review.stars === 0)
+        const hasUnratedItems = reviews.some((review:any) => review.stars === 0)
         if (hasUnratedItems) {
             alert("Please rate all items before submitting")
             return
@@ -125,7 +110,7 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
             <div className='flex-1 mt-2 overflow-y-auto'>
                 {get_ordered_food_query.isSuccess &&
                     get_ordered_food_query.data?.data?.map((item: any, index: number) => {
-                        const currentRating = reviews.find(food => food.food_id === item._id)?.stars || 0
+                        const currentRating = reviews.find((food:any) => food.food_id === item._id)?.stars || 0
                         
                         return (
                             <div className='mb-4' key={item._id}>
@@ -159,7 +144,7 @@ const RatingsPage = ({ ratings_details, order_id, israted , rated_data , close }
                                         ))
                                         :
                                         [...Array(5)].map((_, i) => {
-                                            const foundRating = rated_data.find(fd => fd.food_id === item._id);
+                                            const foundRating = rated_data.find((fd:any) => fd.food_id === item._id);
                                             const stars = foundRating ? foundRating.stars : 0;
                                         
                                             return (
